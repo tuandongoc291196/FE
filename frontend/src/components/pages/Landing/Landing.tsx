@@ -6,12 +6,9 @@ import NavSearching from '../NavSearching/NavSearching';
 
 const Landing = () => {
 
-    const [isSearch, setIsSearch] = useState(false);
-
-    
     useEffect(() => {
 
-    }, [isSearch]);
+    }, []);
 
 
 
@@ -28,7 +25,7 @@ const Landing = () => {
                         </span>
                         <div className="search-container">
                             <div className="search" style={{ borderRadius: '1rem 0 0 1rem' }}>
-                                <SearchIcon style={{ fontSize: '2rem' }} />
+                                <SearchIcon style={{ fontSize: '2rem', color: 'var(--primary-color)' }} />
                                 <input type="text" className="input" placeholder="Search for vendors" />
                             </div>
                             <div className="search">

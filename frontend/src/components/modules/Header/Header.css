@@ -1,4 +1,5 @@
 #Header {
+    color: var(--primary-color);
     height: 96px;
     padding: 0 32px;
     border-bottom: 1px solid #d9d9d9;

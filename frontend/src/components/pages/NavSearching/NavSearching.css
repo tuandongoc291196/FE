@@ -17,7 +17,6 @@
 #NavSearching .vendor-img {
     width: 32px;
     margin-right: 16px;
-    margin-bottom: -6px;
 }
 
 #NavSearching .vendor-list {
@@ -29,6 +28,9 @@
 }
 
 #NavSearching .vendor-item {
+    color: var(--black-color);
+    display: flex;
+    align-items: center;
     font-weight: 400;
     text-transform: capitalize;
     font-size: 2rem;

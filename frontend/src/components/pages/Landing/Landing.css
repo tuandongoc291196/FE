@@ -31,6 +31,7 @@
 }
 
 #Landing .header-search {
+    color: var(--primary-color);
     font-size: 3.5rem;
     width: 100%;
 }
@@ -72,7 +73,7 @@
 
 #Landing .btn-search {
     width: 15%;
-    background-color: var(--black-color);
+    background-color: var(--primary-color);
     font-size: 1.5rem;
     border-radius: 0 1rem 1rem 0;
 }

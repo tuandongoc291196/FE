@@ -1,0 +1,32 @@
+:root {
+  --white-color: #fff;
+  --black-color: #000;
+  --btn-hover-color: #00000052;
+  --background-hover: rgb(34 34 34 / 54%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  line-height: 1.6rem;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #fff;
+  line-height: 2.5rem;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-link {
+  color: #61dafb;
+}

@@ -1,0 +1,73 @@
+.icon {
+    margin: 25px 0 15px 0;
+}
+
+#Login {
+    margin: 0 auto;
+    width: 900px;
+}
+
+.login-cover {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.col-left {
+    width: 40%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.col-right {
+    padding: 60px 80px;
+    font-size: 2rem;
+    width: 60%;
+    border: 1px solid var(--btn-hover-color);
+}
+
+.item {
+    margin-bottom: 24px;
+}
+
+.login-header {
+    font-weight: 500;
+}
+
+.already-register {
+    font-size: 1.5rem;
+}
+
+.input {
+    width: 100%;
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #d9d9d9;
+    outline: none;
+}
+
+.forgot {
+    font-size: 1.3rem;
+    text-align: right;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: var(--black-color);
+    font-size: 1.5rem;
+}
+
+.question {
+    margin-bottom: 8px;
+    color: var(--btn-hover-color);
+    font-size: 1.5rem;
+}
+
+.vendor-login {
+    font-size: 1.5rem;
+    font-weight: 500;
+}

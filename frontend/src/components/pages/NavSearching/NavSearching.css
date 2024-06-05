@@ -5,7 +5,9 @@
     margin-top: 96px;
     z-index: 99;
     height: 320px;
-    width: 98.35vw;
+    right: 0;
+    width: 100%;
+    padding: 1% 15%;
 }
 
 #NavSearching h2 {

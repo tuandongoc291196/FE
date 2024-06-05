@@ -1,8 +1,8 @@
 :root {
   --white-color: #fff;
   --black-color: #000;
-  --primary-color: rgb(253, 178, 66);
-  --btn-hover-color: rgb(255 153 0);
+  --primary-color: rgba(213, 192, 133, 1);
+  --btn-hover-color: rgba(242, 230, 193, 1);
   --background-hover: rgb(34 34 34 / 54%);
 }
 

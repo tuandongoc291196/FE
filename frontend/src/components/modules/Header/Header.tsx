@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./Header.css";
 import NavSearching from '../../pages/NavSearching/NavSearching';
+import { useNavigate } from 'react-router';
 
 interface HeaderProps {
     isModalVisible: boolean;
@@ -8,6 +9,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
+
+    const navigate = useNavigate();
 
     const navItemRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
@@ -33,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
         <div id="Header">
             <div className="header-left">
                 <div className="header-icon">
-                    <img src="https://www.weddingwire.com/assets/img/logos/gen_logoHeader.svg" alt="" />
+                    Wedding
                 </div>
                 <nav className="nav-bar">
                     <ul className="nav-list">
@@ -47,14 +50,14 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
             <div className="header-right">
                 <nav className="nav-auth">
                     <ul className="nav-auth-list">
-                        <li className="nav-auth-item">Đăng nhập</li>
-                        <li className="nav-auth-item">Đăng ký</li>
+                        <li className="nav-auth-item" onClick={() => { navigate("/login") }}>Đăng nhập</li>
+                        <li className="nav-auth-item" onClick={() => { navigate("/login") }}>Đăng ký</li>
                     </ul>
                 </nav>
             </div>
             {isModalVisible && (
-                <div id="Modal" ref={modalRef} style={{ position: 'absolute'}}>
-                    <NavSearching/>
+                <div id="Modal" ref={modalRef} style={{ position: 'absolute' }}>
+                    <NavSearching />
                 </div>
             )}
         </div>

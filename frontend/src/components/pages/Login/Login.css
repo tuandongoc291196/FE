@@ -7,39 +7,39 @@
     width: 900px;
 }
 
-.login-cover {
+#Login .login-cover {
     display: flex;
     flex-wrap: nowrap;
     justify-content: center;
 }
 
-.col-left {
+#Login .col-left {
     width: 40%;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.col-right {
+#Login .col-right {
     padding: 60px 80px;
     font-size: 2rem;
     width: 60%;
     border: 1px solid var(--btn-hover-color);
 }
 
-.item {
+#Login .item {
     margin-bottom: 24px;
 }
 
-.login-header {
+#Login .login-header {
     font-weight: 500;
 }
 
-.already-register {
+#Login .already-register {
     font-size: 1.5rem;
 }
 
-.input {
+#Login .input {
     width: 100%;
     font-size: 1.3rem;
     margin-bottom: 12px;
@@ -49,25 +49,25 @@
     outline: none;
 }
 
-.forgot {
+#Login .forgot {
     font-size: 1.3rem;
     text-align: right;
 }
 
-.btn-login {
+#Login .btn-login {
     width: 100%;
     padding: 12px 15px;
     background-color: var(--black-color);
     font-size: 1.5rem;
 }
 
-.question {
+#Login .question {
     margin-bottom: 8px;
     color: var(--btn-hover-color);
     font-size: 1.5rem;
 }
 
-.vendor-login {
+#Login .vendor-login {
     font-size: 1.5rem;
     font-weight: 500;
 }

@@ -2,7 +2,10 @@ import { faPersonHalfDress } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import "./NavSearching.css";
+import { useNavigate } from 'react-router';
 const NavSearching = () => {
+  const navigate = useNavigate();
+
   return (
     <div id='NavSearching'>
       <h2>Tìm kiếm nhà cung cấp cho bạn</h2>
@@ -15,7 +18,7 @@ const NavSearching = () => {
           <img className='vendor-img' src="https://cdn.iconscout.com/icon/free/png-256/free-wedding-ring-1411380-1192859.png?f=webp" alt="" />
           Nhẫn cưới
         </li>
-        <li className="vendor-item">
+        <li className="vendor-item" onClick={() => { navigate("/photographer") }}>
           <img className='vendor-img' src="https://cdn3.iconfinder.com/data/icons/wedding-love/64/wedding-photography-camera-love-photo-512.png" alt="" />
           Chụp hình
         </li>

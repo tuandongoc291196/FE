@@ -1,7 +1,7 @@
 #Header {
     color: var(--primary-color);
     height: 96px;
-    padding: 0 15%;
+    padding: 0 32px;
     border-bottom: 1px solid #d9d9d9;
     display: flex;
     justify-content: space-between;
@@ -12,15 +12,14 @@
 }
 
 #Header .header-icon {
-    font-size: 3rem;
-    font-weight: 900;
+    width: 30%;
 }
 
 #Header .header-left {
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
-    width: 60%;
+    width: 70%;
     align-items: center;
 }
 
@@ -42,7 +41,7 @@
 #Header .nav-item {
     display: flex;
     align-items: center;
-    padding-right: 24px;  
+    padding-right: 16px;  
     line-height: 96px;  
 }
 
@@ -53,14 +52,14 @@
 
 #Header .header-right {
     display: flex;
-    justify-content: right;
+    justify-content: center;
     flex-wrap: nowrap;
-    width: 30%;
+    width: 20%;
     align-items: center;
 }
 
-#Header .nav-auth-item {
-    margin-left: 24px;
+#Header .nav-auth {
+    width: 50%;
 }
 
 #Header .nav-auth-list {

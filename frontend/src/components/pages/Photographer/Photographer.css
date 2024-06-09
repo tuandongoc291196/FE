@@ -3,14 +3,16 @@
 }
 
 #Photographer .row {
-    padding: 0 15%;
     display: flex;
     flex-wrap: nowrap;
+    }
+
+#Photographer .col-left {
+    padding: 5%;  
+    width: 100%;
+    padding-left: 15% !important;  
 }
 
-#Photographer .col-haft {
-    width: 50%;
-}
 
 #Photographer .col-haft img {
     width: 100%;
@@ -108,4 +110,86 @@
 
 #Photographer .filter-content {
     width: 80%;
+    padding: 24px 50px;
+}
+
+#Photographer .content-header {
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    text-align: left;
+    font-weight: 600;
+}
+
+#Photographer .content-header strong {
+    color: var(--primary-color);
+}
+
+#Photographer .content-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+#Photographer .content-item {
+    display: flex;
+    flex-wrap: nowrap;
+    margin-bottom: 24px;
+    justify-content: space-between;
+}
+
+#Photographer .content-gallery {
+    width: 30%;
+}
+
+#Photographer .content-gallery img {
+    width: 100%;
+    border-radius: 15px;
+}
+
+
+
+#Photographer .content-infor {
+    width: 67%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+#Photographer .item-title {
+    font-size: 1.7rem;
+}
+
+#Photographer .item-subtitle {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    font-size: 1.5rem;
+}
+
+#Photographer .item-rating {
+
+}
+
+#Photographer .item-location {
+    margin-left: 10px;
+}
+
+#Photographer .item-description {
+    word-break: break-word;
+    overflow: hidden;
+    height: 100px;
+}
+
+#Photographer .read-more {
+
+}
+
+#Photographer .item-footer {
+    margin-top: auto;
+    margin-left: auto;
+
+}
+
+#Photographer .btn-item {
+
 }

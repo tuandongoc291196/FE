@@ -1,0 +1,1 @@
+export const ACCOUNT_LOGIN = '/auth/login';

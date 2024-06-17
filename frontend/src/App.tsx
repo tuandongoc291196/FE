@@ -6,17 +6,24 @@ import Landing from './components/pages/Landing/Landing';
 import { useLocation } from 'react-router-dom';
 import Login from './components/pages/Login/Login';
 import Photographer from './components/pages/Photographer/Photographer';
+import MessageBox from './components/pages/Popup/MessageBox/MessageBox';
 
 function App() {
   const location = useLocation();
   const [isModalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState<string>('');
+  const [messageStatus, setMessageStatus] = useState('');
   return (
     <div className="App">
+      {
+        message != '' ?
+          <MessageBox status={messageStatus} message={message} setMessage={setMessage} title='inasd'></MessageBox>
+          :
+          null
+      }
       {(() => {
         {
-          if (location.pathname != "/login") {
-            return <Header isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
-          }
+          return <Header isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
         }
       })()}
       <Routes>

@@ -1,5 +1,5 @@
 import { Button, TextField } from '@mui/material'
-import React, { Dispatch, FC, FormEvent, SetStateAction, useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { authentication, firebaseNotificationConfig } from '../../../firebase-config';
@@ -10,11 +10,8 @@ import { initializeApp } from 'firebase/app';
 import "./Authentication.css";
 import { LoginPayload } from '../../../types/authen/Login';
 import { loginUser, loginUserByGoogle } from '../../../redux/apiRequest';
-interface Props {
-    setMessageStatus: Dispatch<SetStateAction<string>>;
-    setMessage: Dispatch<SetStateAction<string>>;
-}
-const Login: FC<Props> = (props) => {
+
+const Register = () => {
     const user = useSelector((state: any) => state.auth.login.currentUser);
 
     const dispatch = useDispatch();
@@ -22,6 +19,7 @@ const Login: FC<Props> = (props) => {
 
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const [confirm, setConfirm] = useState<string>("");
     const [messageRegister, setMessageRegister] = useState<string>("");
     const [messageLogin, setMessageLogin] = useState<string>("");
 
@@ -47,8 +45,7 @@ const Login: FC<Props> = (props) => {
             } else if (await loginUser(userLogin, dispatch, navigate) == "DISABLE") {
                 setMessageLogin("Your account is disable, please contact to us!");
             } else {
-                props.setMessageStatus("green");
-                props.setMessage("Thành công");
+
             }
         } catch (error) {
             console.log(error)
@@ -57,15 +54,28 @@ const Login: FC<Props> = (props) => {
 
     const signInWithGoogle = (isRegister: boolean) => {
         const provider = new GoogleAuthProvider();
-        signInWithPopup(authentication, provider).then((result) => {
+        signInWithPopup(authentication, provider).then((result: any) => {
             loginUserByGoogle(result, dispatch, navigate, isRegister)
-        }).catch((error) => {
+        }).catch((error: any) => {
             console.log(error);
         });
     }
 
+    const registerHandler = () => {
+        if (password == confirm) {
+            const newUser: LoginPayload = {
+                email: username,
+                password: password,
+            }
+            // registerCandidate(newUser, navigate, dispatch);
+            setMessageRegister("");
+        }
+        else {
+            setMessageRegister("Password confirm and password not match!");
+        }
+    }
     return (
-        <div id='Authentication'>
+        <div id='Login'>
             <img className='icon' src="https://www.weddingwire.com/assets/img/logos/gen_logoHeader.svg" alt="" />
 
             <div className="login-cover">
@@ -73,28 +83,22 @@ const Login: FC<Props> = (props) => {
                 </div>
                 <form onSubmit={loginHandler} className="col-right">
                     <div className="item">
-                        <div className="login-header">Đăng nhập</div>
+                        <div className="login-header">Log in to your account</div>
                     </div>
                     <div className="item">
-                        <div className='already-register'>Bạn chưa có tài khoản? <strong className="register hover-primary" onClick={() => { navigate("/register") }}>Đăng ký ngay</strong></div>
+                        <div className='already-register'>Not a remember yet? <strong>Join now</strong></div>
                     </div>
                     <div className="item">
                         <input className='input' placeholder="Your username" onChange={(e) => { setUsername(e.target.value) }} />
                         <input className='input' placeholder="Your password" type="password" onChange={(e) => { setPassword(e.target.value) }} />
-                        <div className="forgot">Quên mật khẩu?</div>
+                        <div className="forgot">Forgot your password?</div>
                     </div>
                     <div className="item">
-                        <Button type='submit' className="btn-login" variant="contained">Đăng nhập</Button>
-                    </div>
-                    <div className="item hover-primary">
-                        <div className="btn-login-google btn" onClick={() => signInWithGoogle(false)}>
-                            <img src="images/google-icon.svg" className='icon-google' alt="google icon" />
-                            <div className="google">Log in with Google</div>
-                        </div>
+                        <Button type='submit' className="btn-login" variant="contained">Log in</Button>
                     </div>
                     <div className="item">
-                        <div className="question">Bạn là nhà cung cấp?</div>
-                        <div className="vendor-login hover-primary">Đăng nhập với tư cách là nhà cung cấp</div>
+                        <div className="question">Are you a vendor?</div>
+                        <div className="vendor-login">Vendor login</div>
                     </div>
                 </form>
             </div>
@@ -102,4 +106,4 @@ const Login: FC<Props> = (props) => {
     )
 }
 
-export default Login
+export default Register

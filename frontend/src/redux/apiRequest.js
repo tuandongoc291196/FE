@@ -1,9 +1,8 @@
 import axios from "../api/axios";
-import { ACCOUNT_LOGIN } from "../constants/API_URLS";
+import { ACCOUNT_LOGIN, ACCOUNT_LOGIN_GOOGLE } from "../constants/API_URLS";
 import { ROLE, STATUS } from "../constants/consts";
 import { LOGIN_SUCCESS } from "../message/authen/Login";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess } from "./authSlice";
-import { userFailed, userStart, userSuccess } from "./userSlice";
 
 //Authentication
 export const loginUser = async (user, dispatch, navigate) => {
@@ -21,7 +20,6 @@ export const loginUser = async (user, dispatch, navigate) => {
                 } else {
                     if (res.data.message == STATUS.active) {
                         dispatch(loginSuccess(res.data.data));
-                        dispatch(userSuccess(res.data.data));
                         navigate('/');
                     }
                     else {
@@ -41,13 +39,15 @@ export const loginUserByGoogle = async (result, dispatch, navigate, isRegister) 
     dispatch(logoutStart());
     console.log(result.user.accessToken);
     try {
-        const res = await axios.post("/account/auth/loginGoogle", {
+        const res = await axios.post(ACCOUNT_LOGIN_GOOGLE, {
             "token": result.user.accessToken
         });
-        dispatch(loginSuccess(res.data));
-        dispatch(userSuccess(res.data.candidate));
+        await console.log(res);
+        await dispatch(loginSuccess(res.data.data));
         if (isRegister) {
             navigate("/update-candidate")
+        } else {
+            navigate('/')
         }
     } catch (err) {
         dispatch(loginFailed());
@@ -57,8 +57,7 @@ export const loginUserByGoogle = async (result, dispatch, navigate, isRegister) 
 export const logoutUser = async (dispatch, navigate) => {
     dispatch(logoutStart());
     try {
-        dispatch(logoutSuccess());
-        dispatch(userSuccess(null));
+        dispatch(logoutSuccess(null));
         navigate("/");
     } catch (err) {
         dispatch(logoutFailed());

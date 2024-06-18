@@ -28,7 +28,7 @@ function App() {
       })()}
       <Routes>
         <Route path='/' element={<Landing />}></Route>;
-        <Route path='/login' element={<Login />}></Route>;
+        <Route path='/login' element={<Login setMessageStatus={setMessageStatus} setMessage={setMessage} />}></Route>;
         <Route path='/photographer' element={<Photographer />}></Route>;
       </Routes>
     </div>

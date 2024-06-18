@@ -4,7 +4,6 @@
     top: 110px;
     right: 10px;
     z-index: 1000;
-    background-color: #fff;
     display: flex;
     align-items: center;
     border-radius: 2px;
@@ -15,10 +14,6 @@
     animation: slideInLeft ease .3s;
     text-transform: none;
     padding-left: 12px;
-}
-
-.msg-request::after {
-    animation: slideInRight ease .3s;
 }
 
 .msg-request h1 {
@@ -57,4 +52,23 @@
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(430px);
+    }
+}
+
+.hidden {
+    animation: slideOutRight ease .3s;
+    opacity: 0;
+    transform: translateX(430px);
+    display: none;
+    /* Ensure the element is removed from the layout after the animation */
 }

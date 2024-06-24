@@ -4,6 +4,7 @@
     --primary-color: rgba(213, 192, 133, 1);
     --btn-hover-color: rgba(242, 230, 193, 1);
     --background-hover: rgb(34 34 34 / 54%);
+    --background-header-staff: #4f4f4f;
 }
 
 * {

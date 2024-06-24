@@ -1,5 +1,5 @@
 import axios from "../api/axios";
-import { ACCOUNT_LOGIN, ACCOUNT_LOGIN_GOOGLE } from "../constants/API_URLS";
+import { ACCOUNT_LOGIN, ACCOUNT_LOGIN_GOOGLE, ACCOUNT_REGISTER_COUPLE, ACCOUNT_REGISTER_SUPPLIER } from "../constants/API_URLS";
 import { ROLE, STATUS } from "../constants/consts";
 import { LOGIN_SUCCESS } from "../message/authen/Login";
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess } from "./authSlice";
@@ -14,13 +14,14 @@ export const loginUser = async (user, dispatch, navigate) => {
         } else {
             if (res.data) {
                 if (res.data.data.roleName === ROLE.admin) {
-                    console.log(res.data.data);
                     dispatch(loginSuccess(res.data.data));
                     navigate('/');
+                    return res.data.status;
                 } else {
-                    if (res.data.message == STATUS.active) {
+                    if (res.data.data.status == STATUS.active) {
                         dispatch(loginSuccess(res.data.data));
                         navigate('/');
+                        return res.data.status;
                     }
                     else {
                         return res.data.message;
@@ -64,8 +65,28 @@ export const logoutUser = async (dispatch, navigate) => {
     }
 }
 
-// //Candidate
+// Couple
 
+export const registerCouple = async (newUser, navigate, dispatch) => {
+    try {
+        console.log(newUser);
+        const res = await axios.post(ACCOUNT_REGISTER_COUPLE, newUser);
+        console.log(res);
+        // loginUser(newUser, dispatch, navigate, true);
+    } catch (error) {
+        return error
+    }
+}
+
+export const registerSupplier = async (newUser, navigate, dispatch) => {
+    try {
+        const res = await axios.post(ACCOUNT_REGISTER_SUPPLIER, newUser);
+        console.log(res);
+        // loginUser(newUser, dispatch, navigate, true);
+    } catch (error) {
+        return error
+    }
+}
 
 // export const adminRegisterCandidate = async (newUser, navigate) => {
 //     try {
@@ -77,14 +98,6 @@ export const logoutUser = async (dispatch, navigate) => {
 //     }
 // }
 
-// export const registerCandidate = async (newUser, navigate, dispatch) => {
-//     try {
-//         await axios.post("/account/auth/registerForCandidate", newUser)
-//         loginUser(newUser, dispatch, navigate, true);
-//     } catch (error) {
-//         return error
-//     }
-// }
 
 // export const updateCandidate = async (id, navigate, data, dispatch, specialties) => {
 //     dispatch(userStart());
@@ -179,7 +192,16 @@ export const logoutUser = async (dispatch, navigate) => {
 //     }
 // }
 
-// //Specialty
+// Supplier
+
+// export const getAll = async () => {
+//     try {
+//         const res = await axios.get("/specialty-experience/getAllDetailSpecialty")
+//         return res.data
+//     } catch (error) {
+//         return error
+//     }
+// }
 
 // export const getAllSpecialtyExperience = async () => {
 //     try {

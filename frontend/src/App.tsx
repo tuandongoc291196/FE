@@ -4,15 +4,18 @@ import Header from './components/modules/Header/Header';
 import { Route, Routes } from 'react-router';
 import Landing from './components/pages/Landing/Landing';
 import { useLocation } from 'react-router-dom';
-import Login from './components/pages/Login/Login';
 import Photographer from './components/pages/Photographer/Photographer';
 import MessageBox from './components/pages/Popup/MessageBox/MessageBox';
+import Register from './components/pages/Authentication/Register';
+import Login from './components/pages/Authentication/Login';
+import { ROLE } from './constants/consts';
 
 function App() {
   const location = useLocation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState<string>('');
   const [messageStatus, setMessageStatus] = useState('');
+  const [roleLogin, setRoleLogin] = useState<string>(ROLE.couple);
   return (
     <div className="App">
       {
@@ -28,7 +31,8 @@ function App() {
       })()}
       <Routes>
         <Route path='/' element={<Landing />}></Route>;
-        <Route path='/login' element={<Login setMessageStatus={setMessageStatus} setMessage={setMessage} />}></Route>;
+        <Route path='/login' element={<Login setRoleLogin={setRoleLogin} setMessageStatus={setMessageStatus} setMessage={setMessage} />}></Route>;
+        <Route path='/register' element={<Register roleLogin={roleLogin} setMessageStatus={setMessageStatus} setMessage={setMessage} />}></Route>;
         <Route path='/photographer' element={<Photographer />}></Route>;
       </Routes>
     </div>

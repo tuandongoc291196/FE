@@ -83,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                         <nav className="nav-auth">
                             <ul className="nav-auth-list">
                                 <li className="nav-auth-item" onClick={() => { navigate("/login") }}>Đăng nhập</li>
-                                <li className="nav-auth-item" onClick={() => { navigate("/login") }}>Đăng ký</li>
+                                <li className="nav-auth-item" onClick={() => { navigate("/register") }}>Đăng ký</li>
                             </ul>
                         </nav>
                     </div>)

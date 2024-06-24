@@ -40,9 +40,6 @@ const MessageBox: FC<Props> = ({ message, title, status, setMessage }) => {
         <div>
             <div id="myMsg" className={`msg-request ${!message ? 'hidden' : ''}`} style={{ borderLeft: `4px solid ${status}` }}>
                 <h4 className="msg-content">{message}</h4>
-                <button className="msg-close" onClick={() => { setMessage(''); hideMessage(); }}>
-                    <i className="pi pi-times-circle"></i>
-                </button>
             </div>
         </div>
     );

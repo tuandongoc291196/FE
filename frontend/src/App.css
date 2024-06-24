@@ -1,33 +1,52 @@
 :root {
-  --white-color: #fff;
-  --black-color: #000;
-  --primary-color: rgba(213, 192, 133, 1);
-  --btn-hover-color: rgba(242, 230, 193, 1);
-  --background-hover: rgb(34 34 34 / 54%);
+    --white-color: #fff;
+    --black-color: #000;
+    --primary-color: rgba(213, 192, 133, 1);
+    --btn-hover-color: rgba(242, 230, 193, 1);
+    --background-hover: rgb(34 34 34 / 54%);
 }
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
 }
 
 html {
-  font-size: 62.5%;
-  line-height: 1.6rem;
-  font-family: 'Roboto', sans-serif;
-  box-sizing: border-box;
+    font-size: 62.5%;
+    line-height: 1.6rem;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
 }
 
 body {
-  background-color: #fff;
-  line-height: 2.5rem;
+    background-color: #fff;
+    line-height: 2.5rem;
 }
 
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
+}
+
+.display-none {
+    display: none !important;
+}
+
+.hover-primary:hover {
+    color: var(--btn-hover-color);
+    cursor: pointer;
+}
+
+.icon-back {
+    position: absolute;
+    left: 0;
+    margin-top: 4px !important;
+}
+
+.icon-back:hover {
+    cursor: pointer;
 }

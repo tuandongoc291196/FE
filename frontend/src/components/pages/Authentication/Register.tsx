@@ -112,6 +112,7 @@ const Register: FC<Props> = (props) => {
                         supplierName: supplierName
                     }
                     await registerSupplier(supplierRegister, dispatch, navigate);
+                    navigate('/login');
                     break;
 
                 default:
@@ -126,6 +127,7 @@ const Register: FC<Props> = (props) => {
                         weddingDate: weddingDate
                     }
                     await registerCouple(coupleRegister, dispatch, navigate);
+                    navigate('/login');
                     break;
             }
 
@@ -174,6 +176,7 @@ const Register: FC<Props> = (props) => {
                 return (
                     <form onSubmit={registerHandler} className="col-right">
                         <div className="item">
+                            <FontAwesomeIcon icon={faArrowLeft} className="icon icon-back" onClick={() => { setIsInput(false) }} />
                             <div className="login-header">Nhập thông tin</div>
                         </div>
                         <div className="item">

@@ -69,10 +69,7 @@ export const logoutUser = async (dispatch, navigate) => {
 
 export const registerCouple = async (newUser, navigate, dispatch) => {
     try {
-        console.log(newUser);
         const res = await axios.post(ACCOUNT_REGISTER_COUPLE, newUser);
-        console.log(res);
-        // loginUser(newUser, dispatch, navigate, true);
     } catch (error) {
         return error
     }
@@ -81,8 +78,6 @@ export const registerCouple = async (newUser, navigate, dispatch) => {
 export const registerSupplier = async (newUser, navigate, dispatch) => {
     try {
         const res = await axios.post(ACCOUNT_REGISTER_SUPPLIER, newUser);
-        console.log(res);
-        // loginUser(newUser, dispatch, navigate, true);
     } catch (error) {
         return error
     }

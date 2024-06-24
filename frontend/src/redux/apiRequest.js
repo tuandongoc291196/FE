@@ -1,87 +1,113 @@
 import axios from "../api/axios";
-import { ACCOUNT_LOGIN, ACCOUNT_LOGIN_GOOGLE, ACCOUNT_REGISTER_COUPLE, ACCOUNT_REGISTER_SUPPLIER } from "../constants/API_URLS";
+import {
+  ACCOUNT_LOGIN,
+  ACCOUNT_LOGIN_GOOGLE,
+  ACCOUNT_REGISTER_COUPLE,
+  ACCOUNT_REGISTER_SUPPLIER,
+} from "../constants/API_URLS";
 import { ROLE, STATUS } from "../constants/consts";
 import { LOGIN_SUCCESS } from "../message/authen/Login";
-import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess } from "./authSlice";
+import {
+  loginFailed,
+  loginStart,
+  loginSuccess,
+  logoutFailed,
+  logoutStart,
+  logoutSuccess,
+} from "./authSlice";
 
 //Authentication
 export const loginUser = async (user, dispatch, navigate) => {
-    dispatch(loginStart());
-    try {
-        const res = await axios.post("/auth/login", user);
-        if (res.data.message != LOGIN_SUCCESS) {
-            return res.message;
-        } else {
-            if (res.data) {
-                if (res.data.data.roleName === ROLE.admin) {
-                    dispatch(loginSuccess(res.data.data));
-                    navigate('/');
-                    return res.data.status;
-                } else {
-                    if (res.data.data.status == STATUS.active) {
-                        dispatch(loginSuccess(res.data.data));
-                        navigate('/');
-                        return res.data.status;
-                    }
-                    else {
-                        return res.data.message;
-                    }
-                }
-            } else {
-                return res.message;
-            }
+  dispatch(loginStart());
+  try {
+    const res = await axios.post("/auth/login", user);
+    if (res.data.message != LOGIN_SUCCESS) {
+      return res.message;
+    } else {
+      if (res.data) {
+        if (res.data.data.roleName === ROLE.admin) {
+          dispatch(loginSuccess(res.data.data));
+          navigate("/");
+          return res.data.status;
         }
-    } catch (err) {
-        dispatch(loginFailed());
+        if (res.data.data.roleName === ROLE.staff) {
+          dispatch(loginSuccess(res.data.data));
+          navigate("/manage-suppliers");
+          return res.data.status;
+        } else {
+          if (res.data.data.status == STATUS.active) {
+            dispatch(loginSuccess(res.data.data));
+            navigate("/");
+            return res.data.status;
+          } else {
+            return res.data.message;
+          }
+        }
+      } else {
+        return res.message;
+      }
     }
+  } catch (err) {
+    dispatch(loginFailed());
+  }
 };
 
-export const loginUserByGoogle = async (result, dispatch, navigate, isRegister) => {
-    dispatch(logoutStart());
-    console.log(result.user.accessToken);
-    try {
-        const res = await axios.post(ACCOUNT_LOGIN_GOOGLE, {
-            "token": result.user.accessToken
-        });
-        await console.log(res);
-        await dispatch(loginSuccess(res.data.data));
-        if (isRegister) {
-            navigate("/update-candidate")
-        } else {
-            navigate('/')
-        }
-    } catch (err) {
-        dispatch(loginFailed());
+export const loginUserByGoogle = async (
+  result,
+  dispatch,
+  navigate,
+  isRegister
+) => {
+  dispatch(logoutStart());
+  console.log(result.user.accessToken);
+  try {
+    const res = await axios.post(ACCOUNT_LOGIN_GOOGLE, {
+      token: result.user.accessToken,
+    });
+    await console.log(res);
+    await dispatch(loginSuccess(res.data.data));
+    if (isRegister) {
+      navigate("/update-candidate");
+    } else {
+      navigate("/");
     }
+  } catch (err) {
+    dispatch(loginFailed());
+  }
 };
 
 export const logoutUser = async (dispatch, navigate) => {
-    dispatch(logoutStart());
-    try {
-        dispatch(logoutSuccess(null));
-        navigate("/");
-    } catch (err) {
-        dispatch(logoutFailed());
-    }
-}
+  dispatch(logoutStart());
+  try {
+    dispatch(logoutSuccess(null));
+    navigate("/");
+  } catch (err) {
+    dispatch(logoutFailed());
+  }
+};
 
 // Couple
 
 export const registerCouple = async (newUser, navigate, dispatch) => {
-    try {
-        const res = await axios.post(ACCOUNT_REGISTER_COUPLE, newUser);
-    } catch (error) {
-        return error
-    }
-}
+  try {
+    console.log(newUser);
+    const res = await axios.post(ACCOUNT_REGISTER_COUPLE, newUser);
+    console.log(res);
+    // loginUser(newUser, dispatch, navigate, true);
+  } catch (error) {
+    return error;
+  }
+};
 
 export const registerSupplier = async (newUser, navigate, dispatch) => {
-    try {
-        const res = await axios.post(ACCOUNT_REGISTER_SUPPLIER, newUser);
-    } catch (error) {
-        return error
-    }
-}
+  try {
+    const res = await axios.post(ACCOUNT_REGISTER_SUPPLIER, newUser);
+    console.log(res);
+    // loginUser(newUser, dispatch, navigate, true);
+  } catch (error) {
+    return error;
+  }
+};
 
 // export const adminRegisterCandidate = async (newUser, navigate) => {
 //     try {
@@ -92,7 +118,6 @@ export const registerSupplier = async (newUser, navigate, dispatch) => {
 //         return error
 //     }
 // }
-
 
 // export const updateCandidate = async (id, navigate, data, dispatch, specialties) => {
 //     dispatch(userStart());

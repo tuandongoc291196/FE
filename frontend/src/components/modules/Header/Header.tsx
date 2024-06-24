@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import "./Header.css";
 import NavSearching from '../../pages/NavSearching/NavSearching';
-import { useNavigate } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import Nav from 'react-bootstrap/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -47,7 +47,8 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
     }
 
     return (
-        <div id="Header">
+        <>
+         <div id="Header">
             <div className="header-left">
                 <div className="header-icon">
                     Wedding
@@ -127,6 +128,9 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                 </div>
             )}
         </div>
+        <Outlet/>
+        </>
+       
     )
 }
 

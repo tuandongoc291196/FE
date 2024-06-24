@@ -1,0 +1,21 @@
+.inactive-chip {
+  border-radius: 0.3rem;
+  background: #ffcaca;
+  color: red;
+  font-weight: 600;
+  padding: 3px 10px;
+  border: solid 1px red;
+}
+
+.active-chip {
+  border-radius: 0.3rem;
+  background: #abffdc;
+  color: green;
+  font-weight: 600;
+  padding: 3px 10px;
+  border: solid 1px green;
+}
+
+.primary-color {
+  color: var(--primary-color);
+}

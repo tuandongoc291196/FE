@@ -13,12 +13,12 @@ import StaffManageSuppliers from "./components/pages/StaffManager/StaffManageSup
 import StaffManageServices from "./components/pages/StaffManager/StaffManageServices";
 import StaffLayout from "./components/modules/StaffLayout/StaffLayout";
 import { useSelector } from "react-redux";
-import { listRoute } from "./constants/route";
+import Dashboard from "./components/pages/ServiceSupplier/Dashboard";
+import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
   const navigate = useNavigate();
   const user = useSelector((state: any) => state.auth.login.currentUser);
-  console.log(user);
   const location = useLocation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState<string>("");
@@ -26,13 +26,20 @@ function App() {
   const [roleLogin, setRoleLogin] = useState<string>(ROLE.couple);
 
   const isProtectedRoute = (pathname: string) => {
-    const protectedRoutes = listRoute.map((item)=> item.path)
-    return protectedRoutes.includes(pathname);
+    const protectedStaffRoutes = listStaffRoute.map((item) => item.path);
+    const protectedSupplierRoutes = listSupplierRoute.map((item) => item.path);
+
+    return (
+      protectedStaffRoutes.includes(pathname) ||
+      protectedSupplierRoutes.includes(pathname)
+    );
   };
 
   useEffect(() => {
     if (user !== null) {
-    if(user.roleName === ROLE.staff) navigate("/manage-suppliers")
+      if (user.roleName === ROLE.staff) navigate("/suppliers");
+      if (user.roleName === ROLE.supplier)
+        navigate("/service-suppliers-dashboard");
     }
   }, []);
   return (
@@ -81,11 +88,13 @@ function App() {
           </Route>
         ) : (
           <Route element={<StaffLayout />}>
+            <Route path="/suppliers" element={<StaffManageSuppliers />} />
+            <Route path="/services" element={<StaffManageServices />} />
+            {/* Service Supplier */}
             <Route
-              path="/manage-suppliers"
-              element={<StaffManageSuppliers />}
+              path="/service-suppliers-dashboard"
+              element={<Dashboard />}
             />
-            <Route path="/manage-services" element={<StaffManageServices />} />
           </Route>
         )}
         <Route

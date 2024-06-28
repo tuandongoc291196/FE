@@ -1,14 +1,27 @@
-import { AppsOutlined, Diversity3Outlined } from "@mui/icons-material";
+import {
+  AppsOutlined,
+  Diversity3Outlined,
+  SpaceDashboard,
+} from "@mui/icons-material";
+import { Route } from "../types/common";
 
-export const listRoute = [
+export const listStaffRoute: Route[] = [
   {
-    title: "Manage Suppliers",
+    title: "Suppliers List",
     icon: <Diversity3Outlined />,
-    path: "/manage-suppliers",
+    path: "/suppliers",
   },
   {
-    title: "Manage Services",
+    title: "Services List",
     icon: <AppsOutlined />,
-    path: "/manage-services",
+    path: "/services",
+  },
+];
+
+export const listSupplierRoute: Route[] = [
+  {
+    title: "Dashboard",
+    icon: <SpaceDashboard />,
+    path: "/service-suppliers-dashboard",
   },
 ];

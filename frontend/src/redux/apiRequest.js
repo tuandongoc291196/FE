@@ -32,7 +32,12 @@ export const loginUser = async (user, dispatch, navigate) => {
         }
         if (res.data.data.roleName === ROLE.staff) {
           dispatch(loginSuccess(res.data.data));
-          navigate("/manage-suppliers");
+          navigate("/suppliers");
+          return res.data.status;
+        }
+        if (res.data.data.roleName === ROLE.supplier) {
+          dispatch(loginSuccess(res.data.data));
+          navigate("/service-suppliers-dashboard");
           return res.data.status;
         } else {
           if (res.data.data.status == STATUS.active) {

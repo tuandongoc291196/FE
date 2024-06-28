@@ -18,20 +18,24 @@ import Typography from "@mui/material/Typography";
 import { Outlet, useLocation, useNavigate } from "react-router";
 import { AccountCircle } from "@mui/icons-material";
 import { Menu, MenuItem } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../../redux/apiRequest";
-import { listRoute } from "../../../constants/route";
+import { listStaffRoute, listSupplierRoute } from "../../../constants/route";
+import { ROLE } from "../../../constants/consts";
+import { Route } from "../../../types/common";
 
 const drawerWidth = 240;
 
 export default function StaffLayout() {
+  const user = useSelector((state: any) => state.auth.login.currentUser);
+  console.log(user);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+  const [routes, setRoutes] = React.useState<Route[]>([]);
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -57,11 +61,15 @@ export default function StaffLayout() {
   const logoutHandler = () => {
     logoutUser(dispatch, navigate);
   };
+  React.useEffect(() => {
+    if (user.roleName === ROLE.staff) setRoutes(listStaffRoute);
+    if (user.roleName === ROLE.supplier) setRoutes(listSupplierRoute);
+  },[]);
   const drawer = (
     <div>
       <Toolbar />
       <List>
-        {listRoute.map((item) => (
+        {routes.map((item) => (
           <ListItem key={item.title} disablePadding>
             <ListItemButton
               sx={{
@@ -73,7 +81,7 @@ export default function StaffLayout() {
                 },
                 marginX: 2,
                 marginY: 1,
-                borderRadius: "10px"
+                borderRadius: "10px",
               }}
               selected={location.pathname === item.path}
               onClick={() => {
@@ -146,7 +154,7 @@ export default function StaffLayout() {
               onClose={handleClose}
             >
               <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={logoutHandler}>My account</MenuItem>
+              <MenuItem onClick={logoutHandler}>Sign out</MenuItem>
             </Menu>
           </div>
         </Toolbar>

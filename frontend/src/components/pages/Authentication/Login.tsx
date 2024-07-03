@@ -11,15 +11,14 @@ import "./Authentication.css";
 import { LoginPayload } from '../../../types/authen/Login';
 import { loginUser, loginUserByGoogle } from '../../../redux/apiRequest';
 import { ROLE } from '../../../constants/consts';
+import { useMessageContext } from '../Popup/MessageBox/MessageContext';
 interface Props {
-    setMessageStatus: Dispatch<SetStateAction<string>>;
-    setMessage: Dispatch<SetStateAction<string>>;
     setRoleLogin: Dispatch<SetStateAction<string>>;
 }
 
 const Login: FC<Props> = (props) => {
     const user = useSelector((state: any) => state.auth.login.currentUser);
-
+    const { setMessageStatus, setMessage } = useMessageContext();
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -49,18 +48,18 @@ const Login: FC<Props> = (props) => {
 
             switch (status) {
                 case "Login Fail":
-                    props.setMessageStatus("red");
-                    props.setMessage("Tên đăng nhập hoặc mật khẩu không đúng");
+                    setMessageStatus("red");
+                    setMessage("Tên đăng nhập hoặc mật khẩu không đúng");
                     break;
                 case "DISABLE":
-                    props.setMessageStatus("red");
-                    props.setMessage("Tài khoản của bạn đã chưa được kích hoạt, vui lòng liên hệ chúng tôi");
+                    setMessageStatus("red");
+                    setMessage("Tài khoản của bạn đã chưa được kích hoạt, vui lòng liên hệ chúng tôi");
                     break;
                 case "SUCCESS":
                     break;
                 default:
-                    props.setMessageStatus("red");
-                    props.setMessage("Có lỗi xảy ra");
+                    setMessageStatus("red");
+                    setMessage("Có lỗi xảy ra");
                     break;
             }
 
@@ -69,8 +68,8 @@ const Login: FC<Props> = (props) => {
             } else if (await loginUser(userLogin, dispatch, navigate) == "DISABLE") {
                 setMessageLogin("Your account is disable, please contact to us!");
             } else {
-                props.setMessageStatus("");
-                props.setMessage("");
+                setMessageStatus("");
+                setMessage("");
             }
         } catch (error) {
             console.log(error)

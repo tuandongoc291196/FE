@@ -67,7 +67,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                 </li>
               </ul>
             </nav>
-          ) : user.roleName === ROLE.couple ? (
+          ) : user.roleName === ROLE.admin ? (
             <nav className="nav-bar">
               <ul className="nav-list">
                 <li

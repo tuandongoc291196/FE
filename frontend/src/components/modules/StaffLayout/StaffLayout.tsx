@@ -62,9 +62,9 @@ export default function StaffLayout() {
     logoutUser(dispatch, navigate);
   };
   React.useEffect(() => {
-    if (user.roleName === ROLE.staff) setRoutes(listStaffRoute);
-    if (user.roleName === ROLE.supplier) setRoutes(listSupplierRoute);
-  },[]);
+    if (user?.roleName === ROLE.staff) setRoutes(listStaffRoute);
+    if (user?.roleName === ROLE.supplier) setRoutes(listSupplierRoute);
+  }, []);
   const drawer = (
     <div>
       <Toolbar />

@@ -6,12 +6,6 @@ import NavSearching from '../NavSearching/NavSearching';
 
 const Landing = () => {
 
-    useEffect(() => {
-
-    }, []);
-
-
-
     return (
         <div id='Landing'>
             <div className="row">

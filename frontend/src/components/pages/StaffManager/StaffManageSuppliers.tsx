@@ -41,7 +41,7 @@ const defaultColumns: GridColDef[] = [
   },
   {
     field: "actions",
-    headerName: "Actions",
+    headerName: "Hành động",
     align: "center",
     headerAlign: "center",
     flex: 1,

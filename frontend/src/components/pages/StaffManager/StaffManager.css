@@ -2,6 +2,7 @@
   border-radius: 0.3rem;
   background: #ffcaca;
   color: red;
+  width: 50px;
   font-weight: 600;
   padding: 3px 10px;
   border: solid 1px red;
@@ -14,6 +15,16 @@
   font-weight: 600;
   padding: 3px 10px;
   border: solid 1px green;
+}
+
+.pending-chip {
+  border-radius: 0.3rem;
+  background: #ffffbb;
+  color: #cece22;
+  width: 100px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border: solid 1px #cece22;
 }
 
 .primary-color {

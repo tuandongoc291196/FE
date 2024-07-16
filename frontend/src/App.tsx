@@ -26,6 +26,8 @@ import MessageBoxContainer from "./components/pages/Popup/MessageBox/MessageCont
 import { ROLE } from "./constants/consts";
 import "./constants/styles/Filter.css";
 import StaffManageBlogs from "./components/pages/StaffManager/StaffManageBlogs";
+import Services from "./components/pages/Services/Services";
+import ServiceDetail from "./components/pages/Services/ServiceDetail";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -109,6 +111,13 @@ function App() {
                 }
               />
             </Route>
+
+            {/* Supplier */}
+            <Route element={<ProtectedRoute requiredRole={ROLE.supplier} />}>
+              <Route path="/services" element={<Services setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+              <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            </Route>
+
 
             {/* Guest */}
             <Route path="/photographer" element={<Photographer />} />

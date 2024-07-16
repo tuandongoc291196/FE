@@ -1,82 +1,82 @@
 :root {
-    --white-color: #fff;
-    --black-color: #000;
-    --primary-color: rgba(213, 192, 133, 1);
-    --btn-hover-color: rgba(242, 230, 193, 1);
-    --background-hover: rgb(34 34 34 / 54%);
-    --background-header-staff: #4f4f4f;
+  --white-color: #fff;
+  --black-color: #000;
+  --primary-color: rgba(213, 192, 133, 1);
+  --btn-hover-color: rgba(242, 230, 193, 1);
+  --background-hover: rgb(34 34 34 / 54%);
+  --background-header-staff: #4f4f4f;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
 }
 
 html {
-    font-size: 62.5%;
-    line-height: 1.6rem;
-    font-family: 'Roboto', sans-serif;
-    box-sizing: border-box;
+  font-size: 62.5%;
+  line-height: 1.6rem;
+  font-family: "Roboto", sans-serif;
+  box-sizing: border-box;
 }
 
 body {
-    background-color: #fff;
-    line-height: 2.5rem;
+  background-color: #fff;
+  line-height: 2.5rem;
 }
 
 .App {
-    text-align: center;
+  text-align: center;
 }
 
 .App-link {
-    color: #61dafb;
+  color: #61dafb;
 }
 
 .display-none {
-    display: none !important;
+  display: none !important;
 }
 
 .hover-primary:hover {
-    color: var(--btn-hover-color);
-    cursor: pointer;
+  color: var(--btn-hover-color);
+  cursor: pointer;
 }
 
 .icon-back {
-    position: absolute;
-    left: 0;
-    margin-top: 4px !important;
+  position: absolute;
+  left: 0;
+  margin-top: 4px !important;
 }
 
 .icon-back:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .btn {
-    background-color: var(--primary-color) !important;
-    border: none !important;
-    color: var(--white-color) !important;
-    border-radius: 5px !important;
-    font-weight: 500 !important;
-    padding: 5px 24px !important;
+  background-color: var(--primary-color) !important;
+  border: none !important;
+  color: var(--white-color) !important;
+  border-radius: 5px !important;
+  font-weight: 500 !important;
+  padding: 5px 24px !important;
 }
 
 .btn:hover,
 .btn-delete:hover {
-    opacity: 0.8;
-    cursor: pointer;
+  opacity: 0.8;
+  cursor: pointer;
 }
 
 .float-right {
-    float: right;
+  float: right;
 }
 
 .mt-24 {
-    margin-top: 24px;
+  margin-top: 24px;
 }
 
 .mr-24 {
-    margin-right: 24px !important;
+  margin-right: 24px !important;
 }
 
 .mb-24 {
@@ -84,8 +84,8 @@ body {
 }
 
 .btn-close {
-    background-color: var(--black-color) !important;
-    color: var(--white-color) !important;
+  background-color: var(--black-color) !important;
+  color: var(--white-color) !important;
 }
 
 .btn-create {

@@ -1,20 +1,30 @@
 import {
   AppsOutlined,
   Diversity3Outlined,
+  DynamicFeed,
   SpaceDashboard,
 } from "@mui/icons-material";
 import { Route } from "../types/common";
 
 export const listStaffRoute: Route[] = [
   {
-    title: "Suppliers List",
+    title: "Quản lý nhà cung cấp",
     icon: <Diversity3Outlined />,
-    path: "/suppliers",
+    path: "/staff/suppliers",
   },
   {
-    title: "Services List",
+    title: "Quản lý dịch vụ",
     icon: <AppsOutlined />,
-    path: "/services",
+    path: "/staff/services",
+  },
+  {
+    title: "Quản lý bài đăng",
+    icon: <DynamicFeed />,
+    path: "/staff/blogs",
+  },
+  {
+    title: "",
+    path: "/staff/blog-detail",
   },
 ];
 

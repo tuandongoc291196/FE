@@ -1,5 +1,5 @@
 export interface Route {
   title: string;
-  icon: JSX.Element;
+  icon?: JSX.Element;
   path: string;
 }

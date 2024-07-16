@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import Header from "./components/modules/Header/Header";
-import { Route, Routes, Navigate, useNavigate } from "react-router";
 import Landing from "./components/pages/Landing/Landing";
-import { BrowserRouter as Router, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import Photographer from "./components/pages/Photographer/Photographer";
 import MessageBox from "./components/pages/Popup/MessageBox/MessageBox";
 import Register from "./components/pages/Authentication/Register";
@@ -19,61 +25,68 @@ import StaffList from "./components/pages/Admin/StaffList";
 import MessageBoxContainer from "./components/pages/Popup/MessageBox/MessageContainer";
 import { ROLE } from "./constants/consts";
 import "./constants/styles/Filter.css";
+import StaffManageBlogs from "./components/pages/StaffManager/StaffManageBlogs";
 import Services from "./components/pages/Services/Services";
 import ServiceDetail from "./components/pages/Services/ServiceDetail";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
   const user = useSelector((state: any) => state.auth.login.currentUser);
-
+  const [isDisplayHeader, setIsDisplayHeader] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [message, setMessage] = useState<string>("");
   const [messageStatus, setMessageStatus] = useState("");
   const [roleLogin, setRoleLogin] = useState<string>(ROLE.couple);
-
-  // const isProtectedRoute = (pathname: string) => {
-  //   const protectedStaffRoutes = listStaffRoute.map((item) => item.path);
-  //   const protectedSupplierRoutes = listSupplierRoute.map((item) => item.path);
-
-  //   return (
-  //     protectedStaffRoutes.includes(pathname) ||
-  //     protectedSupplierRoutes.includes(pathname)
-  //   );
-  // };
+  const location = useLocation();
 
   useEffect(() => {
-    // if (user !== null) {
-    //   if (user.roleName === ROLE.staff) navigate("/suppliers");
-    //   if (user.roleName === ROLE.supplier)
-    //     navigate("/service-suppliers-dashboard");
-    // }
-  }, []);
+    if (
+      location.pathname === "/login" ||
+      location.pathname === "/register" ||
+      (user && user.roleName === ROLE.staff)
+    ) {
+      setIsDisplayHeader(false);
+    } else {
+      setIsDisplayHeader(true);
+    }
+  }, [location.pathname, user]);
   return (
     <div className="App">
       <UserProvider>
-        <Router>
-          <Header isModalVisible={isModalVisible} setModalVisible={setModalVisible} />
+          {isDisplayHeader && (
+            <Header
+              isModalVisible={isModalVisible}
+              setModalVisible={setModalVisible}
+            />
+          )}
           <Routes>
             {/* <Route path="/*" element={<MessageBoxContainer />} /> */}
             {/* Staff */}
             {/* Will be refactored after completion of Dashboard */}
-            {(user && user?.roleName === ROLE.staff) ? (
+            {user && user?.roleName === ROLE.staff ? (
               <Route path="/" element={<StaffLayout />}>
-                <Route path="/suppliers" element={<StaffManageSuppliers />} />
-                <Route path="/services" element={<StaffManageServices />} />
-                <Route path="/service-suppliers-dashboard" element={<Dashboard />} />
+                <Route
+                  path="/staff/suppliers"
+                  element={<StaffManageSuppliers />}
+                />
+                <Route
+                  path="/staff/services"
+                  element={<StaffManageServices />}
+                />
+                <Route path="/staff/blogs" element={<StaffManageBlogs />} />
+                <Route
+                  path="/service-suppliers-dashboard"
+                  element={<Dashboard />}
+                />
               </Route>
-            ) : <Route path="/" element={<Landing />} />}
-
+            ) : (
+              <Route path="/" element={<Landing />} />
+            )}
 
             {/* Authenticate */}
             <Route
               path="/login"
-              element={
-                <Login
-                  setRoleLogin={setRoleLogin}
-                />
-              }
+              element={<Login setRoleLogin={setRoleLogin} />}
             />
             <Route
               path="/register"
@@ -88,7 +101,15 @@ function App() {
 
             {/* Admin */}
             <Route element={<ProtectedRoute requiredRole={ROLE.admin} />}>
-              <Route path="/staff" element={<StaffList setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+              <Route
+                path="/staff"
+                element={
+                  <StaffList
+                    setMessage={setMessage}
+                    setMessageStatus={setMessageStatus}
+                  />
+                }
+              />
             </Route>
 
             {/* Supplier */}
@@ -103,7 +124,6 @@ function App() {
 
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-        </Router>
       </UserProvider>
       {/* <Routes>
         {user == null || user?.roleName === ROLE.couple ? (

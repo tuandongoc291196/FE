@@ -5,8 +5,13 @@ import {
   ACCOUNT_REGISTER_COUPLE,
   ACCOUNT_REGISTER_STAFF,
   ACCOUNT_REGISTER_SUPPLIER,
+  GET_ACTIVE_BLOGS,
+  GET_ALL_BLOGS,
+  GET_PENDING_BLOGS,
+  GET_REJECTED_BLOGS,
+  GET_SUPPLIERS_BLOGS,
 } from "../constants/API_URLS";
-import { ROLE, STATUS } from "../constants/consts";
+import { PROCESS_STATUS, ROLE, STATUS } from "../constants/consts";
 import { LOGIN_SUCCESS } from "../message/authen/Login";
 import {
   loginFailed,
@@ -33,7 +38,7 @@ export const loginUser = async (user, dispatch, navigate) => {
         }
         if (res.data.data.roleName === ROLE.staff) {
           dispatch(loginSuccess(res.data.data));
-          navigate("/suppliers");
+          navigate("/staff/suppliers");
           return res.data.status;
         }
         if (res.data.data.roleName === ROLE.supplier) {
@@ -117,15 +122,42 @@ export const registerSupplier = async (newUser, navigate, dispatch) => {
 
 // Staff
 
-export const registerStaff = async (newUser, token, navigate, dispatch): Promise<string> => {
+export const registerStaff = async (
+  newUser,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
   const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    };
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
   try {
-      const res = await axios.post(ACCOUNT_REGISTER_STAFF, newUser, { headers: headers });
-      return res.data.status;
+    const res = await axios.post(ACCOUNT_REGISTER_STAFF, newUser, {
+      headers: headers,
+    });
+    return res.data.status;
   } catch (error) {
-      return error.response.data.message
+    return error.response.data.message;
   }
-}
+};
+
+export const getListBlogs = async (page, size, status, supplier_id) => {
+  try {
+    let url = `${GET_ALL_BLOGS}?pageNo=${page}&pageSize=${size}`;
+
+    if (supplier_id) {
+      url = `${GET_SUPPLIERS_BLOGS}?pageNo=${page}&pageSize=${size}&serviceSupplierId=${supplier_id}`;
+    } else if (status === PROCESS_STATUS.pending) {
+      url = `${GET_PENDING_BLOGS}?pageNo=${page}&pageSize=${size}`;
+    } else if (status === PROCESS_STATUS.active) {
+      url = `${GET_ACTIVE_BLOGS}?pageNo=${page}&pageSize=${size}`;
+    } else if (status === PROCESS_STATUS.rejected) {
+      url = `${GET_REJECTED_BLOGS}?pageNo=${page}&pageSize=${size}`;
+    }
+    const response = await axios.get(url);
+    return response.data;
+  } catch (err) {
+    console.log(err);
+  }
+};

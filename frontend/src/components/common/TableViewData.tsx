@@ -16,7 +16,7 @@ const TableViewData = <T extends object>({
   data,
   defaultColumns,
   isLoading,
-  height = 500,
+  height = 550,
   noRowsOverlay = TableEmpty,
   ...dataGridProps
 }: DocumentTableProps<T>) => {
@@ -29,20 +29,25 @@ const TableViewData = <T extends object>({
     >
       <DataGrid
         sx={{
+          
           ".MuiDataGrid-columnHeaderTitle": {
             overflow: "visible !important",
-            fontSize: "1.2rem",
+            fontSize: "1.3rem",
             fontWeight: 600,
+          },
+          ".MuiDataGrid-columnHeader": {
+            height: 20
           },
           ".MuiDataGrid-cell": {
             fontSize: "1rem",
             alignContent: "center",
-            fontFamily: "SF Pro Text Regular",
           },
         }}
         rows={data}
         columns={defaultColumns}
         autoPageSize
+        rowHeight={43}
+        columnHeaderHeight={43}
         pagination
         loading={isLoading}
         slots={{ noRowsOverlay: TableEmpty }}

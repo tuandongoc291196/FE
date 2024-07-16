@@ -28,7 +28,6 @@ const drawerWidth = 240;
 
 export default function StaffLayout() {
   const user = useSelector((state: any) => state.auth.login.currentUser);
-  console.log(user);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -71,26 +70,37 @@ export default function StaffLayout() {
       <List>
         {routes.map((item) => (
           <ListItem key={item.title} disablePadding>
-            <ListItemButton
-              sx={{
-                "&.Mui-selected": {
-                  backgroundColor: "var(--btn-hover-color)",
-                },
-                "&.Mui-selected:hover": {
-                  backgroundColor: "var(--primary-color)",
-                },
-                marginX: 2,
-                marginY: 1,
-                borderRadius: "10px",
-              }}
-              selected={location.pathname === item.path}
-              onClick={() => {
-                navigate(item.path);
-              }}
-            >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.title} />
-            </ListItemButton>
+            {item.path === "/staff/blog-detail" ? (
+              <div>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.title} />
+              </div>
+            ) : (
+              <ListItemButton
+                sx={{
+                  "&.Mui-selected": {
+                    backgroundColor: "var(--btn-hover-color)",
+                  },
+                  "&.Mui-selected:hover": {
+                    backgroundColor: "var(--primary-color)",
+                  },
+                  marginX: 2,
+                  marginY: 1,
+                  borderRadius: "10px",
+                }}
+                selected={
+                  (location.pathname === "/staff/blog-detail" &&
+                    item.path === "/staff/blogs") ||
+                  location.pathname === item.path
+                }
+                onClick={() => {
+                  navigate(item.path);
+                }}
+              >
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.title} />
+              </ListItemButton>
+            )}
           </ListItem>
         ))}
       </List>

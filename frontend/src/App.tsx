@@ -19,6 +19,8 @@ import StaffList from "./components/pages/Admin/StaffList";
 import MessageBoxContainer from "./components/pages/Popup/MessageBox/MessageContainer";
 import { ROLE } from "./constants/consts";
 import "./constants/styles/Filter.css";
+import Services from "./components/pages/Services/Services";
+import ServiceDetail from "./components/pages/Services/ServiceDetail";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -87,6 +89,12 @@ function App() {
             {/* Admin */}
             <Route element={<ProtectedRoute requiredRole={ROLE.admin} />}>
               <Route path="/staff" element={<StaffList setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            </Route>
+
+            {/* Supplier */}
+            <Route element={<ProtectedRoute requiredRole={ROLE.supplier} />}>
+              <Route path="/services" element={<Services setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+              <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
             </Route>
 
 

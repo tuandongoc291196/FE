@@ -1,7 +1,7 @@
 #Header {
     color: var(--primary-color);
     height: 96px;
-    padding: 0 15%;
+    padding: 0 10%;
     border-bottom: 1px solid #d9d9d9;
     display: flex;
     justify-content: space-between;
@@ -20,7 +20,7 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: nowrap;
-    width: 60%;
+    width: 70%;
     align-items: center;
 }
 

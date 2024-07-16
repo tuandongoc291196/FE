@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { logoutUser } from "../../../redux/apiRequest";
 import { ROLE } from "../../../constants/consts";
+import { HeaderNav } from "./HeaderNav";
 
 interface HeaderProps {
   isModalVisible: boolean;
@@ -47,6 +48,42 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
     };
   }, [setModalVisible]);
 
+  const handleNav = () => {
+    if (user) {
+      const navItems = HeaderNav.find(e => e.user == user?.roleName)?.items;
+      console.log(navItems);
+      return (
+        <ul className="nav-list">
+          <li className="nav-item">trang chủ</li>
+          {
+            navItems?.map((item, index) => {
+              return (
+                <li
+                  className="nav-item"
+                  onClick={() => {
+                    navigate(`${item.navigate}`);
+                  }}
+                  key={index}>
+                  {item.name}
+                </li>
+              )
+            })
+          }
+        </ul>
+      )
+    } else {
+      return (
+        <ul className="nav-list">
+          <li className="nav-item">
+            <div id="IsSearch" ref={navItemRef}>
+              dịch vụ
+            </div>
+          </li>
+        </ul>
+      )
+    }
+  }
+
   const logoutHandler = () => {
     logoutUser(dispatch, navigate);
   };
@@ -56,57 +93,9 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
       <div id="Header">
         <div className="header-left">
           <div className="header-icon">Wedding</div>
-          {user == null ? (
-            <nav className="nav-bar">
-              <ul className="nav-list">
-                <li className="nav-item">trang chủ</li>
-                <li className="nav-item">
-                  <div id="IsSearch" ref={navItemRef}>
-                    dịch vụ
-                  </div>
-                </li>
-              </ul>
-            </nav>
-          ) : user.roleName === ROLE.admin ? (
-            <nav className="nav-bar">
-              <ul className="nav-list">
-                <li
-                  className="nav-item"
-                  onClick={() => {
-                    navigate("/");
-                  }}
-                >
-                  trang chủ
-                </li>
-                <li
-                  className="nav-item"
-                  onClick={() => {
-                    navigate("/staff");
-                  }}
-                >
-                  nhân viên
-                </li>
-                <li
-                  className="nav-item"
-                  onClick={() => {
-                    navigate("/supplier");
-                  }}
-                >
-                  nhà cung cấp
-                </li>
-                <li
-                  className="nav-item"
-                  onClick={() => {
-                    navigate("/couple");
-                  }}
-                >
-                  khách hàng
-                </li>
-              </ul>
-            </nav>
-          ) : (
-            <></>
-          )}
+          <nav className="nav-bar">
+            {handleNav()}
+          </nav>
         </div>
         {user == null ? (
           <div className="header-right">

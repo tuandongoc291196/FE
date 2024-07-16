@@ -1,5 +1,4 @@
 import React, { useState, useEffect, FC, Dispatch, SetStateAction } from 'react'
-import { StaffEntity } from '../../../types/entity/StaffEntity'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -9,6 +8,7 @@ import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Typograp
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router';
 import { registerStaff } from '../../../redux/apiRequest';
+import { StaffEntity } from '../../../types/entity/Entity';
 
 const filters = ["Tất cả", "ACTIVATED", "DISABLED"];
 
@@ -35,7 +35,7 @@ const StaffList: FC<Props> = (props) => {
     const [password, setPassword] = useState<string>('');
     const [statusResponse, setStatusResponse] = useState<string>('');
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 

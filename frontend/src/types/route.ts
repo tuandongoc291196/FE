@@ -1,4 +1,4 @@
-export type Role = 'ADMIN' | 'COUPLE' | 'STAFF' | 'SUPPLIER';
+export type Role = 'ADMIN' | 'COUPLE' | 'STAFF' | 'SERVICE_SUPPLIER';
 
 export interface User {
     accountId: Number

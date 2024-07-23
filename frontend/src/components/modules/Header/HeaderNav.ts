@@ -48,7 +48,7 @@ export const HeaderNav = [
             },
             {
                 name: "báo giá",
-                navigate: "/supplier-request"
+                navigate: "/product-price-reporter"
             },
             {
                 name: "bài viết",

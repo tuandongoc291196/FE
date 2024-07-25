@@ -28,6 +28,7 @@ import "./constants/styles/Filter.css";
 import StaffManageBlogs from "./components/pages/StaffManager/StaffManageBlogs";
 import Services from "./components/pages/Services/Services";
 import ServiceDetail from "./components/pages/Services/ServiceDetail";
+import ProductPriceReporter from "./components/pages/Services/ProductPriceReport";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -53,77 +54,78 @@ function App() {
   return (
     <div className="App">
       <UserProvider>
-          {isDisplayHeader && (
-            <Header
-              isModalVisible={isModalVisible}
-              setModalVisible={setModalVisible}
-            />
+        {isDisplayHeader && (
+          <Header
+            isModalVisible={isModalVisible}
+            setModalVisible={setModalVisible}
+          />
+        )}
+        <Routes>
+          {/* <Route path="/*" element={<MessageBoxContainer />} /> */}
+          {/* Staff */}
+          {/* Will be refactored after completion of Dashboard */}
+          {user && user?.roleName === ROLE.staff ? (
+            <Route path="/" element={<StaffLayout />}>
+              <Route
+                path="/staff/suppliers"
+                element={<StaffManageSuppliers />}
+              />
+              <Route
+                path="/staff/services"
+                element={<StaffManageServices />}
+              />
+              <Route path="/staff/blogs" element={<StaffManageBlogs />} />
+              <Route
+                path="/service-suppliers-dashboard"
+                element={<Dashboard />}
+              />
+            </Route>
+          ) : (
+            <Route path="/" element={<Landing />} />
           )}
-          <Routes>
-            {/* <Route path="/*" element={<MessageBoxContainer />} /> */}
-            {/* Staff */}
-            {/* Will be refactored after completion of Dashboard */}
-            {user && user?.roleName === ROLE.staff ? (
-              <Route path="/" element={<StaffLayout />}>
-                <Route
-                  path="/staff/suppliers"
-                  element={<StaffManageSuppliers />}
-                />
-                <Route
-                  path="/staff/services"
-                  element={<StaffManageServices />}
-                />
-                <Route path="/staff/blogs" element={<StaffManageBlogs />} />
-                <Route
-                  path="/service-suppliers-dashboard"
-                  element={<Dashboard />}
-                />
-              </Route>
-            ) : (
-              <Route path="/" element={<Landing />} />
-            )}
 
-            {/* Authenticate */}
+          {/* Authenticate */}
+          <Route
+            path="/login"
+            element={<Login setRoleLogin={setRoleLogin} />}
+          />
+          <Route
+            path="/register"
+            element={
+              <Register
+                roleLogin={roleLogin}
+                setMessageStatus={setMessageStatus}
+                setMessage={setMessage}
+              />
+            }
+          />
+
+          {/* Admin */}
+          <Route element={<ProtectedRoute requiredRole={ROLE.admin} />}>
             <Route
-              path="/login"
-              element={<Login setRoleLogin={setRoleLogin} />}
-            />
-            <Route
-              path="/register"
+              path="/staff"
               element={
-                <Register
-                  roleLogin={roleLogin}
-                  setMessageStatus={setMessageStatus}
+                <StaffList
                   setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
                 />
               }
             />
+          </Route>
 
-            {/* Admin */}
-            <Route element={<ProtectedRoute requiredRole={ROLE.admin} />}>
-              <Route
-                path="/staff"
-                element={
-                  <StaffList
-                    setMessage={setMessage}
-                    setMessageStatus={setMessageStatus}
-                  />
-                }
-              />
-            </Route>
-
-            {/* Supplier */}
-            <Route element={<ProtectedRoute requiredRole={ROLE.supplier} />}>
-              <Route path="/services" element={<Services setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-              <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-            </Route>
+          {/* Supplier */}
+          <Route element={<ProtectedRoute requiredRole={ROLE.supplier} />}>
+            <Route path="/services" element={<Services setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            <Route path="/product-price-reporter" element={<ProductPriceReporter setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+          </Route>
 
 
-            {/* Guest */}
-            <Route path="/photographer" element={<Photographer />} />
+          {/* Guest */}
+          <Route path="/photographer" element={<Photographer />} />
 
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
       </UserProvider>
       {/* <Routes>
         {user == null || user?.roleName === ROLE.couple ? (

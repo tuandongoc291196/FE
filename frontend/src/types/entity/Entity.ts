@@ -17,3 +17,12 @@ export interface ServiceEntity {
     status: String,
     images: Array<String>
 }
+
+export interface ProductPriceReporterEntity {
+    id: String,
+    coupleName: String,
+    categoryName: String,
+    serviceName: String,
+    requirement: String,
+    priceReport: String,
+}

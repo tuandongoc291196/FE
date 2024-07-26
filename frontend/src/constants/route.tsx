@@ -1,5 +1,9 @@
 import {
+  Apps,
   AppsOutlined,
+  Category,
+  Comment,
+  Dashboard,
   Diversity3Outlined,
   DynamicFeed,
   SpaceDashboard,
@@ -8,19 +12,29 @@ import { Route } from "../types/common";
 
 export const listStaffRoute: Route[] = [
   {
-    title: "Quản lý nhà cung cấp",
-    icon: <Diversity3Outlined />,
-    path: "/staff/suppliers",
+    title: "Bảng điều khiến",
+    icon: <Dashboard />,
+    path: "/staff/dashboard",
   },
   {
-    title: "Quản lý dịch vụ",
-    icon: <AppsOutlined />,
-    path: "/staff/services",
+    title: "Gói dịch vụ",
+    icon: <Apps />,
+    path: "/staff/combo-services",
   },
   {
     title: "Quản lý bài đăng",
     icon: <DynamicFeed />,
     path: "/staff/blogs",
+  },
+  {
+    title: "Quản lý phản hồi",
+    icon: <Comment />,
+    path: "/staff/comments",
+  },
+  {
+    title: "Quản lý danh mục",
+    icon: <Category />,
+    path: "/staff/categories",
   },
   {
     title: "",

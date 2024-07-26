@@ -5,8 +5,10 @@ import {
   ACCOUNT_REGISTER_COUPLE,
   ACCOUNT_REGISTER_STAFF,
   ACCOUNT_REGISTER_SUPPLIER,
+  CREATE_CATEGORY,
   GET_ACTIVE_BLOGS,
   GET_ALL_BLOGS,
+  GET_ALL_CATEGORIES,
   GET_PENDING_BLOGS,
   GET_REJECTED_BLOGS,
   GET_SUPPLIERS_BLOGS,
@@ -157,7 +159,38 @@ export const getListBlogs = async (page, size, status, supplier_id) => {
     }
     const response = await axios.get(url);
     return response.data;
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getListCategories = async (page, size) => {
+  try {
+    let url = `${GET_ALL_CATEGORIES}?pageNo=${page}&pageSize=${size}`;
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const createCategory = async (name, token) => {
+  try {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+    let url = `${CREATE_CATEGORY}`;
+
+    const response = await axios.post(
+      url,
+      {
+        categoryName: name,
+      },
+      { headers: headers }
+    );
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
   }
 };

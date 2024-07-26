@@ -29,6 +29,7 @@ import StaffManageBlogs from "./components/pages/StaffManager/StaffManageBlogs";
 import Services from "./components/pages/Services/Services";
 import ServiceDetail from "./components/pages/Services/ServiceDetail";
 import ProductPriceReporter from "./components/pages/Services/ProductPriceReport";
+import StaffManageCategories from "./components/pages/StaffManager/StaffManageCategories";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -70,11 +71,9 @@ function App() {
                 path="/staff/suppliers"
                 element={<StaffManageSuppliers />}
               />
-              <Route
-                path="/staff/services"
-                element={<StaffManageServices />}
-              />
-              <Route path="/staff/blogs" element={<StaffManageBlogs />} />
+              <Route path="/staff/services" element={<StaffManageServices />} />
+              <Route path="/staff/blogs" element={<StaffManageBlogs />} />{" "}
+              <Route path="/staff/categories" element={<StaffManageCategories />} />
               <Route
                 path="/service-suppliers-dashboard"
                 element={<Dashboard />}
@@ -115,11 +114,34 @@ function App() {
 
           {/* Supplier */}
           <Route element={<ProtectedRoute requiredRole={ROLE.supplier} />}>
-            <Route path="/services" element={<Services setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-            <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-            <Route path="/product-price-reporter" element={<ProductPriceReporter setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            <Route
+              path="/services"
+              element={
+                <Services
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
+            <Route
+              path="/service-detail/:id"
+              element={
+                <ServiceDetail
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
+            <Route
+              path="/product-price-reporter"
+              element={
+                <ProductPriceReporter
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
           </Route>
-
 
           {/* Guest */}
           <Route path="/photographer" element={<Photographer />} />

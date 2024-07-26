@@ -26,6 +26,10 @@ const BlogDetail = ({ blog, setBlog }: BlogDetailProps) => {
       setBlogStatus(newStatus);
     }
   };
+
+  const handleReject = (blog: BlogItem) => {
+    
+  }
   return (
     <>
       <div className="flex gap-2 font-semibold text-2xl mb-10 items-center">

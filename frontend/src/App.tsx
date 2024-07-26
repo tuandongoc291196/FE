@@ -26,9 +26,11 @@ import MessageBoxContainer from "./components/pages/Popup/MessageBox/MessageCont
 import { ROLE } from "./constants/consts";
 import "./constants/styles/Filter.css";
 import StaffManageBlogs from "./components/pages/StaffManager/StaffManageBlogs";
-import Services from "./components/pages/Services/Services";
-import ServiceDetail from "./components/pages/Services/ServiceDetail";
-import ProductPriceReporter from "./components/pages/Services/ProductPriceReport";
+import Services from "./components/pages/ServiceSupplier/Services";
+import ServiceDetail from "./components/pages/ServiceSupplier/ServiceDetail";
+import ProductPriceReporter from "./components/pages/ServiceSupplier/ProductPriceReport";
+import BlogDetail from "./components/pages/ServiceSupplier/BlogDetail";
+import Blogs from "./components/pages/ServiceSupplier/Blog";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -118,6 +120,8 @@ function App() {
             <Route path="/services" element={<Services setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
             <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
             <Route path="/product-price-reporter" element={<ProductPriceReporter setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            <Route path="/blogs" element={<Blogs setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            <Route path="/blog-detail/:id" element={<BlogDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
           </Route>
 
 

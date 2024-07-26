@@ -26,3 +26,10 @@ export interface ProductPriceReporterEntity {
     requirement: String,
     priceReport: String,
 }
+
+export interface BlogEntity {
+    id: String,
+    title: String,
+    content: String,
+    date: String
+}

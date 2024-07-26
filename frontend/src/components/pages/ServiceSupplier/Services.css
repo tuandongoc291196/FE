@@ -14,38 +14,11 @@
 }
 
 #Services .create-service {
+    flex-wrap: nowrap;
     display: flex;
     width: 100%;
-    justify-content: right;
+    justify-content: space-between;
     margin-bottom: 24px;
-}
-
-.btn-create-service:hover {
-    background-color: var(--btn-hover-color) !important;
-}
-
-.table {
-    box-shadow: 0 3px 13px 0 rgba(32, 40, 49, 0.1);
-}
-
-.table * {
-    font-size: 2rem;
-}
-
-.action {
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    height: 100%;
-}
-
-.action * {
-    font-size: 2.5rem !important;
-}
-
-.action *:hover {
-    cursor: pointer;
 }
 
 #ModalCreateService {
@@ -58,10 +31,15 @@
 }
 
 #ModalCreateService .box {
+    border-radius: 15px !important;
     background-color: var(--white-color);
     padding: 5% 5%;
     max-height: 900px;
     overflow-y: scroll;
+}
+
+#ModalCreateService ::-webkit-scrollbar {
+    border-radius: 15px !important;
 }
 
 #ModalCreateService input {

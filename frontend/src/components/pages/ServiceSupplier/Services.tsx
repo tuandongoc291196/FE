@@ -120,6 +120,7 @@ const Services: FC<Props> = (props) => {
     return (
         <div id="Services">
             <div className="create-service">
+                <h2 className="h2-title-page" >Dịch vụ</h2>
                 <Button className="btn-create-service" onClick={() => { handleOpen() }}>Tạo mới</Button>
             </div>
             <div className="table" style={{ height: 400, width: "100%" }}>

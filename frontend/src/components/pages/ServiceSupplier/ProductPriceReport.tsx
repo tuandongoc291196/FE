@@ -7,6 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router';
 import { Box, Button, FormControl, MenuItem, Modal, Select, Typography } from '@mui/material';
 import "./Services.css";
+import "../../../constants/styles/TableService.css";
 
 
 interface Props {

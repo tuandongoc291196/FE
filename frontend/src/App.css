@@ -98,6 +98,7 @@ body {
 }
 
 .h2-title-page {
+    width: fit-content;
     text-transform: uppercase;
     color: var(--primary-color);
     font-size: 2.5rem;

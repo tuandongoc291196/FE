@@ -52,7 +52,7 @@ export const HeaderNav = [
             },
             {
                 name: "bài viết",
-                navigate: "/blog"
+                navigate: "/blogs"
             },
             {
                 name: "giảm giá",

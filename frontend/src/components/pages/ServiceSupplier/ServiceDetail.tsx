@@ -5,6 +5,7 @@ import Carousel from 'react-material-ui-carousel';
 import { Paper, Button } from '@mui/material';
 import { Container } from '@mui/material';
 import "./ServiceDetail.css";
+import "../../../constants/styles/TableService.css";
 
 interface Props {
   setMessageStatus: Dispatch<SetStateAction<string>>;

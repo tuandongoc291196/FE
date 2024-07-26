@@ -26,6 +26,7 @@ import MessageBoxContainer from "./components/pages/Popup/MessageBox/MessageCont
 import { ROLE } from "./constants/consts";
 import "./constants/styles/Filter.css";
 import StaffManageBlogs from "./components/pages/StaffManager/StaffManageBlogs";
+import StaffManageCategories from "./components/pages/StaffManager/StaffManageCategories";
 import Services from "./components/pages/ServiceSupplier/Services";
 import ServiceDetail from "./components/pages/ServiceSupplier/ServiceDetail";
 import ProductPriceReporter from "./components/pages/ServiceSupplier/ProductPriceReport";
@@ -72,11 +73,9 @@ function App() {
                 path="/staff/suppliers"
                 element={<StaffManageSuppliers />}
               />
-              <Route
-                path="/staff/services"
-                element={<StaffManageServices />}
-              />
-              <Route path="/staff/blogs" element={<StaffManageBlogs />} />
+              <Route path="/staff/services" element={<StaffManageServices />} />
+              <Route path="/staff/blogs" element={<StaffManageBlogs />} />{" "}
+              <Route path="/staff/categories" element={<StaffManageCategories />} />
               <Route
                 path="/service-suppliers-dashboard"
                 element={<Dashboard />}
@@ -123,7 +122,6 @@ function App() {
             <Route path="/blogs" element={<Blogs setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
             <Route path="/blog-detail/:id" element={<BlogDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
           </Route>
-
 
           {/* Guest */}
           <Route path="/photographer" element={<Photographer />} />

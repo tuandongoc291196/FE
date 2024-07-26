@@ -123,7 +123,6 @@ const StaffManageBlogs = () => {
     const getBlogs = async () => {
       setLoading(true);
       const res = await getListBlogs(0, 10, status);
-      console.log(res);
       if (res)
         if (res.status === "SUCCESS") setData(res.data);
         else setData([]);

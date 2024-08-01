@@ -5,13 +5,12 @@ import {getStorage} from 'firebase/storage'
 
 // TODO: Replace the following with your app's Firebase project configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDQ1pea0jlM-Wfp_WI-mrLqVl5vvQvQQfQ",
-  authDomain: "wedding-platform-aebc2.firebaseapp.com",
-  projectId: "wedding-platform-aebc2",
-  storageBucket: "wedding-platform-aebc2.appspot.com",
-  messagingSenderId: "573761065711",
-  appId: "1:573761065711:web:1b72e42d4c7ee698a4411a",
-  measurementId: "G-D341NRPY1F",
+  apiKey: "AIzaSyAYlwe_V2oooxM2ZWfgeGDSsCv-xEQAewY",
+  authDomain: "weddingwise-daa83.firebaseapp.com",
+  projectId: "weddingwise-daa83",
+  storageBucket: "weddingwise-daa83.appspot.com",
+  messagingSenderId: "114054934594",
+  appId: "1:114054934594:web:5a14ceb750614a25577ddb"
 };
 
 const app = initializeApp(firebaseConfig);

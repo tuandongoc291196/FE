@@ -22,3 +22,22 @@ export const PROCESS_STATUS_VN = {
   rejected: "Bị từ chối",
   inactive: "Vô hiệu hóa",
 };
+
+export const AVAILABLE_PRICE = "Giá sẵn";
+export const CONTACT_PRICE = "Giá liên hệ"
+
+export const ECONOMY_SEGMENT = {
+  name: "Phổ thông",
+  id: "ECONOMY"
+};
+
+export const LUXURY_SEGMENT = {
+  name: "Cao cấp",
+  id: "LUXURY"
+};
+
+export const BOOKING_STATUS = {
+  waiting: "WAITING",
+  confirm: "CONFIRM",
+  cancel: "CANCEL"
+};

@@ -49,8 +49,8 @@
 .create-container {
     width: 100%;
     display: flex;
-    justify-content: left;
     flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .dual-input {
@@ -58,7 +58,7 @@
 }
 
 .individual-input {
-    width: 100%;
+    width: 100% !important;
 }
 
 .textarea {
@@ -80,6 +80,10 @@
 
 .img-item img {
     width: 100%;
+}
+
+.group-input {
+    width: 30%;
 }
 
 .group-input label {
@@ -105,4 +109,14 @@
 
 #ModalCreateService .input-filter {
     width: 100%;
+}
+
+.price {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.price-input {
+    width: 150px;
 }

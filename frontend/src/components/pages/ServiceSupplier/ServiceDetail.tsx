@@ -6,62 +6,48 @@ import { Paper, Button } from '@mui/material';
 import { Container } from '@mui/material';
 import "./ServiceDetail.css";
 import "../../../constants/styles/TableService.css";
+import { ServiceEntity } from '../../../types/entity/Entity';
+import { getServicesById } from '../../../redux/apiRequest';
+import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 
 interface Props {
   setMessageStatus: Dispatch<SetStateAction<string>>;
   setMessage: Dispatch<SetStateAction<string>>;
 }
 
-interface ItemProps {
-  item: {
-    name: string;
-    description: string;
-    image: string;
-  };
-}
-
-const items = [
-  {
-    name: "Random Name #1",
-    description: "Probably the most random thing you have ever seen!",
-    image: "https://cdn0.weddingwire.com/cat/10058609--mfvo10058609.jpg"
-  },
-  {
-    name: "Random Name #2",
-    description: "Hello World!",
-    image: "https://cdn0.weddingwire.com/cat/10058611--mfvg10058611.jpg"
-  },
-  {
-    name: "Random Name #1",
-    description: "Probably the most random thing you have ever seen!",
-    image: "https://cdn0.weddingwire.com/cat/10058611--mfvo10058611.jpg"
-  },
-  {
-    name: "Random Name #2",
-    description: "Hello World!",
-    image: "https://cdn0.weddingwire.com/cat/10058613--mfvo10058613.jpg"
-  }
-];
-
-const ImageSlider: React.FC = () => {
-  return (
-    <Carousel autoPlay indicators>
-      {items.map((item, i) => <Item key={i} item={item} />)}
-    </Carousel>
-  );
-}
-
-const Item: React.FC<ItemProps> = ({ item }) => {
-  return (
-    <Paper>
-      <img src={item.image} alt={item.name} style={{ width: '458px', height: '600px' }} />
-      <h2>{item.name}</h2>
-    </Paper>
-  );
-}
+const storage = getStorage();
 
 const ServiceDetail: FC<Props> = (props) => {
   const { id } = useParams();
+  const [service, setService] = useState<ServiceEntity>();
+  useEffect(() => {
+    fetchData();
+  }, [])
+
+  async function fetchData() {
+    const response = await getServicesById(id);
+    setService(response);
+    console.log();
+
+  }
+
+  const ImageSlider: React.FC = () => {
+    return (
+      <Carousel autoPlay indicators>
+        {service?.listImages?.map((item, i) =>
+          <Paper>
+            <img src={`${item}`} alt={`${item}`} style={{ width: '458px', height: '600px' }} key={i} />
+            {
+              (service.promotions.length > 0) ?
+                (
+                  <h2 className="promotion">Giảm giá {service.promotions.map(element => `${element.percent.toString()}%`).join(', ')}</h2>
+                ) : null
+            }
+          </Paper>
+        )}
+      </Carousel>
+    );
+  }
 
   return (
     <div id="ServiceDetail">
@@ -71,12 +57,12 @@ const ServiceDetail: FC<Props> = (props) => {
         </Container>
         <div className="service-information">
           <div className="information-container">
-            <h1 className="header">MADDOX - ALL WHO WANDER</h1>
-            <span className="service-price">100,000,000 VNĐ</span>
+            <h1 className="header">{service?.name}</h1>
+            <span className="service-price">{`${service?.price}`} VNĐ</span>
             <div className="underline"></div>
             <div className="description">
               <p className="description-header">Chi tiết</p>
-              <div className="description-text">Find hair stylists and makeup artists to help you look your best on your wedding day.</div>
+              <div className="description-text">{service?.description}</div>
             </div>
           </div>
         </div>

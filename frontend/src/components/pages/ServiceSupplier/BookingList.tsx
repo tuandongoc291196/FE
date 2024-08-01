@@ -1,6 +1,5 @@
 import { SetStateAction, Dispatch, FC, useEffect, useState } from 'react'
 import "./Services.css";
-import { ServiceCreate, ServiceEntity } from '../../../types/entity/Entity';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
@@ -10,11 +9,12 @@ import { Box, Button, FormControl, MenuItem, Modal, Select, Typography } from '@
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-import { AVAILABLE_PRICE, CONTACT_PRICE, ECONOMY_SEGMENT, LUXURY_SEGMENT } from '../../../constants/consts';
-import { createService, getListCategories, getPromotionBySupplier, getServicesBySupplier } from '../../../redux/apiRequest';
 import { CategoryItem } from '../../../types/schema/category';
 import { useDispatch, useSelector } from 'react-redux';
 import { PromotionItem } from '../../../types/schema/promotion';
+import { BookingItem } from '../../../types/schema/booking';
+import { getBookingBySupplierId } from '../../../redux/apiRequest';
+import { BOOKING_STATUS } from '../../../constants/consts';
 
 interface Props {
     setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -23,27 +23,21 @@ interface Props {
 
 const storage = getStorage();
 
-const priceTypes = [
-    AVAILABLE_PRICE,
-    CONTACT_PRICE
-]
+const convertStatusName = (status: string) => {
+    switch (status) {
+        case BOOKING_STATUS.cancel:
+            return "Đã huỷ"
+        case BOOKING_STATUS.confirm:
+            return "Đã xác nhận"
+        default: return "Đang đợi"
+    }
+}
 
-const segments = [
-    ECONOMY_SEGMENT,
-    LUXURY_SEGMENT
-]
-
-const Services: FC<Props> = (props) => {
+const BookingList: FC<Props> = (props) => {
     const user = useSelector((state: any) => state.auth.login.currentUser);
-    const [services, setServices] = useState<ServiceEntity[]>([]);
+    const [bookingList, setBookingList] = useState<BookingItem[]>([]);
     const [images, setImages] = useState<string[]>([]);
-    const [categories, setCategories] = useState<CategoryItem[]>([]);
-    const [category, setCategory] = useState<string>('');
-    const [promotions, setPromotions] = useState<PromotionItem[]>([]);
-    const [promotion, setPromotion] = useState<any>();
-    const [priceType, setPriceType] = useState<string>(AVAILABLE_PRICE);
-    const [segment, setSegment] = useState<any>(ECONOMY_SEGMENT);
-    const [serviceName, setServiceName] = useState<string>('');
+    const [bookingName, setBookingName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [price, setPrice] = useState<string>('0');
 
@@ -53,128 +47,72 @@ const Services: FC<Props> = (props) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const bookingStatuses = Object.values(BOOKING_STATUS);
 
     useEffect(() => {
         fetchData();
-        fetchPromotions();
-        fetchCategories();
     }, [])
 
     async function fetchData() {
-        const response = await getServicesBySupplier(true, 0, 10, "id", user?.userId);
-        setServices(response);
+        const response = await getBookingBySupplierId(user?.userId, user?.token);
+        setBookingList(response);
     }
 
-
-    const fetchCategories = async () => {
-        const response = await getListCategories(0, 10);
-        if (response)
-            if (response.status === "SUCCESS") {
-                await setCategories(response?.data);
-            }
-            else setCategories([]);
-    }
-
-    const fetchPromotions = async () => {
-        setPromotions(await getPromotionBySupplier(true, 0, 10, "id", user?.userId));
-    }
-
-    const uploadImage = async (files: FileList | null) => {
-        if (files) {
-            const fileRef = files[0];
-            const storageRef = ref(storage, `images/${fileRef?.name}`);
-
-            try {
-                // Upload the file to Firebase Storage
-                const snapshot = await uploadBytes(storageRef, fileRef);
-
-                // Get the download URL for the file
-                const downloadURL = await getDownloadURL(snapshot.ref);
-
-                // Set the state to the download URL
-                setImages([...images, downloadURL]);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    };
-
-    const handleCreate = async () => {
-        try {
-            let getImagesPayload = "";
-            images.map((image) => {
-                getImagesPayload += image + "\n, "
-            })
-            let categoryId = "";
-            categoryId = categories.find((e) => e.categoryName == category)?.id as string;
-
-            const newService: ServiceCreate = {
-                categoryId: categoryId,
-                description: description,
-                images: getImagesPayload,
-                listPromotionIds: promotion?.id,
-                name: serviceName,
-                price: parseInt(price),
-                serviceSupplierId: user?.userId,
-                type: segment.id,
-            }
-
-            const status = await createService(newService, user?.token, dispatch, navigate);
-
-            if (status == "SUCCESS") {
-                props.setMessageStatus("green");
-                props.setMessage("Tạo thành công");
-                handleClose();
-            } else {
-                props.setMessageStatus("red");
-                props.setMessage(status);
-            }
-        } catch (error) {
-
-        }
-    }
-
-    const rows = services?.length > 0 ? services.map((service) => ({
-        id: service.id,
-        category: service?.categoryResponse?.categoryName,
-        name: service.name,
-        description: service.description,
-        promotion: service.promotions.map(element => `${element.percent.toString()}%`).join(', '),
-        price: service.price,
-        type: service.type
+    const rows = bookingList?.length > 0 ? bookingList.map((booking) => ({
+        id: booking.id,
+        createdAt: booking.createdAt,
+        status: booking.status,
     })) : [];
 
     const columns: GridColDef[] = [
-        { field: "id", headerName: "ID", flex: 0.3 },
-        { field: "category", headerName: "Loại", flex: 0.5 },
-        { field: "name", headerName: "Tên", flex: 0.8 },
-        { field: "description", headerName: "Mô tả", flex: 1.2 },
-        { field: "price", headerName: "Giá", flex: 0.5 },
-        { field: "promotion", headerName: "Giảm giá", flex: 0.5 },
-        { field: "type", headerName: "Phân khúc", flex: 0.5 },
+        { field: "coupleName", headerName: "Tên couple", flex: 0.5 },
         {
             field: '',
-            headerName: 'Tác vụ',
+            headerName: 'Chi tiết dịch vụ',
             flex: 0.5,
             width: 170,
             renderCell: (params) => (
-                <div className="action">
-                    <VisibilityIcon onClick={() => navigate(`/service-detail/${params.id}`)}></VisibilityIcon>
-                    <AppRegistrationIcon></AppRegistrationIcon>
-                    <DeleteIcon></DeleteIcon>
-                </div>
+                <button className="btn-admin-disable" onClick={() => {
+                    // handleDisable(params.row.id);
+                }}>
+                    Xem chi tiết
+                </button>
             ),
-        }
+        },
+        { field: "createdAt", headerName: "Ngày booking", flex: 0.5 },
+        {
+            field: 'status',
+            headerName: 'Trạng thái',
+            flex: 0.3,
+            width: 170,
+            renderCell: (params) => (
+                <FormControl className="form-input price">
+                    <Select
+                        className="input regis-input"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={params.row.status}
+                    >
+                        {
+                            bookingStatuses.map((status: any, index) => {
+                                return (
+                                    <MenuItem value={status} key={index}><div style={{ fontSize: "4rem !important" }}>{convertStatusName(status)}</div></MenuItem>
+                                )
+                            })
+                        }
+                    </Select>
+                </FormControl>
+            ),
+        },
     ];
 
     return (
         <div id="Services">
             {
-                (services?.length > 0) ? (
+                (bookingList?.length > 0) ? (
                     <>
-                        <div className="create-service">
-                            <h2 className="h2-title-page" >Dịch vụ</h2>
-                            <Button className="btn-create-service" onClick={() => { handleOpen() }}>Tạo mới</Button>
+                        <div className="create-booking">
+                            <h2 className="h2-title-page" >Booking</h2>
                         </div>
                         <div className="table" style={{ height: 400, width: "100%" }}>
                             <DataGrid rows={rows}
@@ -186,12 +124,12 @@ const Services: FC<Props> = (props) => {
                 ) : null
             }
 
-            <Modal
+            {/* <Modal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                id="ModalCreateService"
+                id="ModalCreateBooking"
             >
                 <Box
                     className="box"
@@ -206,7 +144,7 @@ const Services: FC<Props> = (props) => {
                             <div className="group-input mb-24">
                                 <label>Tên dịch vụ:</label>
                                 <div className="form-input">
-                                    <input type="Username" className="input regis-input" required onChange={(e) => { setServiceName(e.target.value) }} />
+                                    <input type="Username" className="input regis-input" required onChange={(e) => { setBookingName(e.target.value) }} />
                                     <span className="text-err"></span>
                                 </div>
                             </div>
@@ -273,7 +211,7 @@ const Services: FC<Props> = (props) => {
                                         </Select>
                                     </FormControl>
                                     {
-                                        (priceType == AVAILABLE_PRICE) ?
+                                        (priceType == availablePrice) ?
                                             (
                                                 <div className="form-input price-input">
                                                     <input type="Username" className="input regis-input" required onChange={(e) => { setPrice(e.target.value) }} />
@@ -340,9 +278,9 @@ const Services: FC<Props> = (props) => {
                         </div>
                     </Typography>
                 </Box>
-            </Modal>
+            </Modal> */}
         </div>
     )
 }
 
-export default Services
+export default BookingList

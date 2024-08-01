@@ -6,11 +6,16 @@ import {
   ACCOUNT_REGISTER_STAFF,
   ACCOUNT_REGISTER_SUPPLIER,
   CREATE_CATEGORY,
+  CREATE_SERVICE,
   GET_ACTIVE_BLOGS,
   GET_ALL_BLOGS,
   GET_ALL_CATEGORIES,
+  GET_BOOKING_BY_SUPPLIER,
   GET_PENDING_BLOGS,
+  GET_PROMOTION_BY_SUPPLIER,
   GET_REJECTED_BLOGS,
+  GET_SERVICE_BY_ID,
+  GET_SERVICE_BY_SUPPLIER,
   GET_SUPPLIERS_BLOGS,
 } from "../constants/API_URLS";
 import { PROCESS_STATUS, ROLE, STATUS } from "../constants/consts";
@@ -115,8 +120,6 @@ export const registerCouple = async (newUser, navigate, dispatch) => {
 export const registerSupplier = async (newUser, navigate, dispatch) => {
   try {
     const res = await axios.post(ACCOUNT_REGISTER_SUPPLIER, newUser);
-    console.log(res);
-    // loginUser(newUser, dispatch, navigate, true);
   } catch (error) {
     return error;
   }
@@ -192,5 +195,69 @@ export const createCategory = async (name, token) => {
     return response.data;
   } catch (error) {
     return error.response.data.message;
+  }
+};
+
+// Service
+export const getServicesById = async (id) => {
+  try {
+    const res = await axios.get(GET_SERVICE_BY_ID + `/{id}?id=${id}`);
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getServicesBySupplier = async (isAsc, page, size, sortBy, supplierId) => {
+  try {
+    const res = await axios.get(GET_SERVICE_BY_SUPPLIER + `/{id}?isAscending=${isAsc}&pageNo=${page}&pageSize=${size}&sortBy=${sortBy}&supplierId=${supplierId}`);
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+export const createService = async (
+  newService,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.post(CREATE_SERVICE, newService, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+// Promotion
+
+export const getPromotionBySupplier = async (isAsc, page, size, sortBy, supplierId) => {
+  try {
+    const res = await axios.get(GET_PROMOTION_BY_SUPPLIER + `/{id}?isAscending=${isAsc}&pageNo=${page}&pageSize=${size}&sortBy=${sortBy}&supplierId=${supplierId}`);
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+// Booking
+
+export const getBookingBySupplierId = async (id, token) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.get(GET_BOOKING_BY_SUPPLIER + `?supplierId=${id}`, {headers: headers});
+    return res.data.data;
+  } catch (error) {
+    return error;
   }
 };

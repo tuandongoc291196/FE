@@ -39,10 +39,6 @@ export const HeaderNav = [
         user: ROLE.supplier,
         items: [
             {
-                name: "dashboard",
-                navigate: "/supplier-dashboard"
-            },
-            {
                 name: "dịch vụ",
                 navigate: "/services"
             },
@@ -60,7 +56,7 @@ export const HeaderNav = [
             },
             {
                 name: "booking",
-                navigate: "/supplier-book"
+                navigate: "/booking-list"
             }
         ]
     }

@@ -4,7 +4,8 @@ export const getServiceByCategory = async (
     category: string,
     minPrice: number,
     maxPrice: number,
-    type: string
+    type: string,
+    
   ): Promise<any[]> => {
   
     try {

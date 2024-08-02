@@ -14,17 +14,28 @@ import { useLocation, useNavigate } from "react-router-dom";
 import StarIcon from "@mui/icons-material/Star";
 import ServiceItemViewCard from "./ServiceItemViewCard";
 import { ServiceData } from "../../../utils/ServiceData";
+import { getAllCategory, getAllServices, getServiceByCategory } from "../../../api/CoupleAPI";
 
 const CoupleService = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const path = location.pathname.split("/")[2];
   const coupleServiceData = ServiceData.find((e) => e.name === path);
-  
   const [selectedService, setSelectedService] = useState(coupleServiceData?.items[0]?.name || "");
+  const [selectedServiceList, setSelectedServiceList] = useState<any[]>([]);
+
+  const getAllCategoryList = async () => {
+    const response = await getAllCategory();
+  }
+  const getSelectedServiceList = async () => {
+    const response = await getServiceByCategory("CATEGORY-14");
+    setSelectedServiceList(response);
+;  }
+  console.log(selectedServiceList)
 
   useEffect(() => {
     setSelectedService(coupleServiceData?.items[0]?.name || "");
+    getSelectedServiceList();
   }, [coupleServiceData]);
 
   return (
@@ -139,17 +150,20 @@ const CoupleService = () => {
             <strong>80</strong> kết quả
           </div>
           <ul className="content-list">
-            <ServiceItemViewCard
-              id = "service1"
-              imageUrl="https://cdn0.weddingwire.com/vendor/262779/3_2/640/png/ww-storefront_51_977262-167476398667285.webp"
-              location="San Francisco, CA"
-              title="Sound Originals Photo & Video"
-              ratingValue={3}
-              description="Sound Originals Photo & Video is a 5-star photography and videography team. Couples love Sound Originals! Storytelling Lasts Forever. Y dedicated to excellent quality. Artistic portraits.Y dedicated to excellent quality. ArtiY dedicated to excellent quality. ArtiY dedicated to excell"
-              priceText={
-                coupleServiceData?.isPrice ? `${(20000000).toLocaleString('vi-VN')} VND` : ""
-              }
-            />
+            {selectedServiceList.map((item, index) => {
+              return(
+              <ServiceItemViewCard
+                id = {item.id}
+                imageUrl={item?.listImages[0]}
+                location="San Francisco, CA"
+                title={item.name}
+                ratingValue={3}
+                description={item.description}
+                priceText={item.price}
+              />
+              )
+            })}
+            
           </ul>
           <Box display="flex" justifyContent="center">
             <Pagination

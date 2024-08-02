@@ -1,19 +1,46 @@
 import axios from "./axios";
 
+export const getAllCategory =async (): Promise<any[]> => {
+  try {
+    const response = await axios.get("/category/getAllCategory")
+    if (response.data.status ==='SUCCESS') {
+      return response.data.data;
+    } else {
+      throw new Error('API call was not successful');
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+      throw error;
+  }
+}
+
+export const getAllServices = async (): Promise<any[]> => {
+  try {
+    const response = await axios.get("/service/getAllActiveServices")
+    if (response.data.status ==='SUCCESS') {
+      return response.data.data;
+    } else {
+      throw new Error('API call was not successful');
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+      throw error;
+  }
+}
 export const getServiceByCategory = async (
     category: string,
-    minPrice: number,
-    maxPrice: number,
-    type: string
+    // minPrice: number,
+    // maxPrice: number,
+    // type: string
   ): Promise<any[]> => {
   
     try {
-      const response = await axios.get("/service/filterService/", {
+      const response = await axios.get("/service/getAllServicesByCategory/", {
         params: {
           categoryId: category,
-          minPrice: minPrice,
-          maxPrice: maxPrice,
-          type: type,
+          // minPrice: minPrice,
+          // maxPrice: maxPrice,
+          // type: type,
         },
       });
   

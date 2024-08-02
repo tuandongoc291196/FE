@@ -10,7 +10,7 @@ import {
   faRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { logoutUser } from "../../../redux/apiRequest";
-import { ROLE } from "../../../constants/consts";
+import { LOGO, ROLE } from "../../../constants/consts";
 import { HeaderNav } from "./HeaderNav";
 
 interface HeaderProps {
@@ -92,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
     <>
       <div id="Header">
         <div className="header-left">
-          <div className="header-icon">Wedding</div>
+          <div className="header-icon"><img src={LOGO} alt="" /></div>
           <nav className="nav-bar">
             {handleNav()}
           </nav>

@@ -8,7 +8,7 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import "./Authentication.css";
 import { loginUser, loginUserByGoogle, registerCouple, registerSupplier } from '../../../redux/apiRequest';
 import { RegisterCouplePayload, RegisterSupplierPayload } from '../../../types/authen/Register';
-import { ROLE } from '../../../constants/consts';
+import { LOGO, ROLE } from '../../../constants/consts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 interface Props {
@@ -196,8 +196,6 @@ const Register: FC<Props> = (props) => {
 
     return (
         <div id='Authentication'>
-            <img className='icon' src="https://www.weddingwire.com/assets/img/logos/gen_logoHeader.svg" alt="" />
-
             <div className="login-cover">
                 <div className="col-left" style={{ backgroundImage: 'url(https://cdn1.weddingwire.com/assets/img/layer-alta/default_en-US.jpg)' }}>
                 </div>
@@ -205,6 +203,11 @@ const Register: FC<Props> = (props) => {
                     (!isInput) ?
                         (
                             <div className="col-right">
+                                <img
+                                    className="icon"
+                                    src={LOGO}
+                                    alt=""
+                                />
                                 <div className="item">
                                     <div className="login-header">Đăng ký</div>
                                 </div>

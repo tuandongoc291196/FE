@@ -65,3 +65,9 @@
     border: 1px solid var(--btn-hover-color);
     color: var(--btn-hover-color);
 }
+
+.promotion {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    font-weight: 700;
+}

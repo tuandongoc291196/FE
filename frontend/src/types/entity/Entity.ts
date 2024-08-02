@@ -1,3 +1,5 @@
+import { PromotionItem } from "../schema/promotion"
+
 export interface StaffEntity {
     id: String,
     name: String,
@@ -8,14 +10,35 @@ export interface StaffEntity {
     department: String,
 }
 
+// CATEGORY
+export interface CategoryEntity {
+    id: String,
+    categoryName: String,
+    status: String,
+}
+
+// SERVICE
 export interface ServiceEntity {
     id: String,
-    category: String,
     name: String,
     description: String,
-    price: String,
+    listImages: Array<String>,
+    price: Number,
     status: String,
-    images: Array<String>
+    categoryResponse: CategoryEntity,
+    type: String,
+    promotionService: PromotionItem,
+}
+
+export interface ServiceCreate {
+    categoryId: String,
+    description: String,
+    images: String
+    listPromotionIds: String
+    name: String,
+    price: Number,
+    serviceSupplierId: String,
+    type: String,
 }
 
 export interface ProductPriceReporterEntity {

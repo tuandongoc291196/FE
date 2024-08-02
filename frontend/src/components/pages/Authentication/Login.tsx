@@ -20,7 +20,7 @@ import { initializeApp } from "firebase/app";
 import "./Authentication.css";
 import { LoginPayload } from "../../../types/authen/Login";
 import { loginUser, loginUserByGoogle } from "../../../redux/apiRequest";
-import { ROLE } from "../../../constants/consts";
+import { LOGO, ROLE } from "../../../constants/consts";
 import { useMessageContext } from "../Popup/MessageBox/MessageContext";
 interface Props {
   setRoleLogin: Dispatch<SetStateAction<string>>;
@@ -104,12 +104,6 @@ const Login: FC<Props> = (props) => {
 
   return (
     <div id="Authentication">
-      <img
-        className="icon"
-        src="https://www.weddingwire.com/assets/img/logos/gen_logoHeader.svg"
-        alt=""
-      />
-
       <div className="login-cover">
         <div
           className="col-left"
@@ -119,6 +113,11 @@ const Login: FC<Props> = (props) => {
           }}
         ></div>
         <form onSubmit={loginHandler} className="col-right">
+          <img
+            className="icon"
+            src={LOGO}
+            alt=""
+          />
           <div className="item">
             <div className="login-header">Đăng nhập</div>
           </div>

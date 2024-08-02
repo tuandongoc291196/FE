@@ -22,17 +22,13 @@ export const HeaderNav = [
         user: ROLE.couple,
         items: [
             {
-                name: "nhân viên",
-                navigate: "/staff"
+                name: "Step by step",
+                navigate: "/step-by-step"
             },
             {
-                name: "nhà cung cấp",
-                navigate: "/supplier"
+                name: "Blogs",
+                navigate: "/blogs-couple"
             },
-            {
-                name: "khách hàng",
-                navigate: "/couple"
-            }
         ]
     },
     {

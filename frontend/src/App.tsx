@@ -32,6 +32,17 @@ import ServiceDetail from "./components/pages/ServiceSupplier/ServiceDetail";
 import ProductPriceReporter from "./components/pages/ServiceSupplier/ProductPriceReport";
 import BlogDetail from "./components/pages/ServiceSupplier/BlogDetail";
 import Blogs from "./components/pages/ServiceSupplier/Blog";
+import HomePage from "./components/pages/HomePage/HomePage";
+import UpdateProfile from "./components/pages/CoupleProfile/UpdateProfile";
+import StepByStep from "./components/pages/StepByStep/StepByStep";
+import CoupleQuotation from "./components/pages/CoupleQuotation/CoupleQuotation";
+import BookingDetails from "./components/pages/BookingDetails/BookingDetails";
+import BookingHistory from "./components/pages/BookingHistory/BookingHistory";
+import BlogDetails from "./components/pages/CoupleBlogs/BlogDetail";
+import BlogList from "./components/pages/CoupleBlogs/BlogList";
+import CoupleServiceListImage from "./components/pages/CoupleServiceDetail/CoupleServiceListImage";
+import CoupleServiceDetail from "./components/pages/CoupleServiceDetail/CoupleServiceDetail";
+import CoupleService from "./components/pages/CoupleService/CoupleService";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -75,14 +86,17 @@ function App() {
               />
               <Route path="/staff/services" element={<StaffManageServices />} />
               <Route path="/staff/blogs" element={<StaffManageBlogs />} />{" "}
-              <Route path="/staff/categories" element={<StaffManageCategories />} />
+              <Route
+                path="/staff/categories"
+                element={<StaffManageCategories />}
+              />
               <Route
                 path="/service-suppliers-dashboard"
                 element={<Dashboard />}
               />
             </Route>
           ) : (
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={<HomePage />} />
           )}
 
           {/* Authenticate */}
@@ -116,15 +130,76 @@ function App() {
 
           {/* Supplier */}
           <Route element={<ProtectedRoute requiredRole={ROLE.supplier} />}>
-            <Route path="/services" element={<Services setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-            <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-            <Route path="/product-price-reporter" element={<ProductPriceReporter setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-            <Route path="/blogs" element={<Blogs setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-            <Route path="/blog-detail/:id" element={<BlogDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            <Route
+              path="/services"
+              element={
+                <Services
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
+            <Route
+              path="/service-detail/:id"
+              element={
+                <ServiceDetail
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
+            <Route
+              path="/product-price-reporter"
+              element={
+                <ProductPriceReporter
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
+            <Route
+              path="/blogs"
+              element={
+                <Blogs
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
+            <Route
+              path="/blog-detail/:id"
+              element={
+                <BlogDetail
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
           </Route>
+
+          {/* Test View */}
+          <Route path="/profile" element={<UpdateProfile />} />
 
           {/* Guest */}
           <Route path="/photographer" element={<Photographer />} />
+          <Route path="/step-by-step" element={<StepByStep />} />
+          <Route path="/quotation" element={<CoupleQuotation />} />
+          <Route path="/booking-details" element={<BookingDetails />} />
+          <Route path="/booking-history" element={<BookingHistory />} />
+
+          <Route path="/blogs/details/:id" element={<BlogDetails />} />
+          <Route path="/blogs-couple" element={<BlogList />} />
+
+          <Route
+            path="/services/details/:id/img"
+            element={<CoupleServiceListImage />}
+          />
+          <Route
+            path="/services/details/:id"
+            element={<CoupleServiceDetail />}
+          />
+
+          <Route path="/services/*" element={<CoupleService />} />
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

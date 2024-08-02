@@ -19,6 +19,9 @@ import dayjs, { Dayjs } from 'dayjs';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneRoundedIcon from '@mui/icons-material/PhoneRounded';
 import Person2RoundedIcon from '@mui/icons-material/Person2Rounded';
+import 'dayjs/locale/vi';
+import { createQuotation } from "../../../../api/CoupleAPI";
+import { useSelector } from "react-redux";
 
 const style = {
   position: "absolute",
@@ -36,13 +39,38 @@ const style = {
 interface RequestPricePopupProps {
   open: boolean;
   handleClose: () => void;
+  serviceName: string;
+  serviceId: string;
+  suplierID: string;
 }
 
 const RequestPricePopup: React.FC<RequestPricePopupProps> = ({
   open,
   handleClose,
+  serviceName,
+  serviceId,
+  suplierID
 }) => {
-  const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
+  const [value, setValue] = React.useState<Dayjs | null>(dayjs('2024-12-12'));
+  const [note, setNote] = useState("Chúng tôi hiện đang lên kế hoạch cho đám cưới của mình vào ngày 12/12/2024 và muốn tìm hiểu thêm về doanh nghiệp của bạn. Bạn có thể gửi cho chúng tôi một số thông tin bổ sung không? Cảm ơn bạn!");
+  // const user = useSelector((state: any) => state.auth.login.currentUser);
+
+  const handleChangeNote = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNote(event.target.value);
+  };
+
+  const handleSubmit = async() => {
+    console.log(serviceId)
+    console.log(suplierID)
+    await createQuotation(
+      "COUPLE-1",
+      value?.toJSON() ?? "",
+       note,
+       suplierID,
+       serviceId,
+  )
+    handleClose()
+  };
 
   return (
     <Modal
@@ -64,11 +92,11 @@ const RequestPricePopup: React.FC<RequestPricePopupProps> = ({
               }}
             >
               {truncatedText(
-                "Tên dịch vụ Tên dịch vụTên dịch vụTên dịch vụTên dịch vụ"
+                serviceName
               )}
             </Typography>
             <Typography id="modal-modal-title" variant="h6" component="h3">
-              Message vendor
+              Trao đổi với bên cung cấp dịch vụ
             </Typography>
           </Box>
 
@@ -77,10 +105,9 @@ const RequestPricePopup: React.FC<RequestPricePopupProps> = ({
           </IconButton>
         </Box>
         <Typography id="modal-modal-description" sx={{ mt: 1, fontSize: 12 }}>
-          Fill out the form below to request information from Sound Originals
-          Photo & Video.
+          Hãy điền mẫu dưới đây để được giải đáp về các thắc mắc liên quan đến dịch vụ … 
         </Typography>
-        <TextField
+        {/* <TextField
           fullWidth
           label="First and last name"
           margin="normal"
@@ -139,14 +166,17 @@ const RequestPricePopup: React.FC<RequestPricePopupProps> = ({
           }}
         />
           </Grid>
-        </Grid>
-        
-        <LocalizationProvider dateAdapter={AdapterDayjs} >
-      <DemoContainer components={['DatePicker']}>
+        </Grid> */}
+        <Box mt={2}> 
+
+      
+      <LocalizationProvider  dateAdapter={AdapterDayjs} adapterLocale="vi">
+      <DemoContainer components={['DatePicker']} >
         <DatePicker
-          label="Event Date"
+          label="Ngày sự kiện"
           value={value}
           onChange={(newValue) => setValue(newValue)}
+          format="DD-MM-YYYY"
           slotProps={{
             openPickerIcon: {
                 sx: { fontSize: 24 },
@@ -166,15 +196,16 @@ const RequestPricePopup: React.FC<RequestPricePopupProps> = ({
         />
       </DemoContainer>
     </LocalizationProvider>
-        
+    </Box>
         <TextField
           fullWidth
-          label="Message"
+          label="Ghi chú"
           margin="normal"
           variant="outlined"
           multiline
+          onChange={handleChangeNote}
           rows={4}
-          defaultValue="We are currently planning for our wedding on 12/20/2025 and would like to learn more about your business. Could you send us some additional information? Thank you!"
+          value={note}   
           InputProps={{
             style: { fontSize: 16 },
           }}
@@ -185,7 +216,7 @@ const RequestPricePopup: React.FC<RequestPricePopupProps> = ({
         <Button
           variant="contained"
           fullWidth
-          onClick={handleClose}
+          onClick={handleSubmit}
           sx={{
             mt: 3,
             fontSize: 16,

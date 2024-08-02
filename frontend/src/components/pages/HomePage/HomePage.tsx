@@ -9,18 +9,6 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { ServiceData } from "../../../utils/ServiceData";
 
-const combos = [
-  {
-    image: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
-    name: "Combo 1",
-    description: "Combo description 1",
-  },
-  {
-    image: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
-    name: "Combo 2",
-    description: "Combo description 2",
-  },
-];
 
 const blogs = [
   {
@@ -170,6 +158,7 @@ const HomePage: React.FC = () => {
           </span>
         </div>
       </Box>
+
       <Box my={8} mx={40}>
         <Typography
           mb={4}
@@ -190,6 +179,7 @@ const HomePage: React.FC = () => {
                     transition: "transform 0.2s",
                   },
                 }}
+                elevation={4}
               >
                 <CardMedia sx={{ height: 150 }} image={service.imageSmall} />
                 <CardContent>

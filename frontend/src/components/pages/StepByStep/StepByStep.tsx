@@ -9,18 +9,19 @@ import DiamondIcon from '@mui/icons-material/Diamond';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
-const services = [
-  { icon: <WeddingIcon sx={{ fontSize: 40 }}/>, label: 'Thiệp cưới' , name: "invitations", isPrice: true},
-  { icon: <DiamondIcon sx={{ fontSize: 40 }}/>, label: 'Nhẫn cưới' , name: "jewelry", isPrice: true},
-  { icon: <VendorManagerIcon sx={{ fontSize: 40 }}/>, label: 'Ảnh cưới', name: "photography", isPrice: false },
-  { icon: <CheckroomIcon sx={{ fontSize: 40 }}/>, label: 'Trang phục', name: "outfit", isPrice: true },
-  { icon: <AutoFixHighIcon sx={{ fontSize: 40 }}/>, label: 'Makeup', name: "makeup", isPrice: true },
-  { icon: <DirectionsCarIcon sx={{ fontSize: 40 }}/>, label: 'Xe hoa' , name: "wedding-car", isPrice: false},
-  { icon: <RegistryIcon sx={{ fontSize: 40 }}/>, label: 'Địa điểm', name: "venues" , isPrice: false},
-  { icon: <SeatingChartIcon sx={{ fontSize: 40 }}/>, label: 'Trang trí', name: "decoration" , isPrice: false},
-  { icon: <RegistryIcon sx={{ fontSize: 40 }}/>, label: 'Lễ vật', name: "wedding-gifts", isPrice: true },
+import { ServiceData } from '../../../utils/ServiceData';
+// const services = [
+//   { icon: <WeddingIcon sx={{ fontSize: 40 }}/>, label: 'Thiệp cưới' , name: "invitations", isPrice: true},
+//   { icon: <DiamondIcon sx={{ fontSize: 40 }}/>, label: 'Nhẫn cưới' , name: "jewelry", isPrice: true},
+//   { icon: <VendorManagerIcon sx={{ fontSize: 40 }}/>, label: 'Ảnh cưới', name: "photography", isPrice: false },
+//   { icon: <CheckroomIcon sx={{ fontSize: 40 }}/>, label: 'Trang phục', name: "outfit", isPrice: true },
+//   { icon: <AutoFixHighIcon sx={{ fontSize: 40 }}/>, label: 'Makeup', name: "makeup", isPrice: true },
+//   { icon: <DirectionsCarIcon sx={{ fontSize: 40 }}/>, label: 'Xe hoa' , name: "wedding-car", isPrice: false},
+//   { icon: <RegistryIcon sx={{ fontSize: 40 }}/>, label: 'Địa điểm', name: "venues" , isPrice: false},
+//   { icon: <SeatingChartIcon sx={{ fontSize: 40 }}/>, label: 'Trang trí', name: "decoration" , isPrice: false},
+//   { icon: <RegistryIcon sx={{ fontSize: 40 }}/>, label: 'Lễ vật', name: "wedding-gifts", isPrice: true },
 
-];
+// ];
 
 const serviceDetails = [
   { title: 'Service 1', description: 'Details about service 1' },
@@ -35,6 +36,8 @@ const StepByStep = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
+
+  const services = ServiceData
 
   return (
     <Box sx={{marginX: 20}}>
@@ -53,6 +56,8 @@ const StepByStep = () => {
             label={service.label}
             sx={{
               fontSize: '1.2rem',
+              // color: selectedTab === index ? "var(--primary-color)" : 'inherit',
+              color: selectedTab === index ? "var(--primary-color)" : 'black'
             }}
           />
         ))}

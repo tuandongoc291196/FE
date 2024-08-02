@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -20,6 +20,9 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useNavigate } from "react-router";
 import Divider from "@mui/material/Divider";
+import { getCart, removeFromCart } from "../../../utils/CartStorage";
+import { getListQuotation, getServiceById } from "../../../api/CoupleAPI";
+import { useSelector } from "react-redux";
 
 interface Product {
   id: number;
@@ -46,9 +49,45 @@ const products: Product[] = [
   },
 ];
 
+
 const CoupleQuotation: React.FC = () => {
   const navigate = useNavigate();
   const [cart, setCart] = React.useState<Product[]>(products);
+  const user = useSelector((state: any) => state.auth.login.currentUser);
+  const [servicesPrice, setServicePrice] = useState(getCart());
+  const [servicesQuotation, setServiceQuotation] = useState<any[]>([]);
+
+  const getListQuotationf = async () => {
+    const response = await getListQuotation("COUPLE-1",user.token);
+    const updatedData = await Promise.all(response.map(async (item) => {
+      const serviceData = await getServiceById(item.serviceId);
+      return {
+        ...item,
+        serviceData
+      };
+    }));
+    console.log(updatedData)
+    setServiceQuotation(updatedData);
+  }
+
+  useEffect( () => { 
+    const handleStorageChange = () => {
+      setServicePrice(getCart());
+    };
+
+    getListQuotationf()
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  const handleRemoveFromCart = (id: string) => {
+    removeFromCart(id);
+    setServicePrice(getCart());
+  };
 
   const handleQuantityChange = (id: number, quantity: number) => {
     setCart(
@@ -58,8 +97,8 @@ const CoupleQuotation: React.FC = () => {
     );
   };
 
-  const handleDelete = (id: number) => {
-    setCart(cart.filter((product) => product.id !== id));
+  const handleDelete = (id: string) => {
+    setCart(servicesQuotation.filter((product) => product.id !== id));
   };
 
   const totalPrice = cart.reduce(
@@ -158,7 +197,7 @@ const CoupleQuotation: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {cart.map((product, index) => (
+            {servicesPrice.map((product, index) => (
               <TableRow key={product.id}>
                 <TableCell sx={{ fontSize: 14 }}>{index + 1}</TableCell>
                 <TableCell>
@@ -205,7 +244,7 @@ const CoupleQuotation: React.FC = () => {
                   {(product.price * product.quantity).toLocaleString()} VND
                 </TableCell> */}
                 <TableCell>
-                  <IconButton onClick={() => handleDelete(product.id)}>
+                  <IconButton onClick={() => handleRemoveFromCart(product.id)}>
                     <DeleteIcon sx={{ fontSize: 30, color: "red" }} />
                   </IconButton>
                 </TableCell>
@@ -286,23 +325,23 @@ const CoupleQuotation: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {cart.map((product, index) => (
-              <TableRow key={product.id}>
+            {servicesQuotation.map((product, index) => (
+              <TableRow key={product.serviceData.id}>
                 <TableCell sx={{ fontSize: 14 }}>{index + 1}</TableCell>
                 <TableCell>
                   <Box
                     component="img"
-                    src={product.image}
-                    alt={product.name}
+                    src={product.serviceData.listImages[0]}
+                    alt={product.serviceData.name}
                     width={50}
                     height={50}
                     sx={{ borderRadius: "8px" }}
                   />
                 </TableCell>
                 <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
-                  {product.name}
+                  {product.serviceData.name}
                 </TableCell>
-                <TableCell sx={{ fontSize: 14 }}>Đợi báo giá</TableCell>
+                <TableCell sx={{ fontSize: 14 }}>{product.price === 0 ? "Đợi báo giá" : `${product.price.toLocaleString('vi-VN')}`}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleDelete(product.id)}>
                     <DeleteIcon sx={{ fontSize: 30, color: "red" }} />
@@ -317,7 +356,7 @@ const CoupleQuotation: React.FC = () => {
         <Typography my={2} variant="h4">
           Tổng cộng:{" "}
           <Box component="span" sx={{ color: "green", fontWeight: "bold" }}>
-            {totalPrice.toLocaleString()} VND
+            {totalPrice.toLocaleString('vi-VN')} VND
           </Box>
         </Typography>
         <Box>

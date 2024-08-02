@@ -15,6 +15,7 @@ export const GET_ALL_CATEGORIES = "/category/getAllCategory"
 export const CREATE_CATEGORY = "/category/create"
 
 // Promotion
+export const CREATE_PROMOTION = "/promotion/create"
 export const GET_PROMOTION_BY_SUPPLIER = "/promotion/getPromotionBySupplier"
 
 // Booking

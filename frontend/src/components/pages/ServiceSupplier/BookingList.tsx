@@ -15,6 +15,7 @@ import { PromotionItem } from '../../../types/schema/promotion';
 import { BookingItem } from '../../../types/schema/booking';
 import { getBookingBySupplierId } from '../../../redux/apiRequest';
 import { BOOKING_STATUS } from '../../../constants/consts';
+import "./BookingList.css";
 
 interface Props {
     setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -33,16 +34,27 @@ const convertStatusName = (status: string) => {
     }
 }
 
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '70%',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+};
+
 const BookingList: FC<Props> = (props) => {
     const user = useSelector((state: any) => state.auth.login.currentUser);
     const [bookingList, setBookingList] = useState<BookingItem[]>([]);
-    const [images, setImages] = useState<string[]>([]);
-    const [bookingName, setBookingName] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
-    const [price, setPrice] = useState<string>('0');
+    const [bookingDetail, setBookingDetail] = useState<BookingItem>();
+    const [bookingDetailRows, setBookingDetailRows] = useState<any>([]);
+    const [bookingDetailCols, setBookingDetailCols] = useState<GridColDef[]>([]);
+
 
     const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     const navigate = useNavigate();
@@ -60,11 +72,14 @@ const BookingList: FC<Props> = (props) => {
 
     const rows = bookingList?.length > 0 ? bookingList.map((booking) => ({
         id: booking.id,
+        coupleName: booking.couple.partnerName1,
         createdAt: booking.createdAt,
         status: booking.status,
+        booking: booking
     })) : [];
 
     const columns: GridColDef[] = [
+        { field: "id", headerName: "ID", flex: 0.3 },
         { field: "coupleName", headerName: "Tên couple", flex: 0.5 },
         {
             field: '',
@@ -73,38 +88,58 @@ const BookingList: FC<Props> = (props) => {
             width: 170,
             renderCell: (params) => (
                 <button className="btn-admin-disable" onClick={() => {
-                    // handleDisable(params.row.id);
+                    handleOpen(params.row.booking)
                 }}>
                     Xem chi tiết
                 </button>
             ),
         },
         { field: "createdAt", headerName: "Ngày booking", flex: 0.5 },
-        {
-            field: 'status',
-            headerName: 'Trạng thái',
-            flex: 0.3,
-            width: 170,
-            renderCell: (params) => (
-                <FormControl className="form-input price">
-                    <Select
-                        className="input regis-input"
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        value={params.row.status}
-                    >
-                        {
-                            bookingStatuses.map((status: any, index) => {
-                                return (
-                                    <MenuItem value={status} key={index}><div style={{ fontSize: "4rem !important" }}>{convertStatusName(status)}</div></MenuItem>
-                                )
-                            })
-                        }
-                    </Select>
-                </FormControl>
-            ),
-        },
     ];
+
+    const handleOpen = (booking: BookingItem) => {
+        setBookingDetail(booking);
+        const rows = booking.serviceBookings?.length > 0 ? booking.serviceBookings.map((item) => ({
+            id: item.service.id,
+            name: item.service.name,
+            price: item.bookingPrice,
+            status: item.service.status,
+        })) : [];
+
+        const columns: GridColDef[] = [
+            { field: "name", headerName: "Tên dịch vụ", flex: 1.2 },
+            { field: "price", headerName: "Giá tiền", flex: 0.5 },
+            {
+                field: 'status',
+                headerName: 'Trạng thái',
+                flex: 0.3,
+                width: 170,
+                renderCell: (params) => (
+                    <FormControl className="form-input price">
+                        <Select
+                            className="input regis-input"
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={params.row.status}
+                        >
+                            {
+                                bookingStatuses.map((status: any, index) => {
+                                    return (
+                                        <MenuItem value={status} key={index}><div style={{ fontSize: "4rem !important" }}>{convertStatusName(status)}</div></MenuItem>
+                                    )
+                                })
+                            }
+                        </Select>
+                    </FormControl>
+                ),
+            },
+        ];
+        if (rows) {
+            setBookingDetailRows(rows);
+            setBookingDetailCols(columns);
+        }
+        setOpen(true);
+    }
 
     return (
         <div id="Services">
@@ -123,162 +158,52 @@ const BookingList: FC<Props> = (props) => {
                     </>
                 ) : null
             }
-
-            {/* <Modal
+            <Modal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
-                id="ModalCreateBooking"
+                id="BookingDetailModal"
             >
-                <Box
-                    className="box"
-                >
-                    <Typography id="modal-modal-title" variant="h2" component="h2">
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
                         <span style={{ fontSize: "3rem !important" }}>
-                            Tạo dịch vụ
+                            Chi tiết dịch vụ
                         </span>
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <div className="create-container">
                             <div className="group-input mb-24">
-                                <label>Tên dịch vụ:</label>
+                                <label className='booking-detail-label'>Ngày booking:</label>
                                 <div className="form-input">
-                                    <input type="Username" className="input regis-input" required onChange={(e) => { setBookingName(e.target.value) }} />
-                                    <span className="text-err"></span>
+                                    <span className='booking-detail-info' >{bookingDetail?.createdAt}</span>
                                 </div>
                             </div>
                             <div className="group-input mb-24">
-                                <label>Loại:</label>
-                                <FormControl className="form-input price">
-                                    <Select
-                                        className="input regis-input"
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={category}
-                                        onChange={(e) => {
-                                            setCategory(e.target.value as string); console.log(e.target.value);
-                                        }}
-                                    >
-                                        {
-                                            categories.map((category: any, index) => {
-                                                return (
-                                                    <MenuItem value={category.categoryName} key={index}>{category?.categoryName}</MenuItem>
-                                                )
-                                            })
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </div>
-                            <div className="group-input mb-24">
-                                <label>Phân khúc:</label>
-                                <FormControl className="form-input price">
-                                    <Select
-                                        className="input regis-input"
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={segment}
-                                        onChange={(e) => { setSegment(e.target.value) }}
-                                    >
-                                        {
-                                            segments.map((segment: any, index) => {
-                                                return (
-                                                    <MenuItem value={segment} key={index}>{segment.name}</MenuItem>
-                                                )
-                                            })
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </div>
-                            <div className="group-input mb-24">
-                                <label>Giá:</label>
-                                <div className="form-input price">
-                                    <FormControl className="form-input mr-24">
-                                        <Select
-                                            className="input regis-input"
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={priceType}
-                                            onChange={(e) => { setPriceType(e.target.value) }}
-                                        >
-                                            {
-                                                priceTypes.map((type, index) => {
-                                                    return (
-                                                        <MenuItem value={type} key={index}>{type}</MenuItem>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                    </FormControl>
-                                    {
-                                        (priceType == availablePrice) ?
-                                            (
-                                                <div className="form-input price-input">
-                                                    <input type="Username" className="input regis-input" required onChange={(e) => { setPrice(e.target.value) }} />
-                                                    <span className="text-err"></span>
-                                                </div>
-                                            ) : null
-                                    }
+                                <label className='booking-detail-label'>Ngày cưới:</label>
+                                <div className="form-input">
+                                    <span className='booking-detail-info' >{bookingDetail?.couple.weddingDate}</span>
                                 </div>
                             </div>
                             <div className="group-input mb-24">
-                                <label>Mã giảm giá:</label>
-                                <FormControl className="form-input price">
-                                    <Select
-                                        className="input regis-input"
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={promotion}
-                                        onChange={(e) => { setPromotion(e.target.value) }}
-                                    >
-                                        {
-                                            promotions?.map((promotion: any, index) => {
-                                                return (
-                                                    <MenuItem value={promotion} key={index}>{promotion.promotionDetails}</MenuItem>
-                                                )
-                                            })
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </div>
-                            <div className="group-input mb-24"></div>
-                            <div className="group-input individual-input mb-24">
-                                <label>Mô tả:</label>
+                                <label className='booking-detail-label'>Tổng tiền:</label>
                                 <div className="form-input">
-                                    <textarea className="textarea regis-input" required onChange={(e) => { setDescription(e.target.value) }} />
-                                    <span className="text-err"></span>
-                                </div>
-                            </div>
-                            <div className="group-input individual-input mb-24">
-                                <label>Ảnh:</label>
-                                <div className="form-input">
-                                    <div className="img-input" style={{ cursor: "pointer" }} onClick={(e) => {
-                                        document.getElementById("img-file")?.click();
-                                    }}>
-                                        <input type="file" id="img-file" accept='.jpg, .png' style={{ display: "none" }} onChange={(e) => { uploadImage(e.target.files) }} />
-                                        <Button className="btn-create" variant="contained">Thêm ảnh</Button>
-                                    </div>
-                                    <div className="images">
-                                        {
-                                            images.map((item, index) => {
-                                                return (
-                                                    <div className="img-item" key={index}>
-                                                        <img src={item} alt="" />
-                                                    </div>
-                                                )
-                                            })
-                                        }
-                                    </div>
+                                    <span className='booking-detail-info' >{`${bookingDetail?.totalPrice}`}</span>
                                 </div>
                             </div>
                         </div>
+                        <div className="table" style={{ height: 400, width: "100%" }}>
+                            <DataGrid rows={bookingDetailRows}
+                                columns={bookingDetailCols}
+                                autoPageSize
+                                pagination />
+                        </div>
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <div className="btn-handle">
                             <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Huỷ</Button>
-                            <Button className="btn-create" variant="contained" onClick={() => { handleCreate() }}>Tạo mới</Button>
                         </div>
                     </Typography>
                 </Box>
-            </Modal> */}
+            </Modal>
         </div>
     )
 }

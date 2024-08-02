@@ -6,3 +6,12 @@ export interface PromotionItem {
     endDate: String,
     status: String
 }
+
+export interface PromotionItemCreate {
+    promotionDetails: String,
+    percent: Number,
+    startDate: String,
+    endDate: String,
+    supplierId: String,
+    listServiceIds: String
+}

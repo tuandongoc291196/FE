@@ -86,6 +86,14 @@
     width: 30%;
 }
 
+.group-input-10 {
+    width: 10%;
+}
+
+.group-input-35 {
+    width: 35%;
+}
+
 .group-input label {
     margin-right: 24px;
 }

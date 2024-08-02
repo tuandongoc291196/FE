@@ -52,7 +52,7 @@ export const HeaderNav = [
             },
             {
                 name: "giảm giá",
-                navigate: "/coupon"
+                navigate: "/promotions"
             },
             {
                 name: "booking",

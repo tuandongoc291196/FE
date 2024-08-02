@@ -6,6 +6,7 @@ import {
   ACCOUNT_REGISTER_STAFF,
   ACCOUNT_REGISTER_SUPPLIER,
   CREATE_CATEGORY,
+  CREATE_PROMOTION,
   CREATE_SERVICE,
   GET_ACTIVE_BLOGS,
   GET_ALL_BLOGS,
@@ -237,6 +238,19 @@ export const createService = async (
 };
 
 // Promotion
+
+export const createPromotion = async (promotion, token) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+      const res = await axios.post(CREATE_PROMOTION, promotion, {headers: headers});
+      return res.data.status;
+  } catch (error) {
+      return error;
+  }
+}
 
 export const getPromotionBySupplier = async (isAsc, page, size, sortBy, supplierId) => {
   try {

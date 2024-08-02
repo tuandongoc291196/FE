@@ -137,11 +137,11 @@ const Services: FC<Props> = (props) => {
     const rows = services?.length > 0 ? services.map((service) => ({
         id: service.id,
         category: service?.categoryResponse?.categoryName,
-        name: service.name,
-        description: service.description,
-        promotion: service.promotions.map(element => `${element.percent.toString()}%`).join(', '),
-        price: service.price,
-        type: service.type
+        name: service?.name,
+        description: service?.description,
+        promotion: (service?.promotionService) ? service?.promotionService.percent + "%" : "",
+        price: service?.price,
+        type: service?.type
     })) : [];
 
     const columns: GridColDef[] = [

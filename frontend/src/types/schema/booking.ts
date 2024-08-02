@@ -1,6 +1,9 @@
+import { ServiceEntity } from "../entity/Entity"
+import { CoupleItem } from "./couple"
+
 export interface BookingItem {
     id: String,
-    coupleId: String,
+    couple: CoupleItem,
     createdAt: String,
     completedDate: String,
     serviceBookings: Array<ServiceBookingItem>
@@ -9,6 +12,6 @@ export interface BookingItem {
 }
 
 export interface ServiceBookingItem {
-    serviceId: String,
-    price: Number
+    service: ServiceEntity,
+    bookingPrice: Number
 }

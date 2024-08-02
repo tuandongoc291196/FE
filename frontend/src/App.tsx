@@ -33,6 +33,7 @@ import ProductPriceReporter from "./components/pages/ServiceSupplier/ProductPric
 import BlogDetail from "./components/pages/ServiceSupplier/BlogDetail";
 import Blogs from "./components/pages/ServiceSupplier/Blog";
 import SupplierBookingList from "./components/pages/ServiceSupplier/BookingList";
+import Promotions from "./components/pages/ServiceSupplier/Promotions";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -123,6 +124,7 @@ function App() {
             <Route path="/blogs" element={<Blogs setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
             <Route path="/blog-detail/:id" element={<BlogDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
             <Route path="/booking-list" element={<SupplierBookingList setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            <Route path="/promotions" element={<Promotions setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
           </Route>
 
           {/* Guest */}

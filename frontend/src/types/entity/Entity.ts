@@ -27,7 +27,7 @@ export interface ServiceEntity {
     status: String,
     categoryResponse: CategoryEntity,
     type: String,
-    promotions: Array<PromotionItem>,
+    promotionService: PromotionItem,
 }
 
 export interface ServiceCreate {

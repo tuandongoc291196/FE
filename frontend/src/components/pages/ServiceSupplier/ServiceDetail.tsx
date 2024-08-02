@@ -38,9 +38,9 @@ const ServiceDetail: FC<Props> = (props) => {
           <Paper>
             <img src={`${item}`} alt={`${item}`} style={{ width: '458px', height: '600px' }} key={i} />
             {
-              (service.promotions.length > 0) ?
+              (service.promotionService) ?
                 (
-                  <h2 className="promotion">Giảm giá {service.promotions.map(element => `${element.percent.toString()}%`).join(', ')}</h2>
+                  <h2 className="promotion">Giảm giá {service.promotionService.percent + "%"}</h2>
                 ) : null
             }
           </Paper>

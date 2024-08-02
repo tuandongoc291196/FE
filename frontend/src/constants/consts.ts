@@ -41,3 +41,5 @@ export const BOOKING_STATUS = {
   confirm: "CONFIRM",
   cancel: "CANCEL"
 };
+
+export const LOGO = "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2FD.png?alt=media&token=9d52357b-9b9f-4be7-ab78-8ef0889f0fd6"

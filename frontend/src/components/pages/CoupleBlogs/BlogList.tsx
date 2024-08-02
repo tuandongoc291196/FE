@@ -1,6 +1,7 @@
 // Blog.tsx
 import React from 'react';
-import { Container, Grid, Card, CardContent, Typography, CardMedia, Box } from '@mui/material';
+import { Container, Grid, Card, CardContent, Typography, CardMedia, Box, Divider } from '@mui/material';
+import { useNavigate } from 'react-router';
 
 interface BlogPost {
   title: string;
@@ -42,12 +43,39 @@ const blogPosts: BlogPost[] = [
 ];
 
 const BlogList: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <Box mx={40}>
-      <Typography variant="h3" m={4}>Blogs</Typography>
+      <Typography variant="h2" fontWeight={600} m={4} sx={{color: "var(--primary-color)"}}>
+      <Divider
+          sx={{
+            mx: "auto",
+            width: 700,
+            "&::before, &::after": {
+              borderColor: "var(--primary-color)",
+              borderWidth: "1px",
+            },
+          }}
+        >
+          Cẩm nang cưới
+        </Divider>
+        </Typography>
         {blogPosts.map((post, index) => (
 
-            <Card sx={{my:2,  display: 'flex'}} elevation={4}>
+            <Card 
+            onClick={() => {
+              navigate("/blogs/details/sdfa");
+            }}
+
+            sx={{my:2,  display: 'flex',
+              "&:hover": {
+                boxShadow: 6,
+                transform: "scale(1.05)",
+                transition: "transform 0.2s",
+              },
+            }}
+            elevation={4}
+            >
               <CardMedia
                 component="img"
                 sx={{

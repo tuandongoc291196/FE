@@ -77,7 +77,11 @@ const ItemServiceViewCard: React.FC<VenueCardProps> = ({ imageUrl, title, locati
         >
         {price === "" ? "Giá liên hệ" : price}
         </Button>
-        <RequestPricePopup open={open} handleClose={handleClose} />
+        <RequestPricePopup open={open} handleClose={handleClose} 
+        serviceId=""
+        serviceName=""
+        suplierID=''
+        />
         </CardActions>
       </Box>
     </Card>

@@ -24,18 +24,15 @@ const CoupleService = () => {
   const [selectedService, setSelectedService] = useState(coupleServiceData?.items[0]?.name || "");
   const [selectedServiceList, setSelectedServiceList] = useState<any[]>([]);
 
-  const getAllCategoryList = async () => {
-    const response = await getAllCategory();
-  }
-  const getSelectedServiceList = async () => {
-    const response = await getServiceByCategory("CATEGORY-14");
+
+  const getSelectedServiceList = async (categoryID: string) => {
+    const response = await getServiceByCategory(categoryID);
     setSelectedServiceList(response);
-;  }
-  console.log(selectedServiceList)
+  }
 
   useEffect(() => {
-    setSelectedService(coupleServiceData?.items[0]?.name || "");
-    getSelectedServiceList();
+    // setSelectedService(coupleServiceData?.items[0]?.name || "");
+    getSelectedServiceList(coupleServiceData?.id ?? "");
   }, [coupleServiceData]);
 
   return (
@@ -155,11 +152,13 @@ const CoupleService = () => {
               <ServiceItemViewCard
                 id = {item.id}
                 imageUrl={item?.listImages[0]}
-                location="San Francisco, CA"
+                location="Tp. Hồ Chí Minh"
                 title={item.name}
-                ratingValue={3}
+                ratingValue={4.5}
                 description={item.description}
-                priceText={item.price}
+                price={item.price}
+                isPrice= {coupleServiceData?.isPrice ?? false}
+                suplierID= {item.serviceSupplierResponse.id}
               />
               )
             })}

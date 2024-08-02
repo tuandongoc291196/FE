@@ -427,6 +427,9 @@ const CoupleServiceDetail = () => {
                 <RequestPricePopup
                   open={openRequest}
                   handleClose={handleCloseRequest}
+                  serviceId=""
+                  serviceName=""
+                  suplierID=""
                 />
               </Box>
             </Grid>

@@ -35,7 +35,7 @@ export const getServiceByCategory = async (
   ): Promise<any[]> => {
   
     try {
-      const response = await axios.get("/service/getAllServicesByCategory/", {
+      const response = await axios.get("/service/filterService/", {
         params: {
           categoryId: category,
           // minPrice: minPrice,
@@ -60,7 +60,13 @@ export const getServiceById = async (
   ): Promise<any[]> => {
   
     try {
-      const response = await axios.get("/service/getById/" + serviceID);
+      const response = await axios.get("/service/getById/{id}", 
+        {
+          params:{
+            id: serviceID
+          }
+        }
+      );
   
       if (response.data.status === 'SUCCESS') {
         return response.data.data;
@@ -150,6 +156,7 @@ export const getServiceById = async (
   };
   
 export const createQuotation = async (
+    coupleId: string,
     evenDate: string,
     message: string,
     suplierId: string,
@@ -157,11 +164,12 @@ export const createQuotation = async (
   ): Promise<any[]> => {
   
     try {
+
       const response = await axios.post("/quote-request/create" ,{
-        coupleId: "",
-        eventDate: "",
+        coupleId: coupleId,
+        eventDate: evenDate,
         message: message,
-        suplierId: suplierId,
+        supplierId: suplierId,
         serviceId: serviceId,
       });
   
@@ -177,17 +185,22 @@ export const createQuotation = async (
   };
 
   export const getListQuotation = async (
-    pageNo: number,
-    pageSize: number,
+    coupleId: string,
+    token: string
+    // pageNo: number,
+    // pageSize: number,
   ): Promise<any[]> => {
   
     try {
       const response = await axios.get("/quote-request/getQuoteRequestByCouple", {
         params: {
-          coupleId: "",
-          pageNo: pageNo,
-          pageSize: pageSize
+          coupleId: coupleId,
+          // pageNo: pageNo,
+          // pageSize: pageSize
         },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
   
       if (response.data.status === 'SUCCESS') {

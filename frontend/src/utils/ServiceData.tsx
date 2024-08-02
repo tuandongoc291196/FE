@@ -9,7 +9,7 @@ import CheckroomIcon from '@mui/icons-material/Checkroom';
 
 export const ServiceData = [
     {
-        id: "CATEGORY",
+        id: "CATEGORY-14",
         name: "invitations",
         label: "Thiệp cưới",
         icon: <WeddingIcon sx={{ fontSize: 40 }}/>,
@@ -22,7 +22,7 @@ export const ServiceData = [
         items: []
     },
     {
-        id: "CATEGORY",
+        id: "CATEGORY-15",
         name: "jewelry",
         label: "Nhẫn cưới",
         icon: <DiamondIcon sx={{ fontSize: 40 }}/>,
@@ -35,7 +35,7 @@ export const ServiceData = [
         items: []
     },
     {
-        id: "CATEGORY",
+        id: "CATEGORY-16",
         name: "photography",
         label: "Ảnh cưới",
         icon: <VendorManagerIcon sx={{ fontSize: 40 }}/>,
@@ -61,7 +61,7 @@ export const ServiceData = [
         ]
     },
     {
-        id: "CATEGORY",
+        id: "CATEGORY-17",
         name: "outfits",
         label:"Trang phục",
         icon: <CheckroomIcon sx={{ fontSize: 40 }}/>,
@@ -91,7 +91,7 @@ export const ServiceData = [
         ]
     },
     {
-        id: "CATEGORY",
+        id: "CATEGORY-18",
         name: "makeup",
         label: "Make up",
         icon: <AutoFixHighIcon sx={{ fontSize: 40 }}/>,
@@ -113,7 +113,7 @@ export const ServiceData = [
         ]
     },
     {
-        id: "CATEGORY",
+        id: "CATEGORY-19",
         name: "wedding-car",
         label: "Xe hoa",
         icon: <DirectionsCarIcon sx={{ fontSize: 40 }}/>,
@@ -126,7 +126,7 @@ export const ServiceData = [
         items: []
     },
     {
-        id: "CATEGORY",
+        id: "CATEGORY-20",
         name: "venues",
         label: "Địa điểm",
         icon: <RegistryIcon sx={{ fontSize: 40 }}/>,
@@ -160,7 +160,7 @@ export const ServiceData = [
         ]
     },
     {
-        id: "CATEGORY",
+        id: "CATEGORY-21",
         name: "decoration",
         label:"Trang trí",
         icon: <SeatingChartIcon sx={{ fontSize: 40 }}/>,
@@ -194,7 +194,7 @@ export const ServiceData = [
         ]
     },
     {
-        id: "CATEGORY",
+        id: "CATEGORY-22",
         name: "wedding-gifts",
         label: "Lễ vật",
         icon: <RegistryIcon sx={{ fontSize: 40 }}/>,

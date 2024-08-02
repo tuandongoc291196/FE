@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Button, Rating } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import RequestPricePopup from "../Popup/Couple/RequestPricePopup";
+import { addToCart } from "../../../utils/CartStorage";
 
 interface ServiceItemViewCardProps {
   id: string;
@@ -11,7 +12,9 @@ interface ServiceItemViewCardProps {
   title: string;
   ratingValue: number;
   description: string;
-  priceText: string;
+  price: number;
+  isPrice: boolean;
+  suplierID: string;
 }
 
 const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
@@ -21,7 +24,9 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
   title,
   ratingValue,
   description,
-  priceText
+  price,
+  isPrice,
+  suplierID
 }) => {
   const navigate = useNavigate();
 
@@ -72,16 +77,21 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
             style={{ backgroundColor: "var(--primary-color)"}}
             variant="contained"
             onClick={() => {
-              if (priceText !== "") {
-                  navigate(`/quotation`);
+              if (isPrice) {
+                addToCart({id: id, image: imageUrl, name: title, price: price});
+                navigate(`/quotation`);
               } else {
-                    setOpen(true)
+                setOpen(true)
               }
             }}
           >
-            {priceText === "" ? "Giá liên hệ" : priceText}
+            {isPrice ? `${price.toLocaleString('vi-VN')} VND` : "Giá liên hệ"  }
           </Button>
-          <RequestPricePopup open={open} handleClose={handleClose} />
+          <RequestPricePopup open={open} handleClose={handleClose}
+          serviceId={id}
+          serviceName={title}
+          suplierID={suplierID}
+          />
         </div>
       </div>
     </li>

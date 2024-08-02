@@ -21,7 +21,7 @@ const NavSearching = () => {
               key={index}
             >
               <img className="vendor-img" src={item.imageIcon} alt={item.alt} />
-              {item.name}
+              {item.label}
             </li>
           );
         })}

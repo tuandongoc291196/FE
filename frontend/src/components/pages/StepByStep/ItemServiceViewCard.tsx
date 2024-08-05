@@ -4,26 +4,41 @@ import { Star, FavoriteBorder, People } from '@mui/icons-material';
 import StarIcon from "@mui/icons-material/Star";
 import { useNavigate } from 'react-router';
 import RequestPricePopup from '../Popup/Couple/RequestPricePopup';
+import { addToCart } from '../../../utils/CartStorage';
 
 interface VenueCardProps {
+  id: string;
   imageUrl: string;
   title: string;
   location: string;
   rating: number;
-  price: string;
+  price: number;
   description: string;
+  supplierID: string
 }
 
-const ItemServiceViewCard: React.FC<VenueCardProps> = ({ imageUrl, title, location, rating, price, description }) => {
+const ItemServiceViewCard: React.FC<VenueCardProps> = ({ 
+  id,
+  imageUrl, title, location, rating, price, description,
+   supplierID
+  
+}) => {
   const navigate = useNavigate();
-
+  const type = "LUXURY"
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   return (
-    <Card sx={{ display: 'flex', margin: '20px',}} elevation={3}>
+    <Card sx={{ display: 'flex', margin: '20px',
+      "&:hover": {
+        boxShadow: 6,
+        transform: "scale(1.05)",
+        transition: "transform 0.2s",
+      },
+
+    }} elevation={3}>
       <CardMedia
         component="img"
-        sx={{ width: 200 }}
+        sx={{ width: 200, maxHeight:240 }}
         image={imageUrl}
         alt={title}
       />
@@ -34,13 +49,23 @@ const ItemServiceViewCard: React.FC<VenueCardProps> = ({ imageUrl, title, locati
               <Typography variant="subtitle1" color="text.secondary">
                 {location}
               </Typography>
-              <Typography component="div" variant="h4" fontWeight={600}>
+              <Typography component="div" variant="h4" fontWeight={600}
+              onClick={() => {
+                navigate(`/services/details/${id}`);
+              }}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  color: 'var(--primary-color)',
+                },
+              }}
+              >
                 {title}
               </Typography>
               <Box sx={{ display: 'flex', alignItems: 'bottom' }}>
               <Rating
                     name="text-feedback"
-                    value={3}
+                    value={rating}
                     readOnly
                     precision={0.1}
                     size="large"
@@ -49,9 +74,10 @@ const ItemServiceViewCard: React.FC<VenueCardProps> = ({ imageUrl, title, locati
                     }
                   />
                 <Typography color="text.secondary" sx={{ marginLeft: '5px' }} fontSize={14} fontWeight={500}>
-                  5.0
+                  {rating}
                 </Typography>
               </Box>
+              <Chip label={type === "LUXURY" ? "Cao cấp" : "Phổ thông"} color={type === "LUXURY" ? "secondary" : "warning"} sx={{width: 80, fontSize: 10,fontWeight: 600}} size="small"/>
               <Typography color="text.secondary" fontSize={12} sx={{
                   display: '-webkit-box',
                   overflow: 'hidden',
@@ -68,19 +94,16 @@ const ItemServiceViewCard: React.FC<VenueCardProps> = ({ imageUrl, title, locati
         <CardActions sx={{ justifyContent: 'flex-end' }}>
         <Button variant="contained" sx={{px: 4,py:1, mb:1,mr:1, fontSize: 14, fontWeight: 600}} style={{ backgroundColor: 'var(--primary-color)'}}
         onClick={() => {
-          if (price !== "") {
-              navigate(`/quotation`);
-          } else {
-                setOpen(true)
-          }
+          addToCart({id: id, image: imageUrl, name: title, price: price});
+          navigate(`/quotation`);
         }}
         >
-        {price === "" ? "Giá liên hệ" : price}
+         {price.toLocaleString('vi-VN')} VND
         </Button>
         <RequestPricePopup open={open} handleClose={handleClose} 
-        serviceId=""
-        serviceName=""
-        suplierID=''
+        serviceId={id}
+        serviceName={title}
+        suplierID={supplierID}
         />
         </CardActions>
       </Box>

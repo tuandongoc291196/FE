@@ -52,59 +52,33 @@ const products: Product[] = [
 
 const CoupleQuotation: React.FC = () => {
   const navigate = useNavigate();
-  const [cart, setCart] = React.useState<Product[]>(products);
   const user = useSelector((state: any) => state.auth.login.currentUser);
   const [servicesPrice, setServicePrice] = useState(getCart());
-  const [servicesQuotation, setServiceQuotation] = useState<any[]>([]);
 
-  const getListQuotationf = async () => {
-    const response = await getListQuotation("COUPLE-1",user.token);
-    const updatedData = await Promise.all(response.map(async (item) => {
-      const serviceData = await getServiceById(item.serviceId);
-      return {
-        ...item,
-        serviceData
-      };
-    }));
-    console.log(updatedData)
-    setServiceQuotation(updatedData);
-  }
 
   useEffect( () => { 
     const handleStorageChange = () => {
       setServicePrice(getCart());
     };
 
-    getListQuotationf()
-
     window.addEventListener('storage', handleStorageChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [getCart()]);
 
   const handleRemoveFromCart = (id: string) => {
     removeFromCart(id);
     setServicePrice(getCart());
   };
 
-  const handleQuantityChange = (id: number, quantity: number) => {
-    setCart(
-      cart.map((product) =>
-        product.id === id ? { ...product, quantity } : product
-      )
-    );
-  };
 
-  const handleDelete = (id: string) => {
-    setCart(servicesQuotation.filter((product) => product.id !== id));
-  };
-
-  const totalPrice = cart.reduce(
-    (total, product) => total + product.price * product.quantity,
+  const totalPrice = servicesPrice.reduce(
+    (total, product) => total + product.price,
     0
   );
+
 
   return (
     <Box p={3}>
@@ -124,7 +98,7 @@ const CoupleQuotation: React.FC = () => {
             },
           }}
         >
-          Dịch vụ có giá
+          Danh sách dịch vụ
         </Divider>
       </Typography>
       <TableContainer elevation={4} sx={{ my: 4 }} component={Card}>
@@ -167,24 +141,6 @@ const CoupleQuotation: React.FC = () => {
               >
                 Giá bán
               </TableCell>
-              {/* <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Số lượng
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Thành tiền
-              </TableCell> */}
               <TableCell
                 sx={{
                   fontSize: 16,
@@ -216,134 +172,8 @@ const CoupleQuotation: React.FC = () => {
                 <TableCell sx={{ fontSize: 14 }}>
                   {product.price.toLocaleString()} VND
                 </TableCell>
-                {/* <TableCell>
-                  <Box display="flex" alignItems="center">
-                    <IconButton
-                      onClick={() =>
-                        handleQuantityChange(
-                          product.id,
-                          Math.max(product.quantity - 1, 1)
-                        )
-                      }
-                    >
-                      <RemoveIcon sx={{ color: "red", fontSize: 20 }} />
-                    </IconButton>
-                    <Typography variant="body1" sx={{ mx: 2, fontSize: 14 }}>
-                      {product.quantity}
-                    </Typography>
-                    <IconButton
-                      onClick={() =>
-                        handleQuantityChange(product.id, product.quantity + 1)
-                      }
-                    >
-                      <AddIcon sx={{ color: "green", fontSize: 20 }} />
-                    </IconButton>
-                  </Box>
-                </TableCell>
-                <TableCell sx={{ fontSize: 14 }}>
-                  {(product.price * product.quantity).toLocaleString()} VND
-                </TableCell> */}
                 <TableCell>
                   <IconButton onClick={() => handleRemoveFromCart(product.id)}>
-                    <DeleteIcon sx={{ fontSize: 30, color: "red" }} />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Typography
-        variant="h4"
-        my={4}
-        fontWeight={600}
-        sx={{ textTransform: "uppercase", color:"var(--primary-color)" }}
-      >
-        <Divider
-          sx={{
-            mx: "auto",
-            width: 700,
-            "&::before, &::after": {
-              borderColor: "var(--primary-color)",
-              borderWidth: "1px",
-            },
-          }}
-        >
-          Dịch vụ yêu cầu giá
-        </Divider>
-      </Typography>
-      <TableContainer elevation={4} sx={{ mt: 4 }} component={Card}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                STT
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Hình ảnh
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Tên sản phẩm
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Giá bán
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Xóa
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {servicesQuotation.map((product, index) => (
-              <TableRow key={product.serviceData.id}>
-                <TableCell sx={{ fontSize: 14 }}>{index + 1}</TableCell>
-                <TableCell>
-                  <Box
-                    component="img"
-                    src={product.serviceData.listImages[0]}
-                    alt={product.serviceData.name}
-                    width={50}
-                    height={50}
-                    sx={{ borderRadius: "8px" }}
-                  />
-                </TableCell>
-                <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
-                  {product.serviceData.name}
-                </TableCell>
-                <TableCell sx={{ fontSize: 14 }}>{product.price === 0 ? "Đợi báo giá" : `${product.price.toLocaleString('vi-VN')}`}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleDelete(product.id)}>
                     <DeleteIcon sx={{ fontSize: 30, color: "red" }} />
                   </IconButton>
                 </TableCell>

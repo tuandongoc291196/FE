@@ -21,7 +21,7 @@ const CoupleService = () => {
   const location = useLocation();
   const path = location.pathname.split("/")[2];
   const coupleServiceData = ServiceData.find((e) => e.name === path);
-  const [selectedService, setSelectedService] = useState(coupleServiceData?.items[0]?.name || "");
+  const [selectedService, setSelectedService] = useState(coupleServiceData?.items[0]?.name ?? "");
   const [selectedServiceList, setSelectedServiceList] = useState<any[]>([]);
 
 
@@ -33,6 +33,7 @@ const CoupleService = () => {
   useEffect(() => {
     // setSelectedService(coupleServiceData?.items[0]?.name || "");
     getSelectedServiceList(coupleServiceData?.id ?? "");
+    setSelectedService(coupleServiceData?.items[0]?.name ?? "")
   }, [coupleServiceData]);
 
   return (
@@ -93,7 +94,7 @@ const CoupleService = () => {
               </ul>
             </div>
           )}
-          {coupleServiceData?.isPrice && (
+          
             <div className="filter-component">
               <legend className="filter-name">Chi phí</legend>
               <ul className="filter-list">
@@ -140,7 +141,7 @@ const CoupleService = () => {
                 </RadioGroup>
               </ul>
             </div>
-          )}
+       
         </aside>
         <div className="filter-content">
           <div className="content-header">
@@ -154,10 +155,10 @@ const CoupleService = () => {
                 imageUrl={item?.listImages[0]}
                 location="Tp. Hồ Chí Minh"
                 title={item.name}
+                type={item.type}
                 ratingValue={4.5}
                 description={item.description}
                 price={item.price}
-                isPrice= {coupleServiceData?.isPrice ?? false}
                 suplierID= {item.serviceSupplierResponse.id}
               />
               )

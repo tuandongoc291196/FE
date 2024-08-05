@@ -45,6 +45,7 @@ import BlogList from "./components/pages/CoupleBlogs/BlogList";
 import CoupleServiceListImage from "./components/pages/CoupleServiceDetail/CoupleServiceListImage";
 import CoupleServiceDetail from "./components/pages/CoupleServiceDetail/CoupleServiceDetail";
 import CoupleService from "./components/pages/CoupleService/CoupleService";
+import ComboServiceDetail from "./components/pages/ComboService/ComboServiceDetail";
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -151,6 +152,7 @@ function App() {
           <Route path="/booking-details" element={<BookingDetails />} />
           <Route path="/booking-history" element={<BookingHistory />} />
 
+          <Route path="/combo-service/details/:id" element={<ComboServiceDetail />} />
           <Route path="/blogs/details/:id" element={<BlogDetails />} />
           <Route path="/blogs-couple" element={<BlogList />} />
 

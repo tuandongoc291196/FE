@@ -14,6 +14,8 @@ import { LOGO, ROLE } from "../../../constants/consts";
 import { HeaderNav } from "./HeaderNav";
 import { IconButton } from "@mui/material";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 
 interface HeaderProps {
   isModalVisible: boolean;
@@ -136,6 +138,21 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
           </div>
         ) : (
           <div className="header-right">
+            
+            <IconButton
+              onClick={() => {
+                console.log(1)
+              }}
+            >
+              <AccountBalanceWalletIcon sx={{ fontSize: 30 }} />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                navigate("/booking-history");
+              }}
+            >
+              <ReceiptLongIcon sx={{ fontSize: 30 }} />
+            </IconButton>
             <IconButton
               onClick={() => {
                 navigate("/quotation");

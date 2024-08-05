@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, ImageList, ImageListItem, ImageListItemBar, Typography } from '@mui/material';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const imageData: string[] = [
@@ -18,6 +18,8 @@ const imageData: string[] = [
 
 const CoupleServiceListImage: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const { images, title } = location.state as { images: string[], title: string };
 
   const handleBack = () => {
     navigate(-1);
@@ -42,14 +44,14 @@ const CoupleServiceListImage: React.FC = () => {
             color: 'var(--btn-hover-color)', 
         },
       }}
-      >The Bridges Golf Club</Typography>
+      >{title}</Typography>
     </Button>
         </Box>
     
     
     <Box sx={{  flexGrow: 1, overflowY: 'scroll' }}> 
     <ImageList cols={3} gap={8} >
-      {imageData.map((img, index) => (
+      {images?.map((img, index) => (
         <ImageListItem key={index}>
           <img
             src={`${img}?w=248&fit=crop&auto=format`}
@@ -58,7 +60,7 @@ const CoupleServiceListImage: React.FC = () => {
             loading="lazy"
           />
           <ImageListItemBar
-            title={`Image ${index + 1}`}
+            title={`Ảnh ${index + 1}`}
           />
         </ImageListItem>
       ))}

@@ -1,5 +1,5 @@
 import "./CoupleServiceDetail.css";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import {
   Box,
   Grid,
@@ -10,18 +10,20 @@ import {
   Paper,
   LinearProgress,
   Pagination,
+  Chip,
 } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import FlagOutlined from "@mui/icons-material/Flag";
 import StarIcon from "@mui/icons-material/Star";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { ReviewCard, ReviewCardModel } from "./ReviewCard";
 import { getLabel } from "../../../utils/Utils";
 import RatingPopup from "../Popup/Couple/RatingPopup";
 import RequestPricePopup from "../Popup/Couple/RequestPricePopup";
-
+import { getServiceById } from "../../../api/CoupleAPI";
+import { addToCart } from "../../../utils/CartStorage";
 
 const reviews: ReviewCardModel[] = [
   {
@@ -40,36 +42,7 @@ const reviews: ReviewCardModel[] = [
   },
 ];
 
-const data = [
-  {
-    id: 1,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/gwen-ti-ni.jpg",
-    alt: "",
-  },
-  {
-    id: 2,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ve-binh-tinh-tu-ti-ni.jpg",
-    alt: "",
-  },
-  {
-    id: 3,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/kaisa-ti-ni.png",
-    alt: "",
-  },
-  {
-    id: 4,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/sona-ti-ni.jpg",
-    alt: "",
-  },
-  {
-    id: 5,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/akali-ti-ni.jpg",
-    alt: "",
-  },
-];
-
 const totalReviews = 369;
-const recommendPercentage = 99;
 
 const ratings = [
   { name: "Số lượng", rating: 5.0 },
@@ -79,15 +52,28 @@ const ratings = [
 
 const CoupleServiceDetail = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname.split("/")[2];
+  const { id } = useParams();
   const value = 4.9;
 
   const [openRequest, setOpenRequest] = useState(false);
-  const handleOpenRequest = () => setOpenRequest(true);
+  const handleAddToCart = () => {
+    addToCart({id: service?.id, image: service?.imageUrl, name: service?.title, price: service?.price});
+    navigate(`/quotation`);
+  };
   const handleCloseRequest = () => setOpenRequest(false);
+  const [service, setService] = useState<any>(null);
 
   const [openReview, setOpenReview] = useState(false);
+
+  const getData = async () => {
+    const response = await getServiceById(id ?? "");
+    console.log(response);
+    setService(response);
+  };
+
+  useEffect(() => {
+    getData();
+  }, [id]);
 
   const handleOpenReview = () => {
     setOpenReview(true);
@@ -95,6 +81,10 @@ const CoupleServiceDetail = () => {
 
   const handleCloseReview = () => {
     setOpenReview(false);
+  };
+
+  const handleClickQuantity = () => {
+    console.log(1);
   };
 
   const handleSubmitReview = (ratingData: {
@@ -110,11 +100,11 @@ const CoupleServiceDetail = () => {
   const [slide, setSlide] = useState(0);
 
   const nextSlide = () => {
-    setSlide(slide === data.length - 1 ? 0 : slide + 1);
+    setSlide(slide === service?.listImages.length - 1 ? 0 : slide + 1);
   };
 
   const prevSlide = () => {
-    setSlide(slide === 0 ? data.length - 1 : slide - 1);
+    setSlide(slide === 0 ? service?.listImages.length - 1 : slide - 1);
   };
 
   return (
@@ -129,20 +119,22 @@ const CoupleServiceDetail = () => {
                   size="large"
                   className="img-view-btn"
                   onClick={() => {
-                    navigate("/services/details/item/img");
+                    navigate("/services/details/item/img", {state: {images: service?.listImages,
+                      title: service?.name
+                    }});
                   }}
                 >
-                  View Photos 10
+                  Xem ảnh {service?.listImages.length}
                 </Button>
                 <KeyboardArrowLeftIcon
                   onClick={prevSlide}
                   className="arrow arrow-left"
                 />
-                {data.map((item, idx) => {
+                {service?.listImages.map((item: any, idx: number) => {
                   return (
                     <img
-                      src={item.src}
-                      alt={item.alt}
+                      src={item}
+                      alt=""
                       key={idx}
                       className={slide === idx ? "slide" : "slide slide-hidden"}
                     />
@@ -154,7 +146,7 @@ const CoupleServiceDetail = () => {
                   className="arrow arrow-right"
                 />
                 <span className="indicators">
-                  {data.map((_, idx) => {
+                  {service?.listImages.map((_: any, idx: number) => {
                     return (
                       <button
                         key={idx}
@@ -172,7 +164,7 @@ const CoupleServiceDetail = () => {
 
               <Box sx={{ mt: 8, textAlign: "left" }}>
                 <Typography variant="h3" component="div" gutterBottom>
-                  About
+                  Mô tả
                 </Typography>
                 <Box
                   sx={{
@@ -187,49 +179,13 @@ const CoupleServiceDetail = () => {
                   </Typography>
                 </Box>
                 <Typography variant="body1" sx={{ fontSize: 14 }} paragraph>
-                  PrimaDonna Makeover Mobile Bridal Hair & Makeup is a certified
-                  beauty service, on-site beauty service located in San
-                  Francisco, California & Boise, ID. The owner, Yolanda, and her
-                  team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages.
+                  {service?.description}
                 </Typography>
               </Box>
 
               <Box mt={4} mb={4}>
                 <Typography variant="h4" gutterBottom align="left">
-                  Đánh giá Sound Originals Photo & Video
+                  Đánh giá {service?.name}
                 </Typography>
                 <Grid container spacing={2} mt={2}>
                   <Grid item xs={5} sx={{ textAlign: "left" }}>
@@ -359,7 +315,7 @@ const CoupleServiceDetail = () => {
                 }}
               >
                 <Typography variant="h3" fontWeight={600}>
-                  PrimaDonna Makeover
+                  {service?.name}
                 </Typography>
                 <Box
                   sx={{
@@ -403,10 +359,48 @@ const CoupleServiceDetail = () => {
                       ml: 1,
                     }}
                   >
-                    San Francisco, CA
+                    Tp. Hồ Chí Minh
                   </Link>
                 </Box>
-
+                <Box my={2} display="flex" alignItems="center">
+                  <Typography fontSize={12}> Số lượng: </Typography>
+                  <Chip
+                    label="20"
+                    size="small"
+                    variant="outlined"
+                    sx={{ fontSize: 12, width: 70, mx: 1 }}
+                    onClick={handleClickQuantity}
+                  />
+                  <Chip
+                    label="20"
+                    size="small"
+                    variant="outlined"
+                    sx={{ fontSize: 12, width: 70, mx: 1 }}
+                    onClick={handleClickQuantity}
+                  />
+                </Box>
+                <Box>
+                  <Box>
+                    <Typography fontSize={12} my={1}>
+                      Khuyến mãi:{" "}
+                      <span
+                        style={{
+                          fontWeight: "bold",
+                          color: "red",
+                          fontSize: 16,
+                        }}
+                      >
+                        20%
+                      </span>
+                    </Typography>
+                    <Typography fontSize={12}>
+                      Từ ngày:{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        {"21/2/2025 -> 21/2/2025"}
+                      </span>
+                    </Typography>
+                  </Box>
+                </Box>
                 <Button
                   variant="contained"
                   fullWidth={true}
@@ -420,17 +414,17 @@ const CoupleServiceDetail = () => {
                     fontWeight: 700,
                     fontSize: 16,
                   }}
-                  onClick={handleOpenRequest}
+                  onClick={handleAddToCart}
                 >
-                  Giá liên hệ
+                  {service?.price.toLocaleString() ?? 0} VND
                 </Button>
-                <RequestPricePopup
+                {/* <RequestPricePopup
                   open={openRequest}
                   handleClose={handleCloseRequest}
                   serviceId=""
                   serviceName=""
                   suplierID=""
-                />
+                /> */}
               </Box>
             </Grid>
           </Grid>

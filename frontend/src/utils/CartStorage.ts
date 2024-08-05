@@ -18,7 +18,6 @@ interface CartItem {
     if (! existingItem) {
       cart.push(item);
     }
-    cart.push(item);
     localStorage.setItem(CART_KEY, JSON.stringify(cart));
   };
   

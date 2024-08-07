@@ -8,6 +8,7 @@ import {
   CREATE_CATEGORY,
   CREATE_PROMOTION,
   CREATE_SERVICE,
+  CREATE_SERVICE_SUPPLIER,
   GET_ACTIVE_BLOGS,
   GET_ALL_BLOGS,
   GET_ALL_CATEGORIES,
@@ -15,9 +16,13 @@ import {
   GET_PENDING_BLOGS,
   GET_PROMOTION_BY_SUPPLIER,
   GET_REJECTED_BLOGS,
-  GET_SERVICE_BY_ID,
-  GET_SERVICE_BY_SUPPLIER,
+  GET_SERVICE_BY_CATEGORY_ID,
+  GET_SERVICE_SUPPLIER_BY_ID,
+  GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID,
+  GET_SERVICE_SUPPLIER_FILTER,
   GET_SUPPLIERS_BLOGS,
+  UPDATE_CONFIRM_BOOKING_STATUS,
+  UPDATE_REJECT_BOOKING_STATUS,
 } from "../constants/API_URLS";
 import { PROCESS_STATUS, ROLE, STATUS } from "../constants/consts";
 import { LOGIN_SUCCESS } from "../message/authen/Login";
@@ -199,24 +204,57 @@ export const createCategory = async (name, token) => {
   }
 };
 
-// Service
-export const getServicesById = async (id) => {
+// Service Supplier
+export const createServiceSupplier = async (
+  newService,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
   try {
-    const res = await axios.get(GET_SERVICE_BY_ID + `/{id}?id=${id}`);
+    const res = await axios.post(CREATE_SERVICE_SUPPLIER, newService, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getServicesSupplierFilter = async (supplierId = '', categoryId = '', serviceId = '', segmentId = '') => {
+  try {
+    const res = await axios.get(GET_SERVICE_SUPPLIER_FILTER + `?categoryId=${categoryId}&maxPrice=0&minPrice=0&serviceId=${serviceId}&supplierId=${supplierId}&type=${segmentId}`);
     return res.data.data;
   } catch (error) {
     return error;
   }
 };
 
-export const getServicesBySupplier = async (isAsc, page, size, sortBy, supplierId) => {
+export const getServiceSupplierById = async (supplierId) => {
   try {
-    const res = await axios.get(GET_SERVICE_BY_SUPPLIER + `/{id}?isAscending=${isAsc}&pageNo=${page}&pageSize=${size}&sortBy=${sortBy}&supplierId=${supplierId}`);
+    const res = await axios.get(GET_SERVICE_SUPPLIER_BY_ID + `?id=${supplierId}`);
     return res.data.data;
   } catch (error) {
     return error;
   }
 };
+
+// Service
+
+export const getServicesByCategoryId = async (categoryId) => {
+  try {
+    const res = await axios.get(GET_SERVICE_BY_CATEGORY_ID + `?categoryId=${categoryId}`);
+    console.log(res.data.data);
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
 export const createService = async (
   newService,
   token,
@@ -252,9 +290,9 @@ export const createPromotion = async (promotion, token) => {
   }
 }
 
-export const getPromotionBySupplier = async (isAsc, page, size, sortBy, supplierId) => {
+export const getPromotionBySupplier = async (supplierId) => {
   try {
-    const res = await axios.get(GET_PROMOTION_BY_SUPPLIER + `/{id}?isAscending=${isAsc}&pageNo=${page}&pageSize=${size}&sortBy=${sortBy}&supplierId=${supplierId}`);
+    const res = await axios.get(GET_PROMOTION_BY_SUPPLIER + `?supplierId=${supplierId}`);
     return res.data.data;
   } catch (error) {
     return error;
@@ -275,3 +313,41 @@ export const getBookingBySupplierId = async (id, token) => {
     return error;
   }
 };
+
+// Booking Detail
+
+export const confirmBookingDetail = async (id, token) => {
+  const data = {
+    key: 'value'
+  };
+  fetch('https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' + UPDATE_CONFIRM_BOOKING_STATUS + `?id=${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error))
+  return data.status;
+};
+
+export const rejectBookingDetail = async (id, token) => {
+  const data = {
+    key: 'value'
+  };
+  fetch('https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' + UPDATE_REJECT_BOOKING_STATUS + `?id=${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => response.json())
+  .then(data => console.log(data))
+  .catch(error => console.error('Error:', error))
+  return data.status;
+}

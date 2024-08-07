@@ -39,14 +39,6 @@ export const HeaderNav = [
                 navigate: "/services"
             },
             {
-                name: "báo giá",
-                navigate: "/product-price-reporter"
-            },
-            {
-                name: "bài viết",
-                navigate: "/blogs"
-            },
-            {
                 name: "giảm giá",
                 navigate: "/promotions"
             },

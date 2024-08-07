@@ -6,9 +6,10 @@ import { Paper, Button } from '@mui/material';
 import { Container } from '@mui/material';
 import "./ServiceDetail.css";
 import "../../../constants/styles/TableService.css";
-import { ServiceEntity } from '../../../types/entity/Entity';
-import { getServicesById } from '../../../redux/apiRequest';
+// import { getServicesById } from '../../../redux/apiRequest';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
+import { ServiceSupplierDetail } from '../../../types/schema/serviceSupplier';
+import { getServiceSupplierById } from '../../../redux/apiRequest';
 
 interface Props {
   setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -19,13 +20,14 @@ const storage = getStorage();
 
 const ServiceDetail: FC<Props> = (props) => {
   const { id } = useParams();
-  const [service, setService] = useState<ServiceEntity>();
+  const [service, setService] = useState<ServiceSupplierDetail>();
   useEffect(() => {
     fetchData();
   }, [])
 
   async function fetchData() {
-    const response = await getServicesById(id);
+    const response =
+      await getServiceSupplierById(id);
     setService(response);
     console.log();
 
@@ -38,9 +40,9 @@ const ServiceDetail: FC<Props> = (props) => {
           <Paper>
             <img src={`${item}`} alt={`${item}`} style={{ width: '458px', height: '600px' }} key={i} />
             {
-              (service.promotionService) ?
+              (service?.promotion) ?
                 (
-                  <h2 className="promotion">Giảm giá {service.promotionService.percent + "%"}</h2>
+                  <h2 className="promotion">{service?.promotion?.name}</h2>
                 ) : null
             }
           </Paper>

@@ -6,15 +6,17 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router';
-import { Box, Button, FormControl, MenuItem, Modal, Select, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-import { AVAILABLE_PRICE, CONTACT_PRICE, ECONOMY_SEGMENT, LUXURY_SEGMENT } from '../../../constants/consts';
-import { createService, getListCategories, getPromotionBySupplier, getServicesBySupplier } from '../../../redux/apiRequest';
+import { ALL_SELECT, ECONOMY_SEGMENT, LUXURY_SEGMENT } from '../../../constants/consts';
+import { createService, createServiceSupplier, getListCategories, getPromotionBySupplier, getServicesByCategoryId, getServicesSupplierFilter } from '../../../redux/apiRequest';
 import { CategoryItem } from '../../../types/schema/category';
 import { useDispatch, useSelector } from 'react-redux';
 import { PromotionItem } from '../../../types/schema/promotion';
+import { ServiceSupplierItem, ServiceSupplierListResponse } from '../../../types/schema/serviceSupplier';
+import { ServiceItem } from '../../../types/schema/service';
 
 interface Props {
     setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -23,26 +25,55 @@ interface Props {
 
 const storage = getStorage();
 
-const priceTypes = [
-    AVAILABLE_PRICE,
-    CONTACT_PRICE
-]
-
 const segments = [
+    ALL_SELECT,
     ECONOMY_SEGMENT,
     LUXURY_SEGMENT
 ]
 
+const defaultValueCategory: CategoryItem = {
+    id: 'all',
+    categoryName: 'Tất cả',
+    status: 'ACTIVATED'
+}
+
+const defaultValuePromotion: PromotionItem = {
+    id: 'none',
+    name: 'Không',
+    value: 0,
+    startDate: '',
+    endDate: '',
+    status: '',
+    type: ''
+}
+
 const Services: FC<Props> = (props) => {
     const user = useSelector((state: any) => state.auth.login.currentUser);
-    const [services, setServices] = useState<ServiceEntity[]>([]);
+    const [serviceSupplierList, setServiceSupplierList] = useState<ServiceSupplierItem[]>([]);
     const [images, setImages] = useState<string[]>([]);
     const [categories, setCategories] = useState<CategoryItem[]>([]);
-    const [category, setCategory] = useState<string>('');
+    const [category, setCategory] = useState<CategoryItem>(defaultValueCategory);
+    const [categoriesCreate, setCategoriesCreate] = useState<CategoryItem[]>([]);
+    const [categoryCreate, setCategoryCreate] = useState<CategoryItem>(defaultValueCategory);
+
+    const defaultValueService: ServiceItem = {
+        id: 'all',
+        name: 'Tất cả',
+        createAt: '',
+        description: '',
+        listImages: [],
+        categoryResponse: defaultValueCategory
+    }
+    const [services, setServices] = useState<ServiceItem[]>([]);
+    const [service, setService] = useState<ServiceItem>(defaultValueService);
+
+    const [servicesCreate, setServicesCreate] = useState<ServiceItem[]>([]);
+    const [serviceCreate, setServiceCreate] = useState<ServiceItem>();
+
     const [promotions, setPromotions] = useState<PromotionItem[]>([]);
     const [promotion, setPromotion] = useState<any>();
-    const [priceType, setPriceType] = useState<string>(AVAILABLE_PRICE);
-    const [segment, setSegment] = useState<any>(ECONOMY_SEGMENT);
+    const [segment, setSegment] = useState<any>(ALL_SELECT);
+    const [segmentCreate, setSegmentCreate] = useState<any>(ALL_SELECT);
     const [serviceName, setServiceName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [price, setPrice] = useState<string>('0');
@@ -56,13 +87,58 @@ const Services: FC<Props> = (props) => {
 
     useEffect(() => {
         fetchData();
-        fetchPromotions();
         fetchCategories();
-    }, [])
+        fetchPromotions();
+        getServices();
+    }, [category, service, segment])
+
+    useEffect(() => {
+        fetchCategoriesCreate();
+        getServicesCreate();
+    }, [categoryCreate])
+
+    useEffect(() => {
+    }, [serviceCreate])
 
     async function fetchData() {
-        const response = await getServicesBySupplier(true, 0, 10, "id", user?.userId);
-        setServices(response);
+        const categoryId = category?.id !== 'all' ? `${category?.id}` : undefined;
+        const serviceId = service?.id !== 'all' ? `${service?.id}` : undefined;
+        const segmentId = segment?.id !== 'all' ? `${segment?.id}` : undefined;
+        const response = await getServicesSupplierFilter(user?.userId, categoryId, serviceId, segmentId);
+        if (response) {
+            setServiceSupplierList(response);
+        } else {
+            setServiceSupplierList([]);
+        }
+    }
+
+    async function getServicesCreate() {
+        if (categoryCreate?.id != 'all') {
+            const response = await getServicesByCategoryId(categoryCreate?.id);
+            if (Array.isArray(response)) {
+                setServicesCreate([...response]);
+                setServiceCreate(response[0]);
+            } else {
+                // Handle the case where response is not an array
+                console.error('Response is not an array', response);
+            }
+        }
+    }
+
+    const fetchCategoriesCreate = async () => {
+        const response = await getListCategories(0, 10);
+        if (response)
+            if (response.status === "SUCCESS") {
+                setCategoriesCreate([defaultValueCategory, ...response?.data]);
+            }
+            else setCategoriesCreate([]);
+    }
+
+    async function getServices() {
+        if (category?.id != 'all') {
+            const serviceList = [defaultValueService, ...await getServicesByCategoryId(category?.id)];
+            setServices(serviceList);
+        }
     }
 
 
@@ -70,13 +146,20 @@ const Services: FC<Props> = (props) => {
         const response = await getListCategories(0, 10);
         if (response)
             if (response.status === "SUCCESS") {
-                await setCategories(response?.data);
+                setCategories([defaultValueCategory, ...response?.data]);
             }
             else setCategories([]);
     }
 
     const fetchPromotions = async () => {
-        setPromotions(await getPromotionBySupplier(true, 0, 10, "id", user?.userId));
+        const response = await getPromotionBySupplier(user?.userId);
+        if (Array.isArray(response)) {
+            setPromotions([defaultValuePromotion, ...response]);
+            setPromotion(defaultValuePromotion);
+        } else {
+            // Handle the case where response is not an array
+            console.error('Response is not an array', response);
+        }
     }
 
     const uploadImage = async (files: FileList | null) => {
@@ -99,31 +182,65 @@ const Services: FC<Props> = (props) => {
         }
     };
 
+    const handleChangeCategoryCreate = (event: any) => {
+        const selectedCategory = categoriesCreate.find(cat => cat.id === event.target.value);
+        if (selectedCategory) {
+            setCategoryCreate(selectedCategory);
+        }
+        else {
+            setServicesCreate([]);
+        }
+    };
+
+    const handleChangeServiceCreate = (event: any) => {
+        const selectedService = servicesCreate.find(ser => ser.id === event.target.value);
+        if (selectedService) {
+            setServiceCreate(selectedService);
+        }
+    };
+
+    const handleChangeCategory = (event: any) => {
+        const selectedCategory = categories.find(cat => cat.id === event.target.value);
+        if (selectedCategory) {
+            setCategory(selectedCategory);
+            setService(defaultValueService);
+        }
+        else {
+            setServices([]);
+        }
+    };
+
+    const handleChangeService = (event: any) => {
+        const selectedService = services.find(ser => ser.id === event.target.value);
+        if (selectedService) {
+            setService(selectedService);
+        }
+    };
+
     const handleCreate = async () => {
         try {
             let getImagesPayload = "";
             images.map((image) => {
                 getImagesPayload += image + "\n, "
             })
-            let categoryId = "";
-            categoryId = categories.find((e) => e.categoryName == category)?.id as string;
 
             const newService: ServiceCreate = {
-                categoryId: categoryId,
+                serviceId: `${serviceCreate?.id}`,
                 description: description,
                 images: getImagesPayload,
-                listPromotionIds: promotion?.id,
+                promotionId: (promotion?.id == 'none') ? '' : promotion?.id,
                 name: serviceName,
                 price: parseInt(price),
-                serviceSupplierId: user?.userId,
+                supplierId: user?.userId,
                 type: segment.id,
             }
 
-            const status = await createService(newService, user?.token, dispatch, navigate);
+            const status = await createServiceSupplier(newService, user?.token, dispatch, navigate);
 
             if (status == "SUCCESS") {
                 props.setMessageStatus("green");
                 props.setMessage("Tạo thành công");
+                fetchData();
                 handleClose();
             } else {
                 props.setMessageStatus("red");
@@ -134,24 +251,31 @@ const Services: FC<Props> = (props) => {
         }
     }
 
-    const rows = services?.length > 0 ? services.map((service) => ({
+    const rows = serviceSupplierList?.length > 0 ? serviceSupplierList.map((service) => ({
         id: service.id,
-        category: service?.categoryResponse?.categoryName,
+        idDisplay: service.id.split('SERVICE-SUPPLIER-')[1],
+        // category: service?.categoryResponse?.categoryName,
         name: service?.name,
         description: service?.description,
-        promotion: (service?.promotionService) ? service?.promotionService.percent + "%" : "",
+        rating: service?.rating,
+        // promotion: (service?.promotionService) ? service?.promotionService.percent + "%" : "",
+        createAt: service?.createAt,
         price: service?.price,
-        type: service?.type
+        type: service?.type,
+        status: service?.status,
+        promotionName: service?.promotion?.name
     })) : [];
 
     const columns: GridColDef[] = [
-        { field: "id", headerName: "ID", flex: 0.3 },
-        { field: "category", headerName: "Loại", flex: 0.5 },
+        { field: "idDisplay", headerName: "ID", flex: 0.2 },
+        // { field: "category", headerName: "Loại", flex: 0.5 },
         { field: "name", headerName: "Tên", flex: 0.8 },
-        { field: "description", headerName: "Mô tả", flex: 1.2 },
+        { field: "description", headerName: "Mô tả", flex: 1 },
         { field: "price", headerName: "Giá", flex: 0.5 },
-        { field: "promotion", headerName: "Giảm giá", flex: 0.5 },
-        { field: "type", headerName: "Phân khúc", flex: 0.5 },
+        { field: "promotionName", headerName: "Giảm giá", flex: 0.5 },
+        { field: "rating", headerName: "Đánh giá", flex: 0.3 },
+        { field: "type", headerName: "Phân khúc", flex: 0.4 },
+        { field: "createAt", headerName: "Ngày tạo", flex: 0.7 },
         {
             field: '',
             headerName: 'Tác vụ',
@@ -169,22 +293,80 @@ const Services: FC<Props> = (props) => {
 
     return (
         <div id="Services">
-            {
-                (services?.length > 0) ? (
-                    <>
-                        <div className="create-service">
-                            <h2 className="h2-title-page" >Dịch vụ</h2>
-                            <Button className="btn-create-service" onClick={() => { handleOpen() }}>Tạo mới</Button>
-                        </div>
-                        <div className="table" style={{ height: 400, width: "100%" }}>
-                            <DataGrid rows={rows}
-                                columns={columns}
-                                autoPageSize
-                                pagination />
-                        </div>
-                    </>
-                ) : null
-            }
+            <>
+                <div className="create-service">
+                    <h2 className="h2-title-page" >Dịch vụ</h2>
+                    <div>
+                        {
+                            (category) ? (
+                                <FormControl className="form-input mr-24">
+                                    <InputLabel id="demo-simple-select-label">Loại</InputLabel>
+                                    <Select
+                                        className="input regis-input"
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        label="Loại"
+                                        value={category?.id}
+                                        onChange={handleChangeCategory}
+                                    >
+                                        {categories.map((category) => (
+                                            <MenuItem value={`${category?.id}`} key={`${category.id}`}>
+                                                {category.categoryName}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            ) : null
+                        }
+                        {
+                            (category.id != 'all') ?
+                                (
+                                    <FormControl className="form-input mr-24">
+                                        <InputLabel id="demo-simple-select-label">Dịch vụ</InputLabel>
+                                        <Select
+                                            className="input regis-input"
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            label="Dịch vụ"
+                                            value={service?.id}
+                                            onChange={handleChangeService}
+                                        >
+                                            {services.map((ser) => (
+                                                <MenuItem value={`${ser?.id}`} key={`${ser.id}`}>
+                                                    {ser.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                ) : null
+                        }
+                        <FormControl className="form-input mr-24">
+                            <InputLabel id="demo-simple-select-label">Phân khúc</InputLabel>
+                            <Select
+                                className="input regis-input"
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                label="Loại"
+                                value={segment?.id}
+                                onChange={(event) => { setSegment(segments.find(seg => seg.id === event.target.value)) }}
+                            >
+                                {segments.map((seg, index) => (
+                                    <MenuItem value={seg?.id} key={index}>
+                                        {seg.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <Button className="btn-create-service" onClick={() => { handleOpen() }}>Tạo mới</Button>
+                    </div>
+                </div>
+                <div className="table" style={{ height: 400, width: "100%" }}>
+                    <DataGrid rows={rows}
+                        columns={columns}
+                        autoPageSize
+                        pagination />
+                </div>
+            </>
 
             <Modal
                 open={open}
@@ -211,30 +393,40 @@ const Services: FC<Props> = (props) => {
                                 </div>
                             </div>
                             <div className="group-input mb-24">
-                                <label>Loại:</label>
-                                <FormControl className="form-input price">
-                                    <Select
-                                        className="input regis-input"
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={category}
-                                        onChange={(e) => {
-                                            setCategory(e.target.value as string); console.log(e.target.value);
-                                        }}
-                                    >
-                                        {
-                                            categories.map((category: any, index) => {
-                                                return (
-                                                    <MenuItem value={category.categoryName} key={index}>{category?.categoryName}</MenuItem>
-                                                )
-                                            })
-                                        }
-                                    </Select>
-                                </FormControl>
+                                <label>Giá:</label>
+                                <div className="form-input price">
+                                    <div className="form-input price-input">
+                                        <input type="Username" placeholder={price} className="input regis-input" required onChange={(e) => { setPrice(e.target.value) }} />
+                                        <span className="text-err"></span>
+                                    </div>
+                                </div>
                             </div>
                             <div className="group-input mb-24">
-                                <label>Phân khúc:</label>
-                                <FormControl className="form-input price">
+                                <label className="label-select">Loại:</label>
+                                {
+                                    (categoryCreate) ? (
+                                        <FormControl className="form-input mr-24" style={{ width: '50%' }}>
+                                            <Select
+                                                className="input regis-input"
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={categoryCreate?.id}
+                                                onChange={handleChangeCategoryCreate}
+                                            >
+                                                {categoriesCreate.map((category) => (
+                                                    <MenuItem value={`${category?.id}`} key={`${category.id}`}>
+                                                        {category.categoryName}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    ) : null
+                                }
+                            </div>
+
+                            <div className="group-input mb-24">
+                                <label className="label-select">Phân khúc:</label>
+                                <FormControl className="form-input price" style={{ width: '50%' }}>
                                     <Select
                                         className="input regis-input"
                                         labelId="demo-simple-select-label"
@@ -252,57 +444,55 @@ const Services: FC<Props> = (props) => {
                                     </Select>
                                 </FormControl>
                             </div>
-                            <div className="group-input mb-24">
-                                <label>Giá:</label>
-                                <div className="form-input price">
-                                    <FormControl className="form-input mr-24">
-                                        <Select
-                                            className="input regis-input"
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={priceType}
-                                            onChange={(e) => { setPriceType(e.target.value) }}
-                                        >
-                                            {
-                                                priceTypes.map((type, index) => {
-                                                    return (
-                                                        <MenuItem value={type} key={index}>{type}</MenuItem>
-                                                    )
-                                                })
-                                            }
-                                        </Select>
-                                    </FormControl>
-                                    {
-                                        (priceType == AVAILABLE_PRICE) ?
-                                            (
-                                                <div className="form-input price-input">
-                                                    <input type="Username" className="input regis-input" required onChange={(e) => { setPrice(e.target.value) }} />
-                                                    <span className="text-err"></span>
-                                                </div>
-                                            ) : null
-                                    }
-                                </div>
-                            </div>
-                            <div className="group-input mb-24">
-                                <label>Mã giảm giá:</label>
-                                <FormControl className="form-input price">
-                                    <Select
-                                        className="input regis-input"
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        value={promotion}
-                                        onChange={(e) => { setPromotion(e.target.value) }}
-                                    >
-                                        {
-                                            promotions?.map((promotion: any, index) => {
-                                                return (
-                                                    <MenuItem value={promotion} key={index}>{promotion.promotionDetails}</MenuItem>
-                                                )
-                                            })
-                                        }
-                                    </Select>
-                                </FormControl>
-                            </div>
+
+                            {
+                                (promotion?.id != undefined && promotion) ? (
+                                    <div className="group-input mb-24">
+                                        <label className="label-select">Mã giảm giá:</label>
+                                        <FormControl className="form-input price" style={{ width: '50%' }}>
+                                            <Select
+                                                className="input regis-input"
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={promotion}
+                                                onChange={(e) => { setPromotion(e.target.value) }}
+                                            >
+                                                {
+                                                    promotions?.map((promotion: any, index) => {
+                                                        return (
+                                                            <MenuItem value={promotion} key={index}>{promotion.name}</MenuItem>
+                                                        )
+                                                    })
+                                                }
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                ) : null
+                            }
+
+                            {
+                                (categoryCreate.id != 'all' && serviceCreate?.id != undefined && servicesCreate) ?
+                                    (
+                                        <div className="group-input mb-24">
+                                            <label className="label-select">Dịch vụ:</label>
+                                            <FormControl className="form-input mr-24" style={{ width: '50%' }}>
+                                                <Select
+                                                    className="input regis-input"
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={serviceCreate?.id}
+                                                    onChange={handleChangeServiceCreate}
+                                                >
+                                                    {servicesCreate.map((ser) => (
+                                                        <MenuItem value={`${ser?.id}`} key={`${ser.id}`}>
+                                                            {ser.name}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        </div>
+                                    ) : null
+                            }
                             <div className="group-input mb-24"></div>
                             <div className="group-input individual-input mb-24">
                                 <label>Mô tả:</label>

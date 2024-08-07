@@ -31,13 +31,13 @@ export interface ServiceEntity {
 }
 
 export interface ServiceCreate {
-    categoryId: String,
     description: String,
-    images: String
-    listPromotionIds: String
+    images: String,
     name: String,
     price: Number,
-    serviceSupplierId: String,
+    promotionId: String,
+    serviceId: String,
+    supplierId: String,
     type: String,
 }
 

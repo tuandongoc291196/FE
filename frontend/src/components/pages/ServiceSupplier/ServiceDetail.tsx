@@ -7,7 +7,7 @@ import { Container } from '@mui/material';
 import "./ServiceDetail.css";
 import "../../../constants/styles/TableService.css";
 import { ServiceEntity } from '../../../types/entity/Entity';
-import { getServicesById } from '../../../redux/apiRequest';
+// import { getServicesById } from '../../../redux/apiRequest';
 import { getDownloadURL, getStorage, ref } from 'firebase/storage';
 
 interface Props {
@@ -21,15 +21,16 @@ const ServiceDetail: FC<Props> = (props) => {
   const { id } = useParams();
   const [service, setService] = useState<ServiceEntity>();
   useEffect(() => {
-    fetchData();
+    // fetchData();
   }, [])
 
-  async function fetchData() {
-    const response = await getServicesById(id);
-    setService(response);
-    console.log();
+  // async function fetchData() {
+  //   const response =
+  //    await getServicesById(id);
+  //   setService(response);
+  //   console.log();
 
-  }
+  // }
 
   const ImageSlider: React.FC = () => {
     return (
@@ -40,7 +41,7 @@ const ServiceDetail: FC<Props> = (props) => {
             {
               (service.promotionService) ?
                 (
-                  <h2 className="promotion">Giảm giá {service.promotionService.percent + "%"}</h2>
+                  <h2 className="promotion">Giảm giá {service.promotionService.value + "%"}</h2>
                 ) : null
             }
           </Paper>

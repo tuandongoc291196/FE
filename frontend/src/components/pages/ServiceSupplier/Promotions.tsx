@@ -3,10 +3,10 @@ import { SetStateAction, Dispatch, FC, useEffect, useState } from 'react'
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router';
-import { Box, Button, FormControl, MenuItem, Modal, Select, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
 import "../../../constants/styles/TableService.css";
 import { PromotionItem, PromotionItemCreate } from '../../../types/schema/promotion';
-import { createPromotion, getPromotionBySupplier } from '../../../redux/apiRequest';
+import { createPromotion, getPromotionBySupplier, getServicesSupplierFilter } from '../../../redux/apiRequest';
 import { useSelector } from 'react-redux';
 import dayjs, { Dayjs } from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -14,6 +14,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import moment from 'moment';
+import { PROMOTION_TYPES } from '../../../constants/consts';
+import { ServiceSupplierItem } from '../../../types/schema/serviceSupplier';
 
 
 interface Props {
@@ -38,6 +40,13 @@ const Promotions: FC<Props> = (props) => {
     const now = new Date();
     const [startDate, setStartDate] = React.useState<Dayjs | null>(dayjs(now));
     const [endDate, setEndDate] = React.useState<Dayjs | null>(dayjs(now));
+    const promotionTypes = Object.values(PROMOTION_TYPES);
+    const [promotionType, setPromotionType] = useState<string>(promotionTypes[0]);
+    const [serviceSupplierList, setServiceSupplierList] = useState<ServiceSupplierItem[]>([]);
+    const [serviceSupplier, setServiceSupplier] = useState<ServiceSupplierItem>();
+    const [name, setName] = useState<string>();
+
+
 
     const navigate = useNavigate();
 
@@ -49,26 +58,49 @@ const Promotions: FC<Props> = (props) => {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+
     useEffect(() => {
         fetchData();
-
+        fetchServiceSupplierData();
     }, [])
 
     async function fetchData() {
-        const response = await getPromotionBySupplier(true, 0, 10, "id", user?.userId);
+        const response = await getPromotionBySupplier(user?.userId);
+        console.log(response);
+
         setPromotions(response);
     }
+
+    async function fetchServiceSupplierData() {
+        const response = await getServicesSupplierFilter(user?.userId);
+        if (Array.isArray(response)) {
+            setServiceSupplierList([...response]);
+            setServiceSupplier(response[0]);
+        } else {
+            // Handle the case where response is not an array
+            console.error('Response is not an array', response);
+        }
+    }
+
+    const handleChangeServiceSupplier = (event: any) => {
+        const selectedService = serviceSupplierList.find(ser => ser.id === event.target.value);
+        if (selectedService) {
+            setServiceSupplier(selectedService);
+        }
+    };
 
     const handleCreate = async () => {
         try {
             const newPromotion: PromotionItemCreate = {
-                listServiceIds: "SERVICE-12",
-                percent: parseInt(percent),
-                promotionDetails: "string",
+                supplierId: user?.userId,
+                value: parseInt(percent),
+                name: `${name}`,
                 startDate: startDate ? moment(startDate.toString()).format('YYYY-MM-DD') : '',
                 endDate: endDate ? moment(endDate.toString()).format('YYYY-MM-DD') : '',
-                supplierId: user?.userId
+                listServiceSupplierId: [`${serviceSupplier?.id}`],
+                type: promotionType
             }
+
             const status = await createPromotion(newPromotion, user?.token);
             if (status == "SUCCESS") {
                 handleClose();
@@ -79,19 +111,21 @@ const Promotions: FC<Props> = (props) => {
         }
     }
 
-    const rows = promotions?.length > 0 ? promotions.map((promotion) => ({
+    const rows = promotions?.length > 0 ? promotions?.map((promotion) => ({
         id: promotion.id,
-        percent: promotion.percent + "%",
+        name: promotion.name,
         startDate: promotion.startDate,
         endDate: promotion.endDate,
         status: promotion.status,
+        type: promotion.type
     })) : [];
 
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID", flex: 0.3 },
-        { field: "percent", headerName: "Giảm", flex: 0.5 },
+        { field: "name", headerName: "Giảm", flex: 0.5 },
         { field: "startDate", headerName: "Ngày bắt đầu", flex: 0.5 },
         { field: "endDate", headerName: "Ngày hết hạn", flex: 0.5 },
+        { field: "type", headerName: "Đơn vị", flex: 0.5 },
         { field: "status", headerName: "Trạng thái", flex: 0.5 },
         {
             field: '',
@@ -109,7 +143,7 @@ const Promotions: FC<Props> = (props) => {
     return (
         <div id="Services">
             <div className="create-service">
-                <h2 className="h2-title-page" >Bài viết</h2>
+                <h2 className="h2-title-page" >Giảm giá</h2>
                 <Button className="btn-create-service" onClick={() => { handleOpen() }}>Tạo mới</Button>
             </div>
             <div className="table" style={{ height: 400, width: "100%" }}>
@@ -132,15 +166,72 @@ const Promotions: FC<Props> = (props) => {
                         </span>
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        <div className="create-container">
-                            <div className="group-input-10 mb-24">
-                                <label>Giảm (%):</label>
+                        <div className="create-container group-create-promotion">
+                            <div className="group-input mb-24">
+                                <label>Tên mã giảm giá:</label>
+                                <div className="form-input">
+                                    <input type="Username" className="input regis-input" required onChange={(e) => { setName(e.target.value) }} />
+                                    <span className="text-err"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="create-container group-create-promotion">
+                            <div className="group-input mb-24">
+                                <label>Dịch vụ:</label>
+                                <div className="form-input">
+                                    {
+                                        (serviceSupplier) ? (
+                                            <FormControl className="form-input mr-24">
+                                                <Select
+                                                    className="input regis-input"
+                                                    labelId="demo-simple-select-label"
+                                                    id="demo-simple-select"
+                                                    value={serviceSupplier?.id}
+                                                    onChange={handleChangeServiceSupplier}
+                                                >
+                                                    {serviceSupplierList.map((service, index) => (
+                                                        <MenuItem value={`${service?.id}`} key={index}>
+                                                            {service?.name}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                            </FormControl>
+                                        ) : null
+                                    }
+                                </div>
+                            </div>
+                            <div className="group-input mb-24">
+                                <label>Loại giảm giá:</label>
+                                <div className="form-input">
+                                    <FormControl className="form-input mr-24">
+                                        <Select
+                                            className="input regis-input"
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={promotionType}
+                                            onChange={(event) => { setPromotionType(event.target.value) }}
+                                        >
+                                            {promotionTypes.map((type, index) => (
+                                                <MenuItem value={type} key={index}>
+                                                    {type}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                            </div>
+                            <div className="group-input mb-24">
+                                <label>Giảm:</label>
                                 <div className="form-input">
                                     <input type="Username" className="input regis-input" defaultValue={'0'} required onChange={(e) => { setPercent(e.target.value) }} />
                                     <span className="text-err"></span>
                                 </div>
                             </div>
-                            <div className="group-input-35 mb-24">
+
+                        </div>
+
+                        <div className="create-container group-create-promotion">
+                            <div className="group-input-35 mb-24 mr-24">
                                 <label>Ngày bắt đầu:</label>
                                 <div className="form-input">
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>

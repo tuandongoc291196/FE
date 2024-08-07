@@ -133,7 +133,7 @@ function App() {
           {/* Supplier */}
           <Route element={<ProtectedRoute requiredRole={ROLE.supplier} />}>
             <Route path="/services" element={<Services setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
-            <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
+            {/* <Route path="/service-detail/:id" element={<ServiceDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} /> */}
             <Route path="/product-price-reporter" element={<ProductPriceReporter setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
             <Route path="/blogs" element={<Blogs setMessage={setMessage} setMessageStatus={setMessageStatus} />} />
             <Route path="/blog-detail/:id" element={<BlogDetail setMessage={setMessage} setMessageStatus={setMessageStatus} />} />

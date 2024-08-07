@@ -17,6 +17,7 @@ import {
   GET_PROMOTION_BY_SUPPLIER,
   GET_REJECTED_BLOGS,
   GET_SERVICE_BY_CATEGORY_ID,
+  GET_SERVICE_SUPPLIER_BY_ID,
   GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID,
   GET_SERVICE_SUPPLIER_FILTER,
   GET_SUPPLIERS_BLOGS,
@@ -233,9 +234,9 @@ export const getServicesSupplierFilter = async (supplierId = '', categoryId = ''
   }
 };
 
-export const getServicesSupplierBySupplierId = async (supplierId) => {
+export const getServiceSupplierById = async (supplierId) => {
   try {
-    const res = await axios.get(GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID + `?supplierId=${supplierId}`);
+    const res = await axios.get(GET_SERVICE_SUPPLIER_BY_ID + `?id=${supplierId}`);
     return res.data.data;
   } catch (error) {
     return error;

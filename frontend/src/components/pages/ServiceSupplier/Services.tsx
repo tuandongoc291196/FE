@@ -11,7 +11,7 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { ALL_SELECT, ECONOMY_SEGMENT, LUXURY_SEGMENT } from '../../../constants/consts';
-import { createService, createServiceSupplier, getListCategories, getPromotionBySupplier, getServicesByCategoryId, getServicesSupplierBySupplierId, getServicesSupplierFilter } from '../../../redux/apiRequest';
+import { createService, createServiceSupplier, getListCategories, getPromotionBySupplier, getServicesByCategoryId, getServicesSupplierFilter } from '../../../redux/apiRequest';
 import { CategoryItem } from '../../../types/schema/category';
 import { useDispatch, useSelector } from 'react-redux';
 import { PromotionItem } from '../../../types/schema/promotion';
@@ -35,6 +35,16 @@ const defaultValueCategory: CategoryItem = {
     id: 'all',
     categoryName: 'Tất cả',
     status: 'ACTIVATED'
+}
+
+const defaultValuePromotion: PromotionItem = {
+    id: 'none',
+    name: 'Không',
+    value: 0,
+    startDate: '',
+    endDate: '',
+    status: '',
+    type: ''
 }
 
 const Services: FC<Props> = (props) => {
@@ -103,8 +113,6 @@ const Services: FC<Props> = (props) => {
     }
 
     async function getServicesCreate() {
-        console.log(categoryCreate);
-
         if (categoryCreate?.id != 'all') {
             const response = await getServicesByCategoryId(categoryCreate?.id);
             if (Array.isArray(response)) {
@@ -146,8 +154,8 @@ const Services: FC<Props> = (props) => {
     const fetchPromotions = async () => {
         const response = await getPromotionBySupplier(user?.userId);
         if (Array.isArray(response)) {
-            setPromotions([...response]);
-            setPromotion(response[0]);
+            setPromotions([defaultValuePromotion, ...response]);
+            setPromotion(defaultValuePromotion);
         } else {
             // Handle the case where response is not an array
             console.error('Response is not an array', response);
@@ -220,7 +228,7 @@ const Services: FC<Props> = (props) => {
                 serviceId: `${serviceCreate?.id}`,
                 description: description,
                 images: getImagesPayload,
-                promotionId: promotion?.id,
+                promotionId: (promotion?.id == 'none') ? '' : promotion?.id,
                 name: serviceName,
                 price: parseInt(price),
                 supplierId: user?.userId,

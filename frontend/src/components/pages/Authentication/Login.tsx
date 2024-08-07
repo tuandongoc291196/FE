@@ -109,7 +109,7 @@ const Login: FC<Props> = (props) => {
           className="col-left"
           style={{
             backgroundImage:
-              "url(https://cdn1.weddingwire.com/assets/img/layer-alta/default_en-US.jpg)",
+              "url(https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-img_login_page.jpg?alt=media&token=d94c744c-ba5f-4a5c-a91b-fc9000377782)",
           }}
         ></div>
         <form onSubmit={loginHandler} className="col-right">

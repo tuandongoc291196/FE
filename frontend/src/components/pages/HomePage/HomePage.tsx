@@ -44,27 +44,27 @@ const blogs = [
 const data = [
   {
     id: 1,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/gwen-ti-ni.jpg",
+    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-1.png?alt=media&token=d9ff6e1d-2fe7-41a3-badb-b35a8c57e9f1",
     alt: "",
   },
   {
     id: 2,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ve-binh-tinh-tu-ti-ni.jpg",
+    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-2.png?alt=media&token=bce06610-c646-4c92-8086-510d594455de",
     alt: "",
   },
   {
     id: 3,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/kaisa-ti-ni.png",
+    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-3.png?alt=media&token=cee403f4-5a70-4c22-ad64-a06fa625fc7d",
     alt: "",
   },
   {
     id: 4,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/sona-ti-ni.jpg",
+    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-4.png?alt=media&token=a095049c-2cc4-4950-945d-c3bde6b8d221",
     alt: "",
   },
   {
     id: 5,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/akali-ti-ni.jpg",
+    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-5.png?alt=media&token=cbf0f887-f0dd-41c0-b8e5-8a7c0038f74c",
     alt: "",
   },
 ];

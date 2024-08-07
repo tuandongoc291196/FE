@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export default axios.create({
-    baseURL: 'https://weddingapp.whiteflower-8a918537.australiaeast.azurecontainerapps.io'
+    baseURL: 'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net'
     // baseURL: 'http://localhost:8080/'
 });

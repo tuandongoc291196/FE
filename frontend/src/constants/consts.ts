@@ -7,7 +7,7 @@ export const ROLE = {
   admin: "ADMIN",
   staff: "STAFF",
   couple: "COUPLE",
-  supplier: "SERVICE_SUPPLIER",
+  supplier: "SUPPLIER",
 };
 
 export const PROCESS_STATUS = {
@@ -23,8 +23,15 @@ export const PROCESS_STATUS_VN = {
   inactive: "Vô hiệu hóa",
 };
 
-export const AVAILABLE_PRICE = "Giá sẵn";
-export const CONTACT_PRICE = "Giá liên hệ"
+export const PROMOTION_TYPES = {
+  percent: "PERCENT",
+  money: "MONEY"
+}
+
+export const ALL_SELECT = {
+  name: "Tất cả",
+  id: "all"
+};
 
 export const ECONOMY_SEGMENT = {
   name: "Phổ thông",
@@ -37,9 +44,12 @@ export const LUXURY_SEGMENT = {
 };
 
 export const BOOKING_STATUS = {
-  waiting: "WAITING",
-  confirm: "CONFIRM",
-  cancel: "CANCEL"
+  cancel: "CANCELLED",
+  pending: "PENDING",
+  approved: "APPROVED",
+  reject: "REJECTED",
+  processing: "PROCESSING",
+  completed: "COMPLETED"
 };
 
 export const LOGO = "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2FD.png?alt=media&token=9d52357b-9b9f-4be7-ab78-8ef0889f0fd6"

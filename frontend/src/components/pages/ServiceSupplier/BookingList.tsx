@@ -12,10 +12,10 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { CategoryItem } from '../../../types/schema/category';
 import { useDispatch, useSelector } from 'react-redux';
 import { PromotionItem } from '../../../types/schema/promotion';
-import { BookingItem } from '../../../types/schema/booking';
-import { getBookingBySupplierId } from '../../../redux/apiRequest';
+import { confirmBookingDetail, getBookingBySupplierId, rejectBookingDetail } from '../../../redux/apiRequest';
 import { BOOKING_STATUS } from '../../../constants/consts';
 import "./BookingList.css";
+import { BookingDetailItem } from '../../../types/schema/booking';
 
 interface Props {
     setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -28,8 +28,14 @@ const convertStatusName = (status: string) => {
     switch (status) {
         case BOOKING_STATUS.cancel:
             return "Đã huỷ"
-        case BOOKING_STATUS.confirm:
+        case BOOKING_STATUS.completed:
+            return "Đã hoàn thành"
+        case BOOKING_STATUS.approved:
             return "Đã xác nhận"
+        case BOOKING_STATUS.reject:
+            return "Đã từ chối"
+        case BOOKING_STATUS.processing:
+            return "Đang thực hiện"
         default: return "Đang đợi"
     }
 }
@@ -39,7 +45,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '70%',
+    width: '40%',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -48,14 +54,16 @@ const style = {
 
 const BookingList: FC<Props> = (props) => {
     const user = useSelector((state: any) => state.auth.login.currentUser);
-    const [bookingList, setBookingList] = useState<BookingItem[]>([]);
-    const [bookingDetail, setBookingDetail] = useState<BookingItem>();
+    const [bookingList, setBookingList] = useState<BookingDetailItem[]>([]);
+    const [note, setNote] = useState<string>('');
+    const [bookingDetail, setBookingDetail] = useState<BookingDetailItem>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [bookingDetailRows, setBookingDetailRows] = useState<any>([]);
     const [bookingDetailCols, setBookingDetailCols] = useState<GridColDef[]>([]);
 
 
     const [open, setOpen] = useState(false);
-    const handleClose = () => setOpen(false);
+    const handleClose = () => { setNote(''); setOpen(false) };
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -70,11 +78,29 @@ const BookingList: FC<Props> = (props) => {
         setBookingList(response);
     }
 
+    async function rejectBooking(bookingDetailId: string) {
+        await rejectBookingDetail(bookingDetailId, user?.token)
+        fetchData();
+    }
+
+    async function approveBooking(bookingDetailId: string) {
+        await confirmBookingDetail(bookingDetailId, user?.token)
+        fetchData();
+    }
+
     const rows = bookingList?.length > 0 ? bookingList.map((booking) => ({
-        id: booking.id,
+        id: booking.bookingDetailId,
         coupleName: booking.couple.partnerName1,
-        createdAt: booking.createdAt,
-        status: booking.status,
+        weddingDate: booking.couple.weddingDate,
+        phone: booking.couple.account.phoneNumber,
+        serviceSupplyName: booking.serviceSupplierResponse.name,
+        type: booking.serviceSupplierResponse.type,
+        price: booking.price,
+        promotionName: booking?.promotionResponse?.name,
+        completedDate: booking.completedDate,
+        note: booking.note,
+        createAt: booking.createAt,
+        status: convertStatusName(`${booking.status}`),
         booking: booking
     })) : [];
 
@@ -82,62 +108,110 @@ const BookingList: FC<Props> = (props) => {
         { field: "id", headerName: "ID", flex: 0.3 },
         { field: "coupleName", headerName: "Tên couple", flex: 0.5 },
         {
-            field: '',
-            headerName: 'Chi tiết dịch vụ',
+            field: 'serviceSupplyName',
+            headerName: 'Tên dịch vụ',
             flex: 0.5,
             width: 170,
             renderCell: (params) => (
-                <button className="btn-admin-disable" onClick={() => {
+                <div onClick={() => {
                     handleOpen(params.row.booking)
                 }}>
-                    Xem chi tiết
-                </button>
+                    {params?.row?.serviceSupplyName}
+                </div>
             ),
         },
-        { field: "createdAt", headerName: "Ngày booking", flex: 0.5 },
+        { field: "price", headerName: "Giá", flex: 0.5 },
+        { field: "promotionName", headerName: "Giảm giá", flex: 0.5 },
+        {
+            field: 'note',
+            headerName: 'Ghi chú',
+            flex: 0.5,
+            width: 170,
+            renderCell: (params) => (
+                <>
+                    {
+                        (params.row.note != '') ?
+                            (
+                                <button className="btn-admin-disable" onClick={() => {
+                                    handleOpen(params.row.note)
+                                }}>
+                                    Xem chi tiết
+                                </button>
+                            ) : null
+                    }
+                </>
+            ),
+        },
+        { field: "createAt", headerName: "Ngày booking", flex: 0.5 },
+        { field: "completedDate", headerName: "Ngày hoàn thành", flex: 0.5 },
+        { field: "status", headerName: "Trạng thái", flex: 0.5 },
+        {
+            field: '',
+            headerName: 'Xử lý',
+            flex: 0.6,
+            width: 170,
+            renderCell: (params) => (
+                (params?.row.booking.status == "PENDING") ?
+                    (
+                        <>
+                            <Button variant="contained" component="span" style={{ backgroundColor: 'red', marginRight: '15px' }}
+                                onClick={() => { rejectBooking(params?.row.id) }}
+                            >
+                                {BOOKING_STATUS.reject}
+                            </Button>
+                            <Button variant="contained" component="span" style={{ backgroundColor: 'green' }}
+                                onClick={() => { approveBooking(params?.row.id) }}
+                            >
+                                {BOOKING_STATUS.approved}
+                            </Button>
+                        </>
+                    ) : null
+            ),
+        },
     ];
 
-    const handleOpen = (booking: BookingItem) => {
-        setBookingDetail(booking);
-        const rows = booking.serviceBookings?.length > 0 ? booking.serviceBookings.map((item) => ({
-            id: item.service.id,
-            name: item.service.name,
-            price: item.bookingPrice,
-            status: item.service.status,
-        })) : [];
+    const handleOpen = (note: string) => {
+        setNote(note);
+        // setBookingDetail(booking);
+        // const rows = booking.serviceBookings?.length > 0 ? booking.serviceBookings.map((item) => ({
+        //     id: item.service.id,
+        //     name: item.service.name,
+        //     price: item.bookingPrice,
+        //     status: item.service.status,
+        // })) : [];
 
-        const columns: GridColDef[] = [
-            { field: "name", headerName: "Tên dịch vụ", flex: 1.2 },
-            { field: "price", headerName: "Giá tiền", flex: 0.5 },
-            {
-                field: 'status',
-                headerName: 'Trạng thái',
-                flex: 0.3,
-                width: 170,
-                renderCell: (params) => (
-                    <FormControl className="form-input price">
-                        <Select
-                            className="input regis-input"
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={params.row.status}
-                        >
-                            {
-                                bookingStatuses.map((status: any, index) => {
-                                    return (
-                                        <MenuItem value={status} key={index}><div style={{ fontSize: "4rem !important" }}>{convertStatusName(status)}</div></MenuItem>
-                                    )
-                                })
-                            }
-                        </Select>
-                    </FormControl>
-                ),
-            },
-        ];
-        if (rows) {
-            setBookingDetailRows(rows);
-            setBookingDetailCols(columns);
-        }
+        // const columns: GridColDef[] = [
+        //     { field: "name", headerName: "Tên dịch vụ", flex: 1.2 },
+        //     { field: "price", headerName: "Giá tiền", flex: 0.5 },
+        //     {
+        //         field: 'status',
+        //         headerName: 'Trạng thái',
+        //         flex: 0.3,
+        //         width: 170,
+        //         renderCell: (params) => (
+        //             <FormControl className="form-input price">
+        //                 <Select
+        //                     className="input regis-input"
+        //                     labelId="demo-simple-select-label"
+        //                     id="demo-simple-select"
+        //                     value={params.row.status}
+        //                 >
+        //                     {
+        //                         bookingStatuses.map((status: any, index) => {
+        //                             return (
+        //                                 <MenuItem value={status} key={index}><div style={{ fontSize: "4rem !important" }}>{convertStatusName(status)}</div></MenuItem>
+        //                             )
+        //                         })
+        //                     }
+        //                 </Select>
+        //             </FormControl>
+        //         ),
+        //     },
+        // ];
+        // if (rows) {
+        //     setBookingDetailRows(rows);
+        //     setBookingDetailCols(columns);
+        // }
         setOpen(true);
     }
 
@@ -158,7 +232,32 @@ const BookingList: FC<Props> = (props) => {
                     </>
                 ) : null
             }
-            <Modal
+            {
+                (note != '') ? (
+                    <Modal
+                        open={open}
+                        onClose={handleClose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                        id="BookingDetailModal"
+                    >
+                        <Box sx={style}>
+                            <Typography id="modal-modal-title" variant="h6" component="h2">
+                                <span style={{ fontSize: "3rem !important" }}>
+                                    {note}
+                                </span>
+                            </Typography>
+                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                <div className="btn-handle">
+                                    <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Đóng</Button>
+                                </div>
+                            </Typography>
+                        </Box>
+                    </Modal>
+                ) : null
+            }
+
+            {/* <Modal
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="modal-modal-title"
@@ -174,7 +273,7 @@ const BookingList: FC<Props> = (props) => {
                             <div className="group-input mb-24">
                                 <label className='booking-detail-label'>Ngày booking:</label>
                                 <div className="form-input">
-                                    <span className='booking-detail-info' >{bookingDetail?.createdAt}</span>
+                                    <span className='booking-detail-info' >{bookingDetail?.createAt}</span>
                                 </div>
                             </div>
                             <div className="group-input mb-24">
@@ -186,7 +285,7 @@ const BookingList: FC<Props> = (props) => {
                             <div className="group-input mb-24">
                                 <label className='booking-detail-label'>Tổng tiền:</label>
                                 <div className="form-input">
-                                    <span className='booking-detail-info' >{`${bookingDetail?.totalPrice}`}</span>
+                                    <span className='booking-detail-info' >{`${bookingDetail?.price}`}</span>
                                 </div>
                             </div>
                         </div>
@@ -203,7 +302,7 @@ const BookingList: FC<Props> = (props) => {
                         </div>
                     </Typography>
                 </Box>
-            </Modal>
+            </Modal> */}
         </div>
     )
 }

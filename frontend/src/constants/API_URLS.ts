@@ -21,7 +21,17 @@ export const GET_PROMOTION_BY_SUPPLIER = "/promotion/getPromotionBySupplier"
 // Booking
 export const GET_BOOKING_BY_SUPPLIER = "/booking/getBySupplier"
 
+// Booking Detail
+export const UPDATE_REJECT_BOOKING_STATUS = "/booking-service/reject"
+export const UPDATE_CONFIRM_BOOKING_STATUS = "/booking-service/confirm"
+
+
 // Service
-export const GET_SERVICE_BY_ID = "/service/getById"
-export const GET_SERVICE_BY_SUPPLIER = "/service/getAllServicesBySupplier"
 export const CREATE_SERVICE = "/service/create"
+export const GET_SERVICE_BY_CATEGORY_ID = "/service/getByCategory"
+
+// Service Supplier
+export const CREATE_SERVICE_SUPPLIER = "/service-supplier/create"
+export const GET_SERVICE_SUPPLIER_FILTER = "/service-supplier/filter"
+export const GET_SERVICE_SUPPLIER_BY_ID = "/service/getById"
+export const GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID = "/service-supplier/getBySuppler"

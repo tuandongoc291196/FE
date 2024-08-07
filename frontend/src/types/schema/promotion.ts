@@ -1,17 +1,19 @@
 export interface PromotionItem {
     id: String,
-    promotionDetails: String,
-    percent: Number,
+    name: String,
+    value: Number,
     startDate: String,
     endDate: String,
-    status: String
+    status: String,
+    type: String
 }
 
 export interface PromotionItemCreate {
-    promotionDetails: String,
-    percent: Number,
-    startDate: String,
     endDate: String,
+    listServiceSupplierId: Array<String>,
+    name: String,
+    startDate: String,
     supplierId: String,
-    listServiceIds: String
+    type: String,
+    value: Number,
 }

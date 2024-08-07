@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Button, Rating } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
-import RequestPricePopup from "../Popup/Couple/RequestPricePopup";
-import { addToCart } from "../../../utils/CartStorage";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Chip, Rating } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
+import RequestPricePopup from '../Popup/Couple/RequestPricePopup';
+import { addToCart } from '../../../utils/CartStorage';
 
 interface ServiceItemViewCardProps {
   id: string;
@@ -12,26 +12,26 @@ interface ServiceItemViewCardProps {
   title: string;
   ratingValue: number;
   description: string;
+  type: string;
   price: number;
-  isPrice: boolean;
   suplierID: string;
 }
 
 const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
-    id,
+  id,
   imageUrl,
   location,
   title,
   ratingValue,
   description,
+  type,
   price,
-  isPrice,
-  suplierID
+  suplierID,
 }) => {
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
-  const handleClose = () => setOpen(false);
+  // const [open, setOpen] = useState(false);
+  // const handleClose = () => setOpen(false);
 
   return (
     <li className="content-item">
@@ -64,8 +64,14 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
               }
             />
           </div>
-          <div className="item-rating">{(ratingValue).toFixed(1)}</div>
+          <div className="item-rating">{ratingValue.toFixed(1)}</div>
         </div>
+        <Chip
+          label={type === 'LUXURY' ? 'Cao cấp' : 'Phổ thông'}
+          color={type === 'LUXURY' ? 'secondary' : 'warning'}
+          sx={{ width: 80, fontSize: 10, fontWeight: 600 }}
+          size="small"
+        />
 
         <p className="item-description">
           <span>{description}</span>
@@ -74,24 +80,28 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
           <Button
             className="btn-item"
             sx={{ minWidth: 200 }}
-            style={{ backgroundColor: "var(--primary-color)"}}
+            style={{ backgroundColor: 'var(--primary-color)' }}
             variant="contained"
             onClick={() => {
-              if (isPrice) {
-                addToCart({id: id, image: imageUrl, name: title, price: price});
-                navigate(`/quotation`);
-              } else {
-                setOpen(true)
-              }
+              addToCart({
+                id: id,
+                image: imageUrl,
+                name: title,
+                price: price,
+                promotion: 0,
+              });
+              window.location.href = "/quotation"
+
+              // navigate(`/quotation`);
             }}
           >
-            {isPrice ? `${price.toLocaleString('vi-VN')} VND` : "Giá liên hệ"  }
+            {price.toLocaleString('vi-VN')} VND
           </Button>
-          <RequestPricePopup open={open} handleClose={handleClose}
+          {/* <RequestPricePopup open={open} handleClose={handleClose}
           serviceId={id}
           serviceName={title}
           suplierID={suplierID}
-          />
+          /> */}
         </div>
       </div>
     </li>

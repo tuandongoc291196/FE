@@ -1,110 +1,59 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
   Card,
   CardContent,
-  Grid,
-  IconButton,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
-} from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { useNavigate } from "react-router";
-import Divider from "@mui/material/Divider";
-import { getCart, removeFromCart } from "../../../utils/CartStorage";
-import { getListQuotation, getServiceById } from "../../../api/CoupleAPI";
-import { useSelector } from "react-redux";
-
-interface Product {
-  id: number;
-  image: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
-const products: Product[] = [
-  {
-    id: 1,
-    image: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
-    name: "Lễ Vật Đạm Ngõ : Mẫu 01 A",
-    price: 1200000,
-    quantity: 1,
-  },
-  {
-    id: 2,
-    image: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
-    name: "Lễ Vật Đạm Ngõ : Mẫu 01 A",
-    price: 1200000,
-    quantity: 1,
-  },
-];
-
+  Divider,
+  IconButton,
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate } from 'react-router';
+import { getCart, removeFromCart } from '../../../utils/CartStorage';
+import { useSelector } from 'react-redux';
+import FormBooking from './FormBooking';
 
 const CoupleQuotation: React.FC = () => {
   const navigate = useNavigate();
-  const [cart, setCart] = React.useState<Product[]>(products);
-  const user = useSelector((state: any) => state.auth.login.currentUser);
   const [servicesPrice, setServicePrice] = useState(getCart());
-  const [servicesQuotation, setServiceQuotation] = useState<any[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const getListQuotationf = async () => {
-    const response = await getListQuotation("COUPLE-1",user.token);
-    const updatedData = await Promise.all(response.map(async (item) => {
-      const serviceData = await getServiceById(item.serviceId);
-      return {
-        ...item,
-        serviceData
-      };
-    }));
-    console.log(updatedData)
-    setServiceQuotation(updatedData);
-  }
-
-  useEffect( () => { 
+  useEffect(() => {
     const handleStorageChange = () => {
       setServicePrice(getCart());
     };
-
-    getListQuotationf()
 
     window.addEventListener('storage', handleStorageChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [getCart()]);
 
   const handleRemoveFromCart = (id: string) => {
     removeFromCart(id);
     setServicePrice(getCart());
   };
+  const totalPrice = servicesPrice.reduce((total, product) => {
+    const price = product.price ?? 0;
+    return total + 1 * price;
+  }, 0);
 
-  const handleQuantityChange = (id: number, quantity: number) => {
-    setCart(
-      cart.map((product) =>
-        product.id === id ? { ...product, quantity } : product
-      )
-    );
-  };
-
-  const handleDelete = (id: string) => {
-    setCart(servicesQuotation.filter((product) => product.id !== id));
-  };
-
-  const totalPrice = cart.reduce(
-    (total, product) => total + product.price * product.quantity,
-    0
-  );
+  const totalPromotionPrice = servicesPrice.reduce((total, product) => {
+    const price = product.price ?? 0;
+    const promotion = product.promotion ?? 0;
+    const serviceTotalPrice = 1 * price;
+    const serviceTotalPriceWithPromotion =
+      serviceTotalPrice * (promotion / 100);
+    return total + serviceTotalPriceWithPromotion;
+  }, 0);
 
   return (
     <Box p={3}>
@@ -112,19 +61,19 @@ const CoupleQuotation: React.FC = () => {
         variant="h4"
         my={2}
         fontWeight={600}
-        sx={{ textTransform: "uppercase", color:"var(--primary-color)"  }}
+        sx={{ textTransform: 'uppercase', color: 'var(--primary-color)' }}
       >
         <Divider
           sx={{
-            mx: "auto",
+            mx: 'auto',
             width: 500,
-            "&::before, &::after": {
-              borderColor: "var(--primary-color)",
-              borderWidth: "1px",
+            '&::before, &::after': {
+              borderColor: 'var(--primary-color)',
+              borderWidth: '1px',
             },
           }}
         >
-          Dịch vụ có giá
+          Danh sách dịch vụ
         </Divider>
       </Typography>
       <TableContainer elevation={4} sx={{ my: 4 }} component={Card}>
@@ -134,7 +83,7 @@ const CoupleQuotation: React.FC = () => {
               <TableCell
                 sx={{
                   fontSize: 16,
-                  color: "var(--primary-color)",
+                  color: 'var(--primary-color)',
                   fontWeight: 600,
                 }}
               >
@@ -143,7 +92,7 @@ const CoupleQuotation: React.FC = () => {
               <TableCell
                 sx={{
                   fontSize: 16,
-                  color: "var(--primary-color)",
+                  color: 'var(--primary-color)',
                   fontWeight: 600,
                 }}
               >
@@ -152,7 +101,7 @@ const CoupleQuotation: React.FC = () => {
               <TableCell
                 sx={{
                   fontSize: 16,
-                  color: "var(--primary-color)",
+                  color: 'var(--primary-color)',
                   fontWeight: 600,
                 }}
               >
@@ -161,34 +110,35 @@ const CoupleQuotation: React.FC = () => {
               <TableCell
                 sx={{
                   fontSize: 16,
-                  color: "var(--primary-color)",
+                  color: 'var(--primary-color)',
                   fontWeight: 600,
                 }}
               >
                 Giá bán
               </TableCell>
-              {/* <TableCell
+
+              <TableCell
                 sx={{
                   fontSize: 16,
-                  color: "var(--primary-color)",
+                  color: 'var(--primary-color)',
                   fontWeight: 600,
                 }}
               >
-                Số lượng
+                Khuyến mãi
               </TableCell>
               <TableCell
                 sx={{
                   fontSize: 16,
-                  color: "var(--primary-color)",
+                  color: 'var(--primary-color)',
                   fontWeight: 600,
                 }}
               >
                 Thành tiền
-              </TableCell> */}
+              </TableCell>
               <TableCell
                 sx={{
                   fontSize: 16,
-                  color: "var(--primary-color)",
+                  color: 'var(--primary-color)',
                   fontWeight: 600,
                 }}
               >
@@ -207,7 +157,7 @@ const CoupleQuotation: React.FC = () => {
                     alt={product.name}
                     width={50}
                     height={50}
-                    sx={{ borderRadius: "8px" }}
+                    sx={{ borderRadius: '8px' }}
                   />
                 </TableCell>
                 <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
@@ -216,135 +166,20 @@ const CoupleQuotation: React.FC = () => {
                 <TableCell sx={{ fontSize: 14 }}>
                   {product.price.toLocaleString()} VND
                 </TableCell>
-                {/* <TableCell>
-                  <Box display="flex" alignItems="center">
-                    <IconButton
-                      onClick={() =>
-                        handleQuantityChange(
-                          product.id,
-                          Math.max(product.quantity - 1, 1)
-                        )
-                      }
-                    >
-                      <RemoveIcon sx={{ color: "red", fontSize: 20 }} />
-                    </IconButton>
-                    <Typography variant="body1" sx={{ mx: 2, fontSize: 14 }}>
-                      {product.quantity}
-                    </Typography>
-                    <IconButton
-                      onClick={() =>
-                        handleQuantityChange(product.id, product.quantity + 1)
-                      }
-                    >
-                      <AddIcon sx={{ color: "green", fontSize: 20 }} />
-                    </IconButton>
-                  </Box>
+
+                <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
+                  {product.promotion ?? 0}%
                 </TableCell>
                 <TableCell sx={{ fontSize: 14 }}>
-                  {(product.price * product.quantity).toLocaleString()} VND
-                </TableCell> */}
+                  {(
+                    product.price -
+                    (product.price * (product.promotion ?? 0)) / 100
+                  ).toLocaleString()}{' '}
+                  VND
+                </TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleRemoveFromCart(product.id)}>
-                    <DeleteIcon sx={{ fontSize: 30, color: "red" }} />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Typography
-        variant="h4"
-        my={4}
-        fontWeight={600}
-        sx={{ textTransform: "uppercase", color:"var(--primary-color)" }}
-      >
-        <Divider
-          sx={{
-            mx: "auto",
-            width: 700,
-            "&::before, &::after": {
-              borderColor: "var(--primary-color)",
-              borderWidth: "1px",
-            },
-          }}
-        >
-          Dịch vụ yêu cầu giá
-        </Divider>
-      </Typography>
-      <TableContainer elevation={4} sx={{ mt: 4 }} component={Card}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                STT
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Hình ảnh
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Tên sản phẩm
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Giá bán
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontSize: 16,
-                  color: "var(--primary-color)",
-                  fontWeight: 600,
-                }}
-              >
-                Xóa
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {servicesQuotation.map((product, index) => (
-              <TableRow key={product.serviceData.id}>
-                <TableCell sx={{ fontSize: 14 }}>{index + 1}</TableCell>
-                <TableCell>
-                  <Box
-                    component="img"
-                    src={product.serviceData.listImages[0]}
-                    alt={product.serviceData.name}
-                    width={50}
-                    height={50}
-                    sx={{ borderRadius: "8px" }}
-                  />
-                </TableCell>
-                <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
-                  {product.serviceData.name}
-                </TableCell>
-                <TableCell sx={{ fontSize: 14 }}>{product.price === 0 ? "Đợi báo giá" : `${product.price.toLocaleString('vi-VN')}`}</TableCell>
-                <TableCell>
-                  <IconButton onClick={() => handleDelete(product.id)}>
-                    <DeleteIcon sx={{ fontSize: 30, color: "red" }} />
+                    <DeleteIcon sx={{ fontSize: 30, color: 'red' }} />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -353,10 +188,22 @@ const CoupleQuotation: React.FC = () => {
         </Table>
       </TableContainer>
       <Box mt={2} display="flex" flexDirection="column" alignItems="flex-end">
-        <Typography my={2} variant="h4">
-          Tổng cộng:{" "}
-          <Box component="span" sx={{ color: "green", fontWeight: "bold" }}>
+        <Typography variant="h5">
+          Tổng cộng:{' '}
+          <Box component="span" sx={{ fontWeight: 'bold' }}>
             {totalPrice.toLocaleString('vi-VN')} VND
+          </Box>
+        </Typography>
+        <Typography variant="h5">
+          Giảm giá khuyến mãi:{' '}
+          <Box component="span" sx={{ fontWeight: 'bold' }}>
+            -{totalPromotionPrice.toLocaleString('vi-VN')} VND
+          </Box>
+        </Typography>
+        <Typography my={2} variant="h5">
+          Tổng thanh toán:{' '}
+          <Box component="span" sx={{ color: 'green', fontWeight: 'bold' }}>
+            {(totalPrice - totalPromotionPrice).toLocaleString('vi-VN')} VND
           </Box>
         </Typography>
         <Box>
@@ -371,22 +218,27 @@ const CoupleQuotation: React.FC = () => {
           <Button
             variant="contained"
             sx={{
-              mr: 2,
               px: 4,
               py: 1,
               fontSize: 14,
               fontWeight: 600,
-              backgroundColor: "var(--primary-color)",
-              color: "white",
+              backgroundColor: 'var(--primary-color)',
+              color: 'white',
             }}
-            onClick={() => {
-              navigate("/booking-details");
-            }}
+            disabled={servicesPrice.length === 0}
+            onClick={() => setModalOpen(true)}
           >
             Hoàn tất đơn hàng
           </Button>
         </Box>
       </Box>
+      <FormBooking
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        services={servicesPrice}
+        totalPrice={totalPrice}
+        totalPromotionPrice={totalPromotionPrice}
+      />
     </Box>
   );
 };

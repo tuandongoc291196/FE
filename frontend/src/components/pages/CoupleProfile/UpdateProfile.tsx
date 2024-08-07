@@ -7,7 +7,7 @@ import {
   TextField,
   Button,
   Avatar,
-  IconButton
+  IconButton,
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 
@@ -18,14 +18,14 @@ const UpdateProfile: React.FC = () => {
     address: '',
     logo: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
 
-  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+  const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setProfile({
       ...profile,
-      [name]: value
+      [name]: value,
     });
   };
 
@@ -43,7 +43,12 @@ const UpdateProfile: React.FC = () => {
 
   const handleUpdateInfo = () => {
     // Handle the logic for updating user information
-    console.log('Updating user info:', profile.name, profile.phone, profile.address);
+    console.log(
+      'Updating user info:',
+      profile.name,
+      profile.phone,
+      profile.address
+    );
   };
 
   const handleChangePassword = () => {
@@ -76,7 +81,12 @@ const UpdateProfile: React.FC = () => {
               onChange={handleLogoChange}
             />
             <label htmlFor="upload-logo">
-              <Button variant="contained" color="primary" component="span" style={{ marginTop: '10px' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                component="span"
+                style={{ marginTop: '10px' }}
+              >
                 Upload Logo
               </Button>
             </label>

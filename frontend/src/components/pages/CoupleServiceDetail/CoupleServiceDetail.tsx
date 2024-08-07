@@ -1,5 +1,5 @@
-import "./CoupleServiceDetail.css";
-import { useLocation, useNavigate } from "react-router";
+import './CoupleServiceDetail.css';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import {
   Box,
   Grid,
@@ -10,84 +10,75 @@ import {
   Paper,
   LinearProgress,
   Pagination,
-} from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import FlagOutlined from "@mui/icons-material/Flag";
-import StarIcon from "@mui/icons-material/Star";
-import { useState } from "react";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { ReviewCard, ReviewCardModel } from "./ReviewCard";
-import { getLabel } from "../../../utils/Utils";
-import RatingPopup from "../Popup/Couple/RatingPopup";
-import RequestPricePopup from "../Popup/Couple/RequestPricePopup";
-
+  Chip,
+} from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import FlagOutlined from '@mui/icons-material/Flag';
+import StarIcon from '@mui/icons-material/Star';
+import { useEffect, useState } from 'react';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { ReviewCard, ReviewCardModel } from './ReviewCard';
+import { getLabel } from '../../../utils/Utils';
+import RatingPopup from '../Popup/Couple/RatingPopup';
+import RequestPricePopup from '../Popup/Couple/RequestPricePopup';
+import { getServiceById } from '../../../api/CoupleAPI';
+import { addToCart } from '../../../utils/CartStorage';
+import { getServiceSupplierById } from '../../../redux/apiRequest';
 
 const reviews: ReviewCardModel[] = [
   {
-    username: "Ahri",
+    username: 'Ahri',
     rating: 5,
-    date: "2023-10-19 13:13",
-    content: "Dịch vụ uy tín",
-    avatar: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
+    date: '2023-10-19 13:13',
+    content: 'Dịch vụ uy tín',
+    avatar: 'https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg',
   },
   {
-    username: "Ahri",
+    username: 'Ahri',
     rating: 5,
-    date: "2023-10-19 13:13",
-    content: "Dịch vụ uy tín",
-    avatar: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
-  },
-];
-
-const data = [
-  {
-    id: 1,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/gwen-ti-ni.jpg",
-    alt: "",
-  },
-  {
-    id: 2,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ve-binh-tinh-tu-ti-ni.jpg",
-    alt: "",
-  },
-  {
-    id: 3,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/kaisa-ti-ni.png",
-    alt: "",
-  },
-  {
-    id: 4,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/sona-ti-ni.jpg",
-    alt: "",
-  },
-  {
-    id: 5,
-    src: "https://ggmeo.com/images/linh-thu-dtcl/akali-ti-ni.jpg",
-    alt: "",
+    date: '2023-10-19 13:13',
+    content: 'Dịch vụ uy tín',
+    avatar: 'https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg',
   },
 ];
 
 const totalReviews = 369;
-const recommendPercentage = 99;
 
 const ratings = [
-  { name: "Số lượng", rating: 5.0 },
-  { name: "Chất lượng", rating: 5.0 },
-  { name: "Đúng giờ", rating: 5.0 },
+  { name: 'Số lượng', rating: 5.0 },
+  { name: 'Chất lượng', rating: 5.0 },
+  { name: 'Đúng giờ', rating: 5.0 },
 ];
 
 const CoupleServiceDetail = () => {
+  const [number, setNumber] = useState(1);
   const navigate = useNavigate();
-  const location = useLocation();
-  const path = location.pathname.split("/")[2];
-  const value = 4.9;
+  const { id } = useParams();
+  const [service, setService] = useState<any>(null);
 
-  const [openRequest, setOpenRequest] = useState(false);
-  const handleOpenRequest = () => setOpenRequest(true);
-  const handleCloseRequest = () => setOpenRequest(false);
+  const handleAddToCart = () => {
+    addToCart({
+      id: service?.id,
+      image: service?.listImages[0],
+      name: service?.name,
+      price: service?.price,
+      promotion: (service?.promotion && service?.promotion.value) ?? 0,
+    });
+    window.location.href = "/quotation"
 
+    // navigate(`/quotation`);
+  };
   const [openReview, setOpenReview] = useState(false);
+
+  const getData = async () => {
+    const response = await getServiceSupplierById(id ?? '');
+    setService(response);
+  };
+
+  useEffect(() => {
+    getData();
+  }, [id]);
 
   const handleOpenReview = () => {
     setOpenReview(true);
@@ -103,18 +94,27 @@ const CoupleServiceDetail = () => {
     timeliness: number;
     description: string;
   }) => {
-    console.log("Submitted Rating:", ratingData);
+    console.log('Submitted Rating:', ratingData);
     // Handle the submitted rating data here
   };
+  function calculateFinalPrice() {
+    const price = service?.price;
+    const promotionValue = service?.promotion?.value ?? 1;
+    const finalPrice =
+      promotionValue !== 1
+        ? price * number - (price * number * promotionValue) / 100
+        : price * number;
 
+    return finalPrice.toLocaleString();
+  }
   const [slide, setSlide] = useState(0);
 
   const nextSlide = () => {
-    setSlide(slide === data.length - 1 ? 0 : slide + 1);
+    setSlide(slide === service?.listImages.length - 1 ? 0 : slide + 1);
   };
 
   const prevSlide = () => {
-    setSlide(slide === 0 ? data.length - 1 : slide - 1);
+    setSlide(slide === 0 ? service?.listImages.length - 1 : slide - 1);
   };
 
   return (
@@ -129,39 +129,44 @@ const CoupleServiceDetail = () => {
                   size="large"
                   className="img-view-btn"
                   onClick={() => {
-                    navigate("/services/details/item/img");
+                    navigate('/services/details/item/img', {
+                      state: {
+                        images: service?.listImages,
+                        title: service?.name,
+                      },
+                    });
                   }}
                 >
-                  View Photos 10
+                  Xem ảnh {service?.listImages.length}
                 </Button>
                 <KeyboardArrowLeftIcon
                   onClick={prevSlide}
                   className="arrow arrow-left"
                 />
-                {data.map((item, idx) => {
+                {service?.listImages.map((item: any, idx: number) => {
                   return (
                     <img
-                      src={item.src}
-                      alt={item.alt}
+                      src={item}
+                      alt=""
                       key={idx}
-                      className={slide === idx ? "slide" : "slide slide-hidden"}
+                      className={slide === idx ? 'slide' : 'slide slide-hidden'}
                     />
                   );
                 })}
                 <KeyboardArrowRightIcon
-                  sx={{ color: "red" }}
+                  sx={{ color: 'red' }}
                   onClick={nextSlide}
                   className="arrow arrow-right"
                 />
                 <span className="indicators">
-                  {data.map((_, idx) => {
+                  {service?.listImages.map((_: any, idx: number) => {
                     return (
                       <button
                         key={idx}
                         className={
                           slide === idx
-                            ? "indicator"
-                            : "indicator indicator-inactive"
+                            ? 'indicator'
+                            : 'indicator indicator-inactive'
                         }
                         onClick={() => setSlide(idx)}
                       ></button>
@@ -170,14 +175,14 @@ const CoupleServiceDetail = () => {
                 </span>
               </div>
 
-              <Box sx={{ mt: 8, textAlign: "left" }}>
+              <Box sx={{ mt: 8, textAlign: 'left' }}>
                 <Typography variant="h3" component="div" gutterBottom>
-                  About
+                  Mô tả
                 </Typography>
                 <Box
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     marginBottom: 2,
                   }}
                 >
@@ -187,52 +192,16 @@ const CoupleServiceDetail = () => {
                   </Typography>
                 </Box>
                 <Typography variant="body1" sx={{ fontSize: 14 }} paragraph>
-                  PrimaDonna Makeover Mobile Bridal Hair & Makeup is a certified
-                  beauty service, on-site beauty service located in San
-                  Francisco, California & Boise, ID. The owner, Yolanda, and her
-                  team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages. PrimaDonna Makeover Mobile Bridal Hair & Makeup is a
-                  certified beauty service, on-site beauty service located in
-                  San Francisco, California & Boise, ID. The owner, Yolanda, and
-                  her team strive to deliver the best service possible to their
-                  clients, which is why their clients keep coming back to them
-                  again and again. Now offering Boise, ID wedding flower
-                  packages.
+                  {service?.description}
                 </Typography>
               </Box>
 
               <Box mt={4} mb={4}>
                 <Typography variant="h4" gutterBottom align="left">
-                  Đánh giá Sound Originals Photo & Video
+                  Đánh giá {service?.name}
                 </Typography>
                 <Grid container spacing={2} mt={2}>
-                  <Grid item xs={5} sx={{ textAlign: "left" }}>
+                  <Grid item xs={5} sx={{ textAlign: 'left' }}>
                     <Box>
                       <Box display="flex" alignItems="center">
                         <Typography
@@ -251,7 +220,7 @@ const CoupleServiceDetail = () => {
                       </Box>
                       <Rating
                         name="rating-service-feedback"
-                        value={value}
+                        value={service?.rating}
                         readOnly
                         precision={0.1}
                         size="large"
@@ -276,15 +245,15 @@ const CoupleServiceDetail = () => {
                       sx={{
                         fontSize: 14,
                         fontWeight: 600,
-                        backgroundColor: "var(--primary-color)",
-                        "&:hover": {
-                          backgroundColor: "var(--btn-hover-color)",
+                        backgroundColor: 'var(--primary-color)',
+                        '&:hover': {
+                          backgroundColor: 'var(--btn-hover-color)',
                         },
                       }}
                       style={{
-                        marginTop: "10px",
-                        width: "300px",
-                        padding: "10px 20px",
+                        marginTop: '10px',
+                        width: '300px',
+                        padding: '10px 20px',
                       }}
                       onClick={handleOpenReview}
                     >
@@ -313,14 +282,14 @@ const CoupleServiceDetail = () => {
                               variant="determinate"
                               value={(item.rating / 5) * 100}
                               style={{
-                                width: "200px",
-                                height: "10px",
-                                marginRight: "10px",
-                                borderRadius: "5px",
+                                width: '200px',
+                                height: '10px',
+                                marginRight: '10px',
+                                borderRadius: '5px',
                               }}
                               sx={{
-                                "& .MuiLinearProgress-bar": {
-                                  bgcolor: "var(--primary-color)",
+                                '& .MuiLinearProgress-bar': {
+                                  bgcolor: 'var(--primary-color)',
                                 },
                               }}
                             />
@@ -350,27 +319,27 @@ const CoupleServiceDetail = () => {
                 component={Paper}
                 elevation={3}
                 sx={{
-                  textAlign: "left",
-                  position: "fixed",
+                  textAlign: 'left',
+                  position: 'sticky',
                   p: 2,
-                  width: "550px",
-                  top: "130px",
-                  right: "20px",
+                  width: '100%',
+                  top: '130px',
+                  right: '20px',
                 }}
               >
                 <Typography variant="h3" fontWeight={600}>
-                  PrimaDonna Makeover
+                  {service?.name}
                 </Typography>
                 <Box
                   sx={{
                     marginTop: 1,
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                   }}
                 >
                   <Rating
                     name="rating-service"
-                    value={value}
+                    value={service?.rating}
                     readOnly
                     precision={0.1}
                     size="large"
@@ -379,33 +348,62 @@ const CoupleServiceDetail = () => {
                     }
                   />
                   <Typography variant="h5" sx={{ ml: 1 }}>
-                    {value}
+                    {service?.rating}
                   </Typography>
                   <Typography variant="h5" sx={{ ml: 1 }}>
-                    {getLabel(value)}
+                    {getLabel(service?.rating)}
                   </Typography>
                 </Box>
                 <Box
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     fontSize: 16,
                     marginTop: 2,
                   }}
                 >
                   <LocationOnIcon />
-                  <Link
-                    href="#"
+                  <Box
                     sx={{
-                      color: "black",
-                      textDecoration: "underline",
-                      textDecorationColor: "black",
+                      color: 'black',
+                      textDecorationColor: 'black',
                       ml: 1,
                     }}
                   >
-                    San Francisco, CA
-                  </Link>
+                    {service?.supplierResponse?.area?.ward}
+                    {', '}
+                    {service?.supplierResponse?.area?.district}
+                    {', '}
+                    {service?.supplierResponse?.area?.province}
+                  </Box>
                 </Box>
+
+                {service?.promotion && (
+                  <Box>
+                    <Box>
+                      <Typography fontSize={12} my={1}>
+                        Khuyến mãi:{' '}
+                        <span
+                          style={{
+                            fontWeight: 'bold',
+                            color: 'red',
+                            fontSize: 16,
+                          }}
+                        >
+                          {service?.promotion.value}%
+                        </span>
+                      </Typography>
+                      <Typography fontSize={12}>
+                        Từ ngày:{' '}
+                        <span style={{ fontWeight: 'bold' }}>
+                          {service?.promotion?.startDate}
+                          {' -> '}
+                          {service?.promotion?.endDate}
+                        </span>
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
 
                 <Button
                   variant="contained"
@@ -413,24 +411,24 @@ const CoupleServiceDetail = () => {
                   size="large"
                   sx={{
                     marginTop: 4,
-                    backgroundColor: "var(--primary-color)",
-                    "&:hover": {
-                      backgroundColor: "var(--btn-hover-color)",
+                    backgroundColor: 'var(--primary-color)',
+                    '&:hover': {
+                      backgroundColor: 'var(--btn-hover-color)',
                     },
                     fontWeight: 700,
                     fontSize: 16,
                   }}
-                  onClick={handleOpenRequest}
+                  onClick={handleAddToCart}
                 >
-                  Giá liên hệ
+                  {calculateFinalPrice()} VND
                 </Button>
-                <RequestPricePopup
+                {/* <RequestPricePopup
                   open={openRequest}
                   handleClose={handleCloseRequest}
                   serviceId=""
                   serviceName=""
                   suplierID=""
-                />
+                /> */}
               </Box>
             </Grid>
           </Grid>

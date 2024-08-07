@@ -210,7 +210,7 @@ const HomePage: React.FC = () => {
           fontWeight={600}
           sx={{ textTransform: "uppercase", color: "var(--primary-color)" }}
         >
-          Gói Combo
+          Các Gói Combo
         </Typography>
         <Box
           ref={scrollRef}
@@ -245,7 +245,7 @@ const HomePage: React.FC = () => {
               elevation={3}
             >
               <CardMedia sx={{ height: 200 }} image={service.imageSmall} />
-              <CardContent>
+              <CardContent sx={{textAlign: 'left'}}>
                 <Typography
                   variant="h5"
                   sx={{
@@ -260,6 +260,8 @@ const HomePage: React.FC = () => {
                 >
                   {service.label}
                 </Typography>
+                <Typography fontSize={14}> 4 dịch vụ</Typography>
+                <Typography fontSize={14} fontWeight={600}> {(20000000).toLocaleString('vi-VN')} VND</Typography>
               </CardContent>
             </Card>
           ))}

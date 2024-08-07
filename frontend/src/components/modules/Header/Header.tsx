@@ -1,19 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./Header.css";
-import NavSearching from "../../pages/NavSearching/NavSearching";
-import { Outlet, useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import Nav from "react-bootstrap/Nav";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useRef, useState } from 'react';
+import './Header.css';
+import NavSearching from '../../pages/NavSearching/NavSearching';
+import { Outlet, useNavigate } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import Nav from 'react-bootstrap/Nav';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAddressCard,
   faRightFromBracket,
-} from "@fortawesome/free-solid-svg-icons";
-import { logoutUser } from "../../../redux/apiRequest";
-import { LOGO, ROLE } from "../../../constants/consts";
-import { HeaderNav } from "./HeaderNav";
-import { IconButton } from "@mui/material";
+} from '@fortawesome/free-solid-svg-icons';
+import { logoutUser } from '../../../redux/apiRequest';
+import { LOGO, ROLE } from '../../../constants/consts';
+import { HeaderNav } from './HeaderNav';
+import { Badge, IconButton } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import { getCart } from '../../../utils/CartStorage';
 
 interface HeaderProps {
   isModalVisible: boolean;
@@ -23,8 +26,20 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [services, setServices] = useState(getCart());
+  useEffect(() => {
 
-  const [show, setShow] = useState<string>("display-none");
+    const handleStorageChange = () => {
+      setServices(getCart());
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [getCart()]);
+  const [show, setShow] = useState<string>('display-none');
   const user = useSelector((state: any) => state.auth.login.currentUser);
 
   const navItemRef = useRef<HTMLDivElement>(null);
@@ -43,10 +58,10 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
       }
     };
 
-    document.addEventListener("mouseover", handleMouseOver);
+    document.addEventListener('mouseover', handleMouseOver);
 
     return () => {
-      document.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener('mouseover', handleMouseOver);
     };
   }, [setModalVisible]);
 
@@ -106,10 +121,10 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
     <>
       <div id="Header">
         <div className="header-left">
-          <div className="header-icon"><img src={LOGO} alt="" /></div>
-          <nav className="nav-bar">
-            {handleNav()}
-          </nav>
+          <div className="header-icon">
+            <img src={LOGO} alt="" />
+          </div>
+          <nav className="nav-bar">{handleNav()}</nav>
         </div>
         {user == null ? (
           <div className="header-right">
@@ -118,7 +133,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                 <li
                   className="nav-auth-item"
                   onClick={() => {
-                    navigate("/login");
+                    navigate('/login');
                   }}
                 >
                   Đăng nhập
@@ -126,7 +141,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                 <li
                   className="nav-auth-item"
                   onClick={() => {
-                    navigate("/register");
+                    navigate('/register');
                   }}
                 >
                   Đăng ký
@@ -138,16 +153,33 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
           <div className="header-right">
             <IconButton
               onClick={() => {
-                navigate("/quotation");
+                console.log(1);
               }}
             >
-              <ShoppingCartIcon sx={{ fontSize: 30 }} />
+              <AccountBalanceWalletIcon sx={{ fontSize: 30 }} />
             </IconButton>
+            <IconButton
+              onClick={() => {
+                navigate('/booking-history');
+              }}
+            >
+              <ReceiptLongIcon sx={{ fontSize: 30 }} />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                navigate('/quotation');
+              }}
+            >
+              <Badge badgeContent={services.length} color="error">
+                <ShoppingCartIcon sx={{ fontSize: 30 }} />{' '}
+              </Badge>
+            </IconButton>
+
             <div
               className="navlink user-wrap"
               onClick={(e) => {
                 e.stopPropagation();
-                show == "" ? setShow("display-none") : setShow("");
+                show == '' ? setShow('display-none') : setShow('');
               }}
             >
               <div className="flex-css relative hover-primary">
@@ -173,9 +205,9 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                 <div
                   className="dropdown-option"
                   onClick={() => {
-                    navigate("/profile");
+                    navigate('/profile');
                   }}
-                  style={{ color: "var(--black-color)" }}
+                  style={{ color: 'var(--black-color)' }}
                 >
                   <FontAwesomeIcon icon={faAddressCard} className="icon" />
                   Cá nhân
@@ -190,7 +222,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
         )}
 
         {isModalVisible && (
-          <div id="Modal" ref={modalRef} style={{ position: "absolute" }}>
+          <div id="Modal" ref={modalRef} style={{ position: 'absolute' }}>
             <NavSearching />
           </div>
         )}

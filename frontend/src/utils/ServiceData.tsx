@@ -9,7 +9,7 @@ import CheckroomIcon from '@mui/icons-material/Checkroom';
 
 export const ServiceData = [
     {
-        id: "CATEGORY-14",
+        id: "CATEGORY-2",
         name: "invitations",
         label: "Thiệp cưới",
         icon: <WeddingIcon sx={{ fontSize: 40 }}/>,
@@ -18,7 +18,6 @@ export const ServiceData = [
         imageIcon: "https://cdn-icons-png.freepik.com/512/104/104471.png",
         alt: "invitations",
         navigate: "/services/invitations",
-        isPrice: true,
         items: []
     },
     {
@@ -31,11 +30,10 @@ export const ServiceData = [
         imageIcon: "https://cdn.iconscout.com/icon/free/png-256/free-wedding-ring-1411380-1192859.png?f=webp",
         alt: "jewelry",
         navigate: "/services/jewelry",
-        isPrice: true,
         items: []
     },
     {
-        id: "CATEGORY-16",
+        id: "CATEGORY-1",
         name: "photography",
         label: "Ảnh cưới",
         icon: <VendorManagerIcon sx={{ fontSize: 40 }}/>,
@@ -70,7 +68,6 @@ export const ServiceData = [
         imageIcon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSww9HjKznDB3Fq-NgA_YXXp4KL39e7I3ghQ&s",
         alt: "outfits",
         navigate: "/services/outfits",
-        isPrice: true,
         items: [
             {
                 id: "Category",
@@ -100,7 +97,6 @@ export const ServiceData = [
         imageIcon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS85U5US0cu3mQuWLwwd0hOWeBYkw1l37EGBw&s",
         alt: "makeup",
         navigate: "/services/makeup",
-        isPrice: true,
         items: [
             {
                 id: "Category",
@@ -203,7 +199,6 @@ export const ServiceData = [
         imageIcon: "https://cdn.iconscout.com/icon/premium/png-256-thumb/wedding-gift-3842622-3190391.png",
         alt: "wedding-gifts",
         navigate: "/services/wedding-gifts",
-        isPrice: true,
         items: [
             {
                 id: "Category",

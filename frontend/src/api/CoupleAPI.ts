@@ -29,18 +29,18 @@ export const getAllServices = async (): Promise<any[]> => {
 }
 export const getServiceByCategory = async (
     category: string,
-    // minPrice: number,
-    // maxPrice: number,
-    // type: string
+    minPrice?: number,
+    maxPrice?: number,
+    type?: string
   ): Promise<any[]> => {
   
     try {
-      const response = await axios.get("/service/filterService/", {
+      const response = await axios.get("/service-supplier/filter", {
         params: {
           categoryId: category,
-          // minPrice: minPrice,
-          // maxPrice: maxPrice,
-          // type: type,
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          type: type,
         },
       });
   
@@ -57,7 +57,7 @@ export const getServiceByCategory = async (
 
 export const getServiceById = async (
     serviceID: string
-  ): Promise<any[]> => {
+  ): Promise<any> => {
   
     try {
       const response = await axios.get("/service/getById/{id}", 
@@ -79,10 +79,28 @@ export const getServiceById = async (
     }
   };
 
-  export const getBlogsList = async (
-    pageNo: number,
-    pageSize: number,
-  ): Promise<any[]> => {
+  export const getBlogById = async (
+    blogID: string
+  ): Promise<any> => {
+  
+    try {
+      const response = await axios.get("/blog/getBlogPostById/" + blogID);
+  
+      if (response.data.status === 'SUCCESS') {
+        return response.data.data;
+      } else {
+        throw new Error('API call was not successful');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
+    }
+  };
+
+  export const getBlogsList = async ({
+    pageNo,
+    pageSize,
+  }: { pageNo: number, pageSize: number }): Promise<any[]> => {
   
     try {
       const response = await axios.get("/blog/getAllActiveBlogPosts/", {

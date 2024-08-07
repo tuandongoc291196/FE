@@ -83,6 +83,10 @@ body {
     margin-bottom: 24px !important;
 }
 
+.ml-8 {
+    margin-left: 8% !important;
+}
+
 .btn-close {
     background-color: var(--black-color) !important;
     color: var(--white-color) !important;

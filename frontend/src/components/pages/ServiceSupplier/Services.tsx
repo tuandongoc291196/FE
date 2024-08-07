@@ -86,11 +86,14 @@ const Services: FC<Props> = (props) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        fetchData();
         fetchCategories();
         fetchPromotions();
         getServices();
     }, [category, service, segment])
+
+    useEffect(() => {
+        fetchData();
+    }, [])
 
     useEffect(() => {
         fetchCategoriesCreate();
@@ -236,12 +239,11 @@ const Services: FC<Props> = (props) => {
             }
 
             const status = await createServiceSupplier(newService, user?.token, dispatch, navigate);
-
+            fetchData();
+            handleClose();
             if (status == "SUCCESS") {
                 props.setMessageStatus("green");
                 props.setMessage("Tạo thành công");
-                fetchData();
-                handleClose();
             } else {
                 props.setMessageStatus("red");
                 props.setMessage(status);

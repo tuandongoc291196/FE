@@ -174,9 +174,7 @@ const Promotions: FC<Props> = (props) => {
                                     <span className="text-err"></span>
                                 </div>
                             </div>
-                        </div>
-                        <div className="create-container group-create-promotion">
-                            <div className="group-input mb-24">
+                            <div className="group-input mb-24 ml-8">
                                 <label>Dịch vụ:</label>
                                 <div className="form-input">
                                     {
@@ -200,6 +198,9 @@ const Promotions: FC<Props> = (props) => {
                                     }
                                 </div>
                             </div>
+                        </div>
+                        <div className="create-container group-create-promotion">
+
                             <div className="group-input mb-24">
                                 <label>Loại giảm giá:</label>
                                 <div className="form-input">
@@ -220,7 +221,7 @@ const Promotions: FC<Props> = (props) => {
                                     </FormControl>
                                 </div>
                             </div>
-                            <div className="group-input mb-24">
+                            <div className="group-input mb-24 ml-8">
                                 <label>Giảm:</label>
                                 <div className="form-input">
                                     <input type="Username" className="input regis-input" defaultValue={'0'} required onChange={(e) => { setPercent(e.target.value) }} />

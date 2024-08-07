@@ -33,5 +33,5 @@ export const GET_SERVICE_BY_CATEGORY_ID = "/service/getByCategory"
 // Service Supplier
 export const CREATE_SERVICE_SUPPLIER = "/service-supplier/create"
 export const GET_SERVICE_SUPPLIER_FILTER = "/service-supplier/filter"
-export const GET_SERVICE_SUPPLIER_BY_ID = "/service/getById"
+export const GET_SERVICE_SUPPLIER_BY_ID = "/service-supplier/getById"
 export const GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID = "/service-supplier/getBySuppler"

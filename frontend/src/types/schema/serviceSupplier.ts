@@ -1,3 +1,4 @@
+import { CategoryItem } from "./category";
 import { PromotionItem } from "./promotion";
 import { ServiceItem } from "./service";
 
@@ -31,4 +32,20 @@ export interface ServiceSupplierResponse {
     price: String,
     status: String,
     serviceResponse: ServiceItem
+}
+
+export interface ServiceSupplierDetail {
+    id: String,
+    name: String,
+    description: String,
+    rating: String,
+    listImages: Array<String>,
+    type: String,
+    createAt: String,
+    price: String,
+    status: String,
+    supplierResponse: any,
+    serviceResponse: ServiceItem,
+    categoryResponse: CategoryItem,
+    promotion: PromotionItem
 }

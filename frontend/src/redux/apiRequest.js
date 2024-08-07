@@ -1,10 +1,11 @@
-import axios from "../api/axios";
+import axios from '../api/axios';
 import {
   ACCOUNT_LOGIN,
   ACCOUNT_LOGIN_GOOGLE,
   ACCOUNT_REGISTER_COUPLE,
   ACCOUNT_REGISTER_STAFF,
   ACCOUNT_REGISTER_SUPPLIER,
+  CANCEL_BOOKING,
   CREATE_CATEGORY,
   CREATE_PROMOTION,
   CREATE_SERVICE,
@@ -12,6 +13,8 @@ import {
   GET_ACTIVE_BLOGS,
   GET_ALL_BLOGS,
   GET_ALL_CATEGORIES,
+  GET_BOOKING_BY_COUPLE,
+  GET_BOOKING_BY_ID,
   GET_BOOKING_BY_SUPPLIER,
   GET_PENDING_BLOGS,
   GET_PROMOTION_BY_SUPPLIER,
@@ -21,11 +24,13 @@ import {
   GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID,
   GET_SERVICE_SUPPLIER_FILTER,
   GET_SUPPLIERS_BLOGS,
+  POST_BOOKING,
+  REQUEST_PAYMENT,
   UPDATE_CONFIRM_BOOKING_STATUS,
   UPDATE_REJECT_BOOKING_STATUS,
-} from "../constants/API_URLS";
-import { PROCESS_STATUS, ROLE, STATUS } from "../constants/consts";
-import { LOGIN_SUCCESS } from "../message/authen/Login";
+} from '../constants/API_URLS';
+import { PROCESS_STATUS, ROLE, STATUS } from '../constants/consts';
+import { LOGIN_SUCCESS } from '../message/authen/Login';
 import {
   loginFailed,
   loginStart,
@@ -33,35 +38,35 @@ import {
   logoutFailed,
   logoutStart,
   logoutSuccess,
-} from "./authSlice";
+} from './authSlice';
 
 //Authentication
 export const loginUser = async (user, dispatch, navigate) => {
   dispatch(loginStart());
   try {
-    const res = await axios.post("/auth/login", user);
+    const res = await axios.post('/auth/login', user);
     if (res.data.message != LOGIN_SUCCESS) {
       return res.message;
     } else {
       if (res.data) {
         if (res.data.data.roleName === ROLE.admin) {
           dispatch(loginSuccess(res.data.data));
-          navigate("/");
+          navigate('/');
           return res.data.status;
         }
         if (res.data.data.roleName === ROLE.staff) {
           dispatch(loginSuccess(res.data.data));
-          navigate("/staff/suppliers");
+          navigate('/staff/suppliers');
           return res.data.status;
         }
         if (res.data.data.roleName === ROLE.supplier) {
           dispatch(loginSuccess(res.data.data));
-          navigate("/service-suppliers-dashboard");
+          navigate('/service-suppliers-dashboard');
           return res.data.status;
         } else {
           if (res.data.data.status == STATUS.active) {
             dispatch(loginSuccess(res.data.data));
-            navigate("/");
+            navigate('/');
             return res.data.status;
           } else {
             return res.data.message;
@@ -91,9 +96,9 @@ export const loginUserByGoogle = async (
     await console.log(res);
     await dispatch(loginSuccess(res.data.data));
     if (isRegister) {
-      navigate("/update-candidate");
+      navigate('/update-candidate');
     } else {
-      navigate("/");
+      navigate('/');
     }
   } catch (err) {
     dispatch(loginFailed());
@@ -104,7 +109,7 @@ export const logoutUser = async (dispatch, navigate) => {
   dispatch(logoutStart());
   try {
     dispatch(logoutSuccess(null));
-    navigate("/");
+    navigate('/');
   } catch (err) {
     dispatch(logoutFailed());
   }
@@ -140,7 +145,7 @@ export const registerStaff = async (
   dispatch
 ): Promise<string> => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   };
   try {
@@ -186,7 +191,7 @@ export const getListCategories = async (page, size) => {
 export const createCategory = async (name, token) => {
   try {
     const headers = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     };
     let url = `${CREATE_CATEGORY}`;
@@ -212,7 +217,7 @@ export const createServiceSupplier = async (
   dispatch
 ): Promise<string> => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   };
   try {
@@ -225,9 +230,17 @@ export const createServiceSupplier = async (
   }
 };
 
-export const getServicesSupplierFilter = async (supplierId = '', categoryId = '', serviceId = '', segmentId = '') => {
+export const getServicesSupplierFilter = async (
+  supplierId = '',
+  categoryId = '',
+  serviceId = '',
+  segmentId = ''
+) => {
   try {
-    const res = await axios.get(GET_SERVICE_SUPPLIER_FILTER + `?categoryId=${categoryId}&maxPrice=0&minPrice=0&serviceId=${serviceId}&supplierId=${supplierId}&type=${segmentId}`);
+    const res = await axios.get(
+      GET_SERVICE_SUPPLIER_FILTER +
+        `?categoryId=${categoryId}&maxPrice=0&minPrice=0&serviceId=${serviceId}&supplierId=${supplierId}&type=${segmentId}`
+    );
     return res.data.data;
   } catch (error) {
     return error;
@@ -236,7 +249,9 @@ export const getServicesSupplierFilter = async (supplierId = '', categoryId = ''
 
 export const getServiceSupplierById = async (supplierId) => {
   try {
-    const res = await axios.get(GET_SERVICE_SUPPLIER_BY_ID + `?id=${supplierId}`);
+    const res = await axios.get(
+      GET_SERVICE_SUPPLIER_BY_ID + `?id=${supplierId}`
+    );
     return res.data.data;
   } catch (error) {
     return error;
@@ -247,7 +262,9 @@ export const getServiceSupplierById = async (supplierId) => {
 
 export const getServicesByCategoryId = async (categoryId) => {
   try {
-    const res = await axios.get(GET_SERVICE_BY_CATEGORY_ID + `?categoryId=${categoryId}`);
+    const res = await axios.get(
+      GET_SERVICE_BY_CATEGORY_ID + `?categoryId=${categoryId}`
+    );
     console.log(res.data.data);
     return res.data.data;
   } catch (error) {
@@ -262,7 +279,7 @@ export const createService = async (
   dispatch
 ): Promise<string> => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   };
   try {
@@ -279,20 +296,25 @@ export const createService = async (
 
 export const createPromotion = async (promotion, token) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   };
   try {
-      const res = await axios.post(CREATE_PROMOTION, promotion, {headers: headers});
-      return res.data.status;
+    const res = await axios.post(CREATE_PROMOTION, promotion, {
+      headers: headers,
+    });
+    return res.data.status;
   } catch (error) {
-      return error;
+    return error;
   }
-}
+};
 
 export const getPromotionBySupplier = async (supplierId) => {
   try {
-    const res = await axios.get(GET_PROMOTION_BY_SUPPLIER + `?supplierId=${supplierId}`);
+    const res = await axios.get(
+      GET_PROMOTION_BY_SUPPLIER + `?supplierId=${supplierId}`
+    );
+
     return res.data.data;
   } catch (error) {
     return error;
@@ -303,11 +325,93 @@ export const getPromotionBySupplier = async (supplierId) => {
 
 export const getBookingBySupplierId = async (id, token) => {
   const headers = {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   };
   try {
-    const res = await axios.get(GET_BOOKING_BY_SUPPLIER + `?supplierId=${id}`, {headers: headers});
+    const res = await axios.get(GET_BOOKING_BY_SUPPLIER + `?supplierId=${id}`, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const createBooking = async (createBookingArgs, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.post(POST_BOOKING, createBookingArgs, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getBookingById = async (id, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(GET_BOOKING_BY_ID + `?id=${id}`, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const requestPayment = async (data, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.post(REQUEST_PAYMENT, data, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getBookingHistoryByCoupleId = async (id, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(GET_BOOKING_BY_COUPLE + `?coupleId=${id}`, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const cancelBooking = async (id, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    console.log(headers);
+    const res = await axios.put(
+      CANCEL_BOOKING + `?id=${id}`,
+      {},
+      {
+        headers: headers,
+      }
+    );
     return res.data.data;
   } catch (error) {
     return error;
@@ -318,36 +422,46 @@ export const getBookingBySupplierId = async (id, token) => {
 
 export const confirmBookingDetail = async (id, token) => {
   const data = {
-    key: 'value'
+    key: 'value',
   };
-  fetch('https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' + UPDATE_CONFIRM_BOOKING_STATUS + `?id=${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(data)
-  })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error))
+  fetch(
+    'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
+      UPDATE_CONFIRM_BOOKING_STATUS +
+      `?id=${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error));
   return data.status;
 };
 
 export const rejectBookingDetail = async (id, token) => {
   const data = {
-    key: 'value'
+    key: 'value',
   };
-  fetch('https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' + UPDATE_REJECT_BOOKING_STATUS + `?id=${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify(data)
-  })
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error('Error:', error))
+  fetch(
+    'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
+      UPDATE_REJECT_BOOKING_STATUS +
+      `?id=${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error));
   return data.status;
-}
+};

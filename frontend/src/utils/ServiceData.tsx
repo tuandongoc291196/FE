@@ -9,7 +9,7 @@ import CheckroomIcon from '@mui/icons-material/Checkroom';
 
 export const ServiceData = [
     {
-        id: "CATEGORY-14",
+        id: "CATEGORY-2",
         name: "invitations",
         label: "Thiệp cưới",
         icon: <WeddingIcon sx={{ fontSize: 40 }}/>,
@@ -33,7 +33,7 @@ export const ServiceData = [
         items: []
     },
     {
-        id: "CATEGORY-16",
+        id: "CATEGORY-1",
         name: "photography",
         label: "Ảnh cưới",
         icon: <VendorManagerIcon sx={{ fontSize: 40 }}/>,

@@ -1,5 +1,5 @@
-import "./CoupleServiceDetail.css";
-import { useLocation, useNavigate, useParams } from "react-router";
+import './CoupleServiceDetail.css';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import {
   Box,
   Grid,
@@ -11,63 +11,68 @@ import {
   LinearProgress,
   Pagination,
   Chip,
-} from "@mui/material";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import FlagOutlined from "@mui/icons-material/Flag";
-import StarIcon from "@mui/icons-material/Star";
-import { useEffect, useState } from "react";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { ReviewCard, ReviewCardModel } from "./ReviewCard";
-import { getLabel } from "../../../utils/Utils";
-import RatingPopup from "../Popup/Couple/RatingPopup";
-import RequestPricePopup from "../Popup/Couple/RequestPricePopup";
-import { getServiceById } from "../../../api/CoupleAPI";
-import { addToCart } from "../../../utils/CartStorage";
+} from '@mui/material';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import FlagOutlined from '@mui/icons-material/Flag';
+import StarIcon from '@mui/icons-material/Star';
+import { useEffect, useState } from 'react';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { ReviewCard, ReviewCardModel } from './ReviewCard';
+import { getLabel } from '../../../utils/Utils';
+import RatingPopup from '../Popup/Couple/RatingPopup';
+import RequestPricePopup from '../Popup/Couple/RequestPricePopup';
+import { getServiceById } from '../../../api/CoupleAPI';
+import { addToCart } from '../../../utils/CartStorage';
+import { getServiceSupplierById } from '../../../redux/apiRequest';
 
 const reviews: ReviewCardModel[] = [
   {
-    username: "Ahri",
+    username: 'Ahri',
     rating: 5,
-    date: "2023-10-19 13:13",
-    content: "Dịch vụ uy tín",
-    avatar: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
+    date: '2023-10-19 13:13',
+    content: 'Dịch vụ uy tín',
+    avatar: 'https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg',
   },
   {
-    username: "Ahri",
+    username: 'Ahri',
     rating: 5,
-    date: "2023-10-19 13:13",
-    content: "Dịch vụ uy tín",
-    avatar: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
+    date: '2023-10-19 13:13',
+    content: 'Dịch vụ uy tín',
+    avatar: 'https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg',
   },
 ];
 
 const totalReviews = 369;
 
 const ratings = [
-  { name: "Số lượng", rating: 5.0 },
-  { name: "Chất lượng", rating: 5.0 },
-  { name: "Đúng giờ", rating: 5.0 },
+  { name: 'Số lượng', rating: 5.0 },
+  { name: 'Chất lượng', rating: 5.0 },
+  { name: 'Đúng giờ', rating: 5.0 },
 ];
 
 const CoupleServiceDetail = () => {
+  const [number, setNumber] = useState(1);
   const navigate = useNavigate();
   const { id } = useParams();
-  const value = 4.9;
-
-  const [openRequest, setOpenRequest] = useState(false);
-  const handleAddToCart = () => {
-    addToCart({id: service?.id, image: service?.imageUrl, name: service?.title, price: service?.price});
-    navigate(`/quotation`);
-  };
-  const handleCloseRequest = () => setOpenRequest(false);
   const [service, setService] = useState<any>(null);
 
+  const handleAddToCart = () => {
+    addToCart({
+      id: service?.id,
+      image: service?.listImages[0],
+      name: service?.name,
+      price: service?.price,
+      promotion: (service?.promotion && service?.promotion.value) ?? 0,
+    });
+    window.location.href = "/quotation"
+
+    // navigate(`/quotation`);
+  };
   const [openReview, setOpenReview] = useState(false);
 
   const getData = async () => {
-    const response = await getServiceById(id ?? "");
-    console.log(response);
+    const response = await getServiceSupplierById(id ?? '');
     setService(response);
   };
 
@@ -83,20 +88,25 @@ const CoupleServiceDetail = () => {
     setOpenReview(false);
   };
 
-  const handleClickQuantity = () => {
-    console.log(1);
-  };
-
   const handleSubmitReview = (ratingData: {
     quantity: number;
     quality: number;
     timeliness: number;
     description: string;
   }) => {
-    console.log("Submitted Rating:", ratingData);
+    console.log('Submitted Rating:', ratingData);
     // Handle the submitted rating data here
   };
+  function calculateFinalPrice() {
+    const price = service?.price;
+    const promotionValue = service?.promotion?.value ?? 1;
+    const finalPrice =
+      promotionValue !== 1
+        ? price * number - (price * number * promotionValue) / 100
+        : price * number;
 
+    return finalPrice.toLocaleString();
+  }
   const [slide, setSlide] = useState(0);
 
   const nextSlide = () => {
@@ -119,9 +129,12 @@ const CoupleServiceDetail = () => {
                   size="large"
                   className="img-view-btn"
                   onClick={() => {
-                    navigate("/services/details/item/img", {state: {images: service?.listImages,
-                      title: service?.name
-                    }});
+                    navigate('/services/details/item/img', {
+                      state: {
+                        images: service?.listImages,
+                        title: service?.name,
+                      },
+                    });
                   }}
                 >
                   Xem ảnh {service?.listImages.length}
@@ -136,12 +149,12 @@ const CoupleServiceDetail = () => {
                       src={item}
                       alt=""
                       key={idx}
-                      className={slide === idx ? "slide" : "slide slide-hidden"}
+                      className={slide === idx ? 'slide' : 'slide slide-hidden'}
                     />
                   );
                 })}
                 <KeyboardArrowRightIcon
-                  sx={{ color: "red" }}
+                  sx={{ color: 'red' }}
                   onClick={nextSlide}
                   className="arrow arrow-right"
                 />
@@ -152,8 +165,8 @@ const CoupleServiceDetail = () => {
                         key={idx}
                         className={
                           slide === idx
-                            ? "indicator"
-                            : "indicator indicator-inactive"
+                            ? 'indicator'
+                            : 'indicator indicator-inactive'
                         }
                         onClick={() => setSlide(idx)}
                       ></button>
@@ -162,14 +175,14 @@ const CoupleServiceDetail = () => {
                 </span>
               </div>
 
-              <Box sx={{ mt: 8, textAlign: "left" }}>
+              <Box sx={{ mt: 8, textAlign: 'left' }}>
                 <Typography variant="h3" component="div" gutterBottom>
                   Mô tả
                 </Typography>
                 <Box
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     marginBottom: 2,
                   }}
                 >
@@ -188,7 +201,7 @@ const CoupleServiceDetail = () => {
                   Đánh giá {service?.name}
                 </Typography>
                 <Grid container spacing={2} mt={2}>
-                  <Grid item xs={5} sx={{ textAlign: "left" }}>
+                  <Grid item xs={5} sx={{ textAlign: 'left' }}>
                     <Box>
                       <Box display="flex" alignItems="center">
                         <Typography
@@ -207,7 +220,7 @@ const CoupleServiceDetail = () => {
                       </Box>
                       <Rating
                         name="rating-service-feedback"
-                        value={value}
+                        value={service?.rating}
                         readOnly
                         precision={0.1}
                         size="large"
@@ -232,15 +245,15 @@ const CoupleServiceDetail = () => {
                       sx={{
                         fontSize: 14,
                         fontWeight: 600,
-                        backgroundColor: "var(--primary-color)",
-                        "&:hover": {
-                          backgroundColor: "var(--btn-hover-color)",
+                        backgroundColor: 'var(--primary-color)',
+                        '&:hover': {
+                          backgroundColor: 'var(--btn-hover-color)',
                         },
                       }}
                       style={{
-                        marginTop: "10px",
-                        width: "300px",
-                        padding: "10px 20px",
+                        marginTop: '10px',
+                        width: '300px',
+                        padding: '10px 20px',
                       }}
                       onClick={handleOpenReview}
                     >
@@ -269,14 +282,14 @@ const CoupleServiceDetail = () => {
                               variant="determinate"
                               value={(item.rating / 5) * 100}
                               style={{
-                                width: "200px",
-                                height: "10px",
-                                marginRight: "10px",
-                                borderRadius: "5px",
+                                width: '200px',
+                                height: '10px',
+                                marginRight: '10px',
+                                borderRadius: '5px',
                               }}
                               sx={{
-                                "& .MuiLinearProgress-bar": {
-                                  bgcolor: "var(--primary-color)",
+                                '& .MuiLinearProgress-bar': {
+                                  bgcolor: 'var(--primary-color)',
                                 },
                               }}
                             />
@@ -306,12 +319,12 @@ const CoupleServiceDetail = () => {
                 component={Paper}
                 elevation={3}
                 sx={{
-                  textAlign: "left",
-                  position: "fixed",
+                  textAlign: 'left',
+                  position: 'sticky',
                   p: 2,
-                  width: "550px",
-                  top: "130px",
-                  right: "20px",
+                  width: '100%',
+                  top: '130px',
+                  right: '20px',
                 }}
               >
                 <Typography variant="h3" fontWeight={600}>
@@ -320,13 +333,13 @@ const CoupleServiceDetail = () => {
                 <Box
                   sx={{
                     marginTop: 1,
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                   }}
                 >
                   <Rating
                     name="rating-service"
-                    value={value}
+                    value={service?.rating}
                     readOnly
                     precision={0.1}
                     size="large"
@@ -335,88 +348,79 @@ const CoupleServiceDetail = () => {
                     }
                   />
                   <Typography variant="h5" sx={{ ml: 1 }}>
-                    {value}
+                    {service?.rating}
                   </Typography>
                   <Typography variant="h5" sx={{ ml: 1 }}>
-                    {getLabel(value)}
+                    {getLabel(service?.rating)}
                   </Typography>
                 </Box>
                 <Box
                   sx={{
-                    display: "flex",
-                    alignItems: "center",
+                    display: 'flex',
+                    alignItems: 'center',
                     fontSize: 16,
                     marginTop: 2,
                   }}
                 >
                   <LocationOnIcon />
-                  <Link
-                    href="#"
+                  <Box
                     sx={{
-                      color: "black",
-                      textDecoration: "underline",
-                      textDecorationColor: "black",
+                      color: 'black',
+                      textDecorationColor: 'black',
                       ml: 1,
                     }}
                   >
-                    Tp. Hồ Chí Minh
-                  </Link>
-                </Box>
-                <Box my={2} display="flex" alignItems="center">
-                  <Typography fontSize={12}> Số lượng: </Typography>
-                  <Chip
-                    label="20"
-                    size="small"
-                    variant="outlined"
-                    sx={{ fontSize: 12, width: 70, mx: 1 }}
-                    onClick={handleClickQuantity}
-                  />
-                  <Chip
-                    label="20"
-                    size="small"
-                    variant="outlined"
-                    sx={{ fontSize: 12, width: 70, mx: 1 }}
-                    onClick={handleClickQuantity}
-                  />
-                </Box>
-                <Box>
-                  <Box>
-                    <Typography fontSize={12} my={1}>
-                      Khuyến mãi:{" "}
-                      <span
-                        style={{
-                          fontWeight: "bold",
-                          color: "red",
-                          fontSize: 16,
-                        }}
-                      >
-                        20%
-                      </span>
-                    </Typography>
-                    <Typography fontSize={12}>
-                      Từ ngày:{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {"21/2/2025 -> 21/2/2025"}
-                      </span>
-                    </Typography>
+                    {service?.supplierResponse?.area?.ward}
+                    {', '}
+                    {service?.supplierResponse?.area?.district}
+                    {', '}
+                    {service?.supplierResponse?.area?.province}
                   </Box>
                 </Box>
+
+                {service?.promotion && (
+                  <Box>
+                    <Box>
+                      <Typography fontSize={12} my={1}>
+                        Khuyến mãi:{' '}
+                        <span
+                          style={{
+                            fontWeight: 'bold',
+                            color: 'red',
+                            fontSize: 16,
+                          }}
+                        >
+                          {service?.promotion.value}%
+                        </span>
+                      </Typography>
+                      <Typography fontSize={12}>
+                        Từ ngày:{' '}
+                        <span style={{ fontWeight: 'bold' }}>
+                          {service?.promotion?.startDate}
+                          {' -> '}
+                          {service?.promotion?.endDate}
+                        </span>
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+
                 <Button
                   variant="contained"
                   fullWidth={true}
                   size="large"
                   sx={{
                     marginTop: 4,
-                    backgroundColor: "var(--primary-color)",
-                    "&:hover": {
-                      backgroundColor: "var(--btn-hover-color)",
+                    backgroundColor: 'var(--primary-color)',
+                    '&:hover': {
+                      backgroundColor: 'var(--btn-hover-color)',
                     },
                     fontWeight: 700,
                     fontSize: 16,
                   }}
                   onClick={handleAddToCart}
                 >
-                  {service?.price.toLocaleString() ?? 0} VND
+                  {calculateFinalPrice()} VND
                 </Button>
                 {/* <RequestPricePopup
                   open={openRequest}

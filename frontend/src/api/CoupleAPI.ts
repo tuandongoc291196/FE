@@ -29,18 +29,18 @@ export const getAllServices = async (): Promise<any[]> => {
 }
 export const getServiceByCategory = async (
     category: string,
-    // minPrice: number,
-    // maxPrice: number,
-    // type: string
+    minPrice?: number,
+    maxPrice?: number,
+    type?: string
   ): Promise<any[]> => {
   
     try {
-      const response = await axios.get("/service/filterService/", {
+      const response = await axios.get("/service-supplier/filter", {
         params: {
           categoryId: category,
-          // minPrice: minPrice,
-          // maxPrice: maxPrice,
-          // type: type,
+          minPrice: minPrice,
+          maxPrice: maxPrice,
+          type: type,
         },
       });
   

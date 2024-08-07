@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Button, Chip, Rating } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
-import RequestPricePopup from "../Popup/Couple/RequestPricePopup";
-import { addToCart } from "../../../utils/CartStorage";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Button, Chip, Rating } from '@mui/material';
+import StarIcon from '@mui/icons-material/Star';
+import RequestPricePopup from '../Popup/Couple/RequestPricePopup';
+import { addToCart } from '../../../utils/CartStorage';
 
 interface ServiceItemViewCardProps {
   id: string;
@@ -18,7 +18,7 @@ interface ServiceItemViewCardProps {
 }
 
 const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
-    id,
+  id,
   imageUrl,
   location,
   title,
@@ -26,7 +26,7 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
   description,
   type,
   price,
-  suplierID
+  suplierID,
 }) => {
   const navigate = useNavigate();
 
@@ -64,9 +64,14 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
               }
             />
           </div>
-          <div className="item-rating">{(ratingValue).toFixed(1)}</div>
+          <div className="item-rating">{ratingValue.toFixed(1)}</div>
         </div>
-        <Chip label={type === "LUXURY" ? "Cao cấp" : "Phổ thông"} color={type === "LUXURY" ? "secondary" : "warning"} sx={{width: 80, fontSize: 10,fontWeight: 600}} size="small"/>
+        <Chip
+          label={type === 'LUXURY' ? 'Cao cấp' : 'Phổ thông'}
+          color={type === 'LUXURY' ? 'secondary' : 'warning'}
+          sx={{ width: 80, fontSize: 10, fontWeight: 600 }}
+          size="small"
+        />
 
         <p className="item-description">
           <span>{description}</span>
@@ -75,14 +80,22 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
           <Button
             className="btn-item"
             sx={{ minWidth: 200 }}
-            style={{ backgroundColor: "var(--primary-color)"}}
+            style={{ backgroundColor: 'var(--primary-color)' }}
             variant="contained"
             onClick={() => {
-                addToCart({id: id, image: imageUrl, name: title, price: price});
-                navigate(`/quotation`);
+              addToCart({
+                id: id,
+                image: imageUrl,
+                name: title,
+                price: price,
+                promotion: 0,
+              });
+              window.location.href = "/quotation"
+
+              // navigate(`/quotation`);
             }}
           >
-            {price.toLocaleString('vi-VN')} VND 
+            {price.toLocaleString('vi-VN')} VND
           </Button>
           {/* <RequestPricePopup open={open} handleClose={handleClose}
           serviceId={id}

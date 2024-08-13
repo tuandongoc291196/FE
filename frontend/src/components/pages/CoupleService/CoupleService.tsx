@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import "./CoupleService.css";
+import { useEffect, useState } from 'react';
+import './CoupleService.css';
 import {
   Box,
   Button,
@@ -7,18 +7,18 @@ import {
   Pagination,
   Radio,
   RadioGroup,
-} from "@mui/material";
-import { useLocation } from "react-router-dom";
-import ServiceItemViewCard from "./ServiceItemViewCard";
-import { ServiceData } from "../../../utils/ServiceData";
-import { getServiceByCategory } from "../../../api/CoupleAPI";
+} from '@mui/material';
+import { useLocation } from 'react-router-dom';
+import ServiceItemViewCard from './ServiceItemViewCard';
+import { ServiceData } from '../../../utils/ServiceData';
+import { getServiceByCategory } from '../../../api/CoupleAPI';
 
 const CoupleService = () => {
   const location = useLocation();
-  const path = location.pathname.split("/")[2];
+  const path = location.pathname.split('/')[2];
   const coupleServiceData = ServiceData.find((e) => e.name === path);
   const [selectedService, setSelectedService] = useState(
-    coupleServiceData?.items[0]?.name ?? ""
+    coupleServiceData?.items[0]?.name ?? ''
   );
   const [selectedServiceList, setSelectedServiceList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,8 +28,8 @@ const CoupleService = () => {
   const itemsPerPage = 10;
 
   // New filter states
-  const [type, setType] = useState("");
-  const [priceRange, setPriceRange] = useState("");
+  const [type, setType] = useState('');
+  const [priceRange, setPriceRange] = useState('');
 
   const getSelectedServiceList = async (
     categoryID: string,
@@ -41,23 +41,23 @@ const CoupleService = () => {
     // Convert price range to minPrice and maxPrice
     let minPrice, maxPrice;
     switch (priceRange) {
-      case "1":
+      case '1':
         minPrice = 0;
         maxPrice = 5000000;
         break;
-      case "2":
+      case '2':
         minPrice = 5000000;
         maxPrice = 10000000;
         break;
-      case "3":
+      case '3':
         minPrice = 10000000;
         maxPrice = 15000000;
         break;
-      case "4":
+      case '4':
         minPrice = 15000000;
         maxPrice = 20000000;
         break;
-      case "5":
+      case '5':
         minPrice = 20000000;
         maxPrice = undefined; // No upper limit
         break;
@@ -78,7 +78,7 @@ const CoupleService = () => {
   };
 
   useEffect(() => {
-    getSelectedServiceList(coupleServiceData?.id ?? "", "", "");
+    getSelectedServiceList(coupleServiceData?.id ?? '', '', '');
   }, [coupleServiceData]);
 
   // Handle page change
@@ -93,14 +93,14 @@ const CoupleService = () => {
   const handleTypeChange = (event: any) => {
     const newType = event.target.value;
     setType(newType);
-    getSelectedServiceList(coupleServiceData?.id ?? "", newType, priceRange);
+    getSelectedServiceList(coupleServiceData?.id ?? '', newType, priceRange);
   };
 
   // Handle price range change
   const handlePriceRangeChange = (event: any) => {
     const newPriceRange = event.target.value;
     setPriceRange(newPriceRange);
-    getSelectedServiceList(coupleServiceData?.id ?? "", type, newPriceRange);
+    getSelectedServiceList(coupleServiceData?.id ?? '', type, newPriceRange);
   };
 
   // Paginate items
@@ -109,10 +109,10 @@ const CoupleService = () => {
     currentPage * itemsPerPage
   );
   const resetFilters = () => {
-    setType("");
-    setPriceRange("");
+    setType('');
+    setPriceRange('');
     setCurrentPage(1);
-    getSelectedServiceList(coupleServiceData?.id ?? "", "", "");
+    getSelectedServiceList(coupleServiceData?.id ?? '', '', '');
   };
   return (
     <div id="CoupleService">
@@ -133,14 +133,14 @@ const CoupleService = () => {
               >
                 <li className="filter-item">
                   <Radio
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                    sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
                     value="ECONOMY"
                   />
                   Phổ thông
                 </li>
                 <li className="filter-item">
                   <Radio
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                    sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
                     value="LUXURY"
                   />
                   Cao cấp
@@ -162,7 +162,7 @@ const CoupleService = () => {
                   {coupleServiceData?.items.map((item, index) => (
                     <li key={index} className="filter-item">
                       <Radio
-                        sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                        sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
                         value={item.name}
                       />
                       {item.name}
@@ -184,35 +184,35 @@ const CoupleService = () => {
               >
                 <li className="filter-item">
                   <Radio
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                    sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
                     value="1"
-                  />{" "}
+                  />{' '}
                   Dưới 5.000.000 VNĐ
                 </li>
                 <li className="filter-item">
                   <Radio
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                    sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
                     value="2"
                   />
                   5.000.000 - 10.000.000 VNĐ
                 </li>
                 <li className="filter-item">
                   <Radio
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                    sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
                     value="3"
                   />
                   10.000.000 - 15.000.000 VNĐ
                 </li>
                 <li className="filter-item">
                   <Radio
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                    sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
                     value="4"
                   />
                   15.000.000 - 20.000.000 VNĐ
                 </li>
                 <li className="filter-item">
                   <Radio
-                    sx={{ "& .MuiSvgIcon-root": { fontSize: 18 } }}
+                    sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
                     value="5"
                   />
                   Trên 20.000.000 VNĐ

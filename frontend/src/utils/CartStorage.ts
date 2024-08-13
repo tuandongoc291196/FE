@@ -4,6 +4,7 @@ interface CartItem {
   price: number;
   image: string;
   promotion: number;
+  quantity: number;
 }
 
 const CART_KEY = 'cart';
@@ -30,4 +31,12 @@ export const removeFromCart = (id: string): void => {
 
 export const clearCart = (): void => {
   localStorage.removeItem(CART_KEY);
+};
+
+export const updateCartItemQuantity = (id: string, quantity: number) => {
+  const cart = getCart();
+  const updatedCart = cart.map((item) =>
+    item.id === id ? { ...item, quantity: quantity } : item
+  );
+  localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
 };

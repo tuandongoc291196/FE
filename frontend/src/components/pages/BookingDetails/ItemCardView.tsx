@@ -17,6 +17,7 @@ export interface VenueCardProps {
   promotion?: number;
   rating: number;
   location: string;
+  quantity: number;
 }
 
 const ItemCardView: React.FC<VenueCardProps> = ({
@@ -27,6 +28,7 @@ const ItemCardView: React.FC<VenueCardProps> = ({
   promotion,
   rating,
   location,
+  quantity,
 }) => {
   return (
     <Card sx={{ display: 'flex', margin: '20px' }} elevation={3}>
@@ -75,6 +77,9 @@ const ItemCardView: React.FC<VenueCardProps> = ({
               </Box>
               <Typography mt={3} fontSize={14} fontWeight={600}>
                 Giá: {price.toLocaleString()} VNĐ
+              </Typography>
+              <Typography fontSize={14} fontWeight={600}>
+                Số lượng: {quantity}
               </Typography>
               <Typography
                 color="text.secondary"

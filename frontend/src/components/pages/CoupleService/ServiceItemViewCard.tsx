@@ -89,8 +89,9 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
                 name: title,
                 price: price,
                 promotion: 0,
+                quantity: 1,
               });
-              window.location.href = "/quotation"
+              window.location.href = '/quotation';
 
               // navigate(`/quotation`);
             }}

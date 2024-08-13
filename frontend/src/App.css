@@ -130,3 +130,7 @@ body {
     border-right: 1px solid var(--black-color) !important;
     height: 100%;
 }
+
+#btn-show-detail {
+    font-size: 1.5rem !important;
+}

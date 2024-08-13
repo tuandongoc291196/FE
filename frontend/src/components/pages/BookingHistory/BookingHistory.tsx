@@ -30,7 +30,7 @@ const BookingHistory: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const user = useSelector((state: any) => state.auth.login.currentUser);
-
+  console.log(data);
   const getData = async () => {
     setLoading(true);
     const res = await getBookingHistoryByCoupleId(user.userId, user.token);
@@ -148,6 +148,15 @@ const BookingHistory: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
+                    Số lượng
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 16,
+                      color: 'var(--primary-color)',
+                      fontWeight: 600,
+                    }}
+                  >
                     Hủy
                   </TableCell>
                 </TableRow>
@@ -176,7 +185,9 @@ const BookingHistory: React.FC = () => {
                       <TableCell sx={{ fontSize: 14 }}>
                         {product?.price.toLocaleString()} VND
                       </TableCell>
-
+                      <TableCell sx={{ fontSize: 14 }}>
+                        {product?.quantity}
+                      </TableCell>
                       <TableCell>
                         <IconButton
                           disabled={

@@ -146,10 +146,9 @@ const ItemServiceViewCard: React.FC<VenueCardProps> = ({
                 name: title,
                 price: price,
                 promotion: 0,
+                quantity: 1,
               });
               window.location.href = '/quotation';
-
-              // navigate(`/quotation`);
             }}
           >
             {price.toLocaleString('vi-VN')} VND

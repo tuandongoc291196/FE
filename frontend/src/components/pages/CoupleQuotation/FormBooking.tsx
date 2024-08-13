@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -31,8 +31,14 @@ interface CartItem {
   price: number;
   image: string;
   promotion: number;
+  quantity: number;
 }
-
+interface BookingItem {
+  serviceSupplierId: string;
+  dateCompleted: string;
+  note: string;
+  quantity: number;
+}
 interface ServiceModalProps {
   open: boolean;
   onClose: () => void;
@@ -48,16 +54,20 @@ const FormBooking: React.FC<ServiceModalProps> = ({
   totalPrice,
   totalPromotionPrice,
 }) => {
-  const [serviceData, setServiceData] = useState(
-    services.map((service) => ({
-      serviceSupplierId: service.id.toString(),
-      dateCompleted: '',
-      note: '',
-    }))
-  );
+  const [serviceData, setServiceData] = useState<BookingItem[]>([]);
+  useEffect(() => {
+    setServiceData(
+      services.map((service) => ({
+        serviceSupplierId: service.id.toString(),
+        dateCompleted: '',
+        note: '',
+        quantity: service.quantity,
+      }))
+    );
+  }, [services]);
+
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: any) => state.auth.login.currentUser);
-  const navigate = useNavigate();
   const handleDateChange = (index: number, date: string) => {
     const newServiceData = [...serviceData];
     newServiceData[index].dateCompleted = date;
@@ -136,6 +146,15 @@ const FormBooking: React.FC<ServiceModalProps> = ({
                         fontWeight: 600,
                       }}
                     >
+                      Số lượng
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontSize: '14px',
+                        textAlign: 'center',
+                        fontWeight: 600,
+                      }}
+                    >
                       %KM
                     </TableCell>
                     <TableCell sx={{ fontSize: '14px', fontWeight: 600 }}>
@@ -155,7 +174,9 @@ const FormBooking: React.FC<ServiceModalProps> = ({
                       <TableCell sx={{ fontSize: '12px', textAlign: 'center' }}>
                         {services[index]?.price.toLocaleString()}
                       </TableCell>
-
+                      <TableCell sx={{ fontSize: '12px', textAlign: 'center' }}>
+                        {services[index]?.quantity}
+                      </TableCell>
                       <TableCell sx={{ fontSize: '12px', textAlign: 'center' }}>
                         {services[index]?.promotion}%
                       </TableCell>

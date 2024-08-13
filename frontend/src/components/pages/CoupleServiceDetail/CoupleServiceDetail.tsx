@@ -11,6 +11,8 @@ import {
   LinearProgress,
   Pagination,
   Chip,
+  Input,
+  TextField,
 } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FlagOutlined from '@mui/icons-material/Flag';
@@ -64,8 +66,9 @@ const CoupleServiceDetail = () => {
       name: service?.name,
       price: service?.price,
       promotion: (service?.promotion && service?.promotion.value) ?? 0,
+      quantity: number,
     });
-    window.location.href = "/quotation"
+    window.location.href = '/quotation';
 
     // navigate(`/quotation`);
   };
@@ -377,6 +380,28 @@ const CoupleServiceDetail = () => {
                     {service?.supplierResponse?.area?.province}
                   </Box>
                 </Box>
+                {(service?.serviceResponse?.categoryResponse.id ===
+                  'CATEGORY-1' ||
+                  service?.serviceResponse?.categoryResponse.id ===
+                    'CATEGORY-7') && (
+                  <Box
+                    sx={{
+                      mt: 2,
+                    }}
+                  >
+                    <TextField
+                      value={number}
+                      onChange={(event) =>
+                        setNumber(parseInt(event.target.value))
+                      }
+                      id="outlined-number"
+                      label="Number"
+                      type="number"
+                      size="small"
+                      InputProps={{ inputProps: { min: 1 } }}
+                    />
+                  </Box>
+                )}
 
                 {service?.promotion && (
                   <Box>

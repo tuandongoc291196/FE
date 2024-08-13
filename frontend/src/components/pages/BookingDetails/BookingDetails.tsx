@@ -174,7 +174,8 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
                       description={item.serviceSupplier.description}
                       rating={item.serviceSupplier.rating}
                       price={item?.serviceSupplier?.price}
-                      // promotion={item.serviceSupplier.promotion}
+                      promotion={item.promotionServiceSupplier?.value}
+                      quantity={item.quantity}
                     />
                   );
                 })}

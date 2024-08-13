@@ -13,10 +13,15 @@ import {
   Typography,
   Divider,
   IconButton,
+  TextField,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router';
-import { getCart, removeFromCart } from '../../../utils/CartStorage';
+import {
+  getCart,
+  removeFromCart,
+  updateCartItemQuantity,
+} from '../../../utils/CartStorage';
 import { useSelector } from 'react-redux';
 import FormBooking from './FormBooking';
 
@@ -43,7 +48,7 @@ const CoupleQuotation: React.FC = () => {
   };
   const totalPrice = servicesPrice.reduce((total, product) => {
     const price = product.price ?? 0;
-    return total + 1 * price;
+    return total + product.quantity * price;
   }, 0);
 
   const totalPromotionPrice = servicesPrice.reduce((total, product) => {
@@ -52,7 +57,7 @@ const CoupleQuotation: React.FC = () => {
     const serviceTotalPrice = 1 * price;
     const serviceTotalPriceWithPromotion =
       serviceTotalPrice * (promotion / 100);
-    return total + serviceTotalPriceWithPromotion;
+    return total + serviceTotalPriceWithPromotion * product.quantity;
   }, 0);
 
   return (
@@ -116,6 +121,15 @@ const CoupleQuotation: React.FC = () => {
               >
                 Giá bán
               </TableCell>
+              <TableCell
+                sx={{
+                  fontSize: 16,
+                  color: 'var(--primary-color)',
+                  fontWeight: 600,
+                }}
+              >
+                Số lượng
+              </TableCell>
 
               <TableCell
                 sx={{
@@ -166,14 +180,32 @@ const CoupleQuotation: React.FC = () => {
                 <TableCell sx={{ fontSize: 14 }}>
                   {product.price.toLocaleString()} VND
                 </TableCell>
+                <TableCell sx={{ fontSize: 14 }}>
+                  <TextField
+                    value={product.quantity}
+                    onChange={(event) => {
+                      updateCartItemQuantity(
+                        product.id,
+                        parseInt(event.target.value)
+                      );
+                      setServicePrice(getCart());
+                    }}
+                    id="outlined-number"
+                    label="Number"
+                    type="number"
+                    size="small"
+                    InputProps={{ inputProps: { min: 1 } }}
+                  />
+                </TableCell>
 
                 <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
                   {product.promotion ?? 0}%
                 </TableCell>
                 <TableCell sx={{ fontSize: 14 }}>
                   {(
-                    product.price -
-                    (product.price * (product.promotion ?? 0)) / 100
+                    (product.price -
+                      (product.price * (product.promotion ?? 0)) / 100) *
+                    product.quantity
                   ).toLocaleString()}{' '}
                   VND
                 </TableCell>

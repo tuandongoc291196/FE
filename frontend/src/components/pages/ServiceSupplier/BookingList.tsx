@@ -18,7 +18,7 @@ import "./BookingList.css";
 import { BookingDetailItem, BookingItem } from '../../../types/schema/booking';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
-
+var bookingDetailIdItem = "";
 interface Props {
     setMessageStatus: Dispatch<SetStateAction<string>>;
     setMessage: Dispatch<SetStateAction<string>>;
@@ -66,18 +66,17 @@ const BookingList: FC<Props> = (props) => {
     const [bookingDetailId, setBookingDetailId] = useState<string>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isLoadingPopup, setIsLoadingPopup] = useState<boolean>(false);
-
+    const [rowsBookingDetail, setRowsBookingDetail] = useState<any>([]);
+    const [columnsBookingDetail, setColumnsBookingDetail] = useState<GridColDef[]>([]);
 
     const [open, setOpen] = useState(false);
+    const [openNote, setOpenNote] = useState(false);
     const handleClose = () => { setNote(''); setOpen(false) };
+    const handleCloseNote = () => { setNote(''); setOpenNote(false) };
 
     useEffect(() => {
         fetchData();
     }, [])
-
-    useEffect(() => {
-        fetchBookingDetails();
-    }, [isLoadingPopup])
 
     async function fetchData() {
         setIsLoading(true);
@@ -86,24 +85,48 @@ const BookingList: FC<Props> = (props) => {
         setIsLoading(false);
     }
 
-    async function rejectBooking(bookingDetailId: string) {
-        setIsLoadingPopup(true);
-        await rejectBookingDetail(bookingDetailId, user?.token)
+    async function rejectBooking(id: string) {
+        try {
+            await rejectBookingDetail(id, user?.token)
+            setIsLoadingPopup(true);
+        } catch (error) {
+
+        } finally {
+            await fetchBookingDetails();
+        }
     }
 
-    async function approveBooking(bookingDetailId: string) {
-        setIsLoadingPopup(true);
-        await confirmBookingDetail(bookingDetailId, user?.token)
+    async function approveBooking(id: string) {
+        try {
+            await confirmBookingDetail(id, user?.token)
+            setIsLoadingPopup(true);
+        } catch (error) {
+
+        } finally {
+            await fetchBookingDetails();
+        }
     }
 
-    async function processingBooking(bookingDetailId: string) {
-        setIsLoadingPopup(true);
-        await processingBookingDetail(bookingDetailId, user?.token)
+    async function processingBooking(id: string) {
+        try {
+            await processingBookingDetail(id, user?.token)
+            setIsLoadingPopup(true);
+        } catch (error) {
+
+        } finally {
+            await fetchBookingDetails();
+        }
     }
 
-    async function doneBooking(bookingDetailId: string) {
-        setIsLoadingPopup(true);
-        await doneBookingDetail(bookingDetailId, user?.token)
+    async function doneBooking(id: string) {
+        try {
+            await doneBookingDetail(id, user?.token)
+            setIsLoadingPopup(true);
+        } catch (error) {
+
+        } finally {
+            await fetchBookingDetails();
+        }
     }
 
     const rows = bookingList?.length > 0 ? bookingList.map((booking) => ({
@@ -111,7 +134,6 @@ const BookingList: FC<Props> = (props) => {
         coupleName: booking.coupleResponse.account.name,
         weddingDate: booking.coupleResponse.weddingDate,
         totalPrice: booking.totalPrice,
-        note: booking.note,
         createAt: booking.createAt,
         status: convertStatusName(`${booking.status}`),
         booking: booking
@@ -121,7 +143,6 @@ const BookingList: FC<Props> = (props) => {
         { field: "id", headerName: "ID", flex: 0.5 },
         { field: "coupleName", headerName: "Tên couple", flex: 0.5 },
         { field: "totalPrice", headerName: "Giá", flex: 0.5 },
-        // { field: "completedDate", headerName: "Ngày hoàn thành", flex: 0.5 },
         { field: "weddingDate", headerName: "Ngày cưới", flex: 0.5 },
         { field: "status", headerName: "Trạng thái", flex: 0.5 },
         {
@@ -133,8 +154,13 @@ const BookingList: FC<Props> = (props) => {
                 <>
                     <Button style={{ fontSize: '1.2rem' }} className="btn-admin-disable" onClick={() => {
                         handleOpen()
-                        setBookingDetailId(params.row.id);
-                        setIsLoadingPopup(true);
+                        bookingDetailIdItem = params.row.id
+                        try {
+                            fetchBookingDetails();
+                        } catch (error) {
+                        } finally {
+                            setIsLoadingPopup(true);
+                        }
                     }}>
                         Xem chi tiết
                     </Button>
@@ -144,14 +170,54 @@ const BookingList: FC<Props> = (props) => {
     ];
 
     async function fetchBookingDetails() {
-        const response = await getBookingDetailBySupplierId(user?.userId, bookingDetailId, user?.token);
-        setBookingDetails(response);
-        setIsLoadingPopup(false);
+
+        try {
+            const response = await getBookingDetailBySupplierId(user?.userId, bookingDetailIdItem, user?.token);
+            setBookingDetails(response);
+
+            const rows = response?.length > 0 ? response?.map((item: BookingDetailItem) => ({
+                id: item.bookingDetailId,
+                name: item.serviceSupplierResponse.name,
+                completedDate: item.completedDate,
+                price: item.price,
+                note: item.note,
+                status: convertStatusName(`${item.status}`),
+            })) : [];
+
+            const columns: GridColDef[] = [
+                { field: "name", headerName: "Tên dịch vụ", flex: 1.2 },
+                { field: "price", headerName: "Giá tiền", flex: 0.5 },
+                { field: "completedDate", headerName: "Ngày hoàn thành", flex: 0.5 },
+                { field: "status", headerName: "Trạng thái", flex: 0.5 },
+                {
+                    field: 'note',
+                    headerName: 'Ghi chú',
+                    flex: 0.5,
+                    width: 170,
+                    renderCell: (params) => (
+                        handleDisplayNote(params.row?.note)
+                    ),
+                },
+                {
+                    field: '',
+                    headerName: 'Tác vụ',
+                    flex: 0.255,
+                    width: 170,
+                    renderCell: (params) => (
+                        handleAction(params.row.status, params.row.id)
+                    ),
+                },
+            ];
+            setRowsBookingDetail(rows);
+            setColumnsBookingDetail(columns);
+        } catch (error) {
+
+        } finally {
+            setIsLoadingPopup(false);
+        }
     }
 
     const handleAction = (status: string, id: string) => {
-        console.log("status", status);
-
         switch (status) {
             case convertStatusName(BOOKING_STATUS.pending):
                 return (
@@ -173,31 +239,27 @@ const BookingList: FC<Props> = (props) => {
         }
     }
 
-    const rowsBookingDetail = bookingDetails?.length > 0 ? bookingDetails.map((item) => ({
-        id: item.bookingDetailId,
-        name: item.serviceSupplierResponse.name,
-        completedDate: item.completedDate,
-        price: item.price,
-        status: convertStatusName(`${item.status}`),
-    })) : [];
+    const handleDisplayNote = (isNote: string) => {
+        if (!(isNote == "")) {
+            return (
+                <Button id="btn-show-detail" onClick={() => {
+                    setNote(isNote);
+                    handleOpenNote();
+                }}>
+                    Xem chi tiết
+                </Button>
+            )
+        } else {
+            return null;
+        }
+    }
 
-    const columnsBookingDetail: GridColDef[] = [
-        { field: "name", headerName: "Tên dịch vụ", flex: 1.2 },
-        { field: "price", headerName: "Giá tiền", flex: 0.5 },
-        { field: "completedDate", headerName: "Ngày hoàn thành", flex: 0.5 },
-        { field: "status", headerName: "Trạng thái", flex: 0.5 },
-        {
-            field: '',
-            headerName: 'Tác vụ',
-            flex: 0.255,
-            width: 170,
-            renderCell: (params) => (
-                handleAction(params.row.status, params.row.id)
-            ),
-        },
-    ];
     const handleOpen = () => {
         setOpen(true);
+    }
+
+    const handleOpenNote = () => {
+        setOpenNote(true);
     }
 
     return (
@@ -222,87 +284,89 @@ const BookingList: FC<Props> = (props) => {
                     </>
                 )
             }
-            {/* {
-                (note != '') ? (
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                        id="BookingDetailModal"
-                    >
-                        <Box sx={style}>
-                            <Typography id="modal-modal-title" variant="h6" component="h2">
-                                <span style={{ fontSize: "3rem !important" }}>
-                                    {note}
-                                </span>
-                            </Typography>
-                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                <div className="btn-handle">
-                                    <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Đóng</Button>
+
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                id="BookingDetailModal"
+            >
+                <Box sx={style}>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        <span style={{ fontSize: "3rem !important" }}>
+                            Chi tiết dịch vụ
+                        </span>
+                        <div className="create-container">
+                            <div className="group-input mb-24">
+                                <label className='booking-detail-label'>Tên khách hàng:</label>
+                                <div className="form-input">
+                                    <span className='booking-detail-info' >{bookingDetails[0]?.couple.account.name}</span>
                                 </div>
-                            </Typography>
-                        </Box>
-                    </Modal>
-                ) : null
-            } */}
-            {
-                isLoadingPopup && (
-                    <div className="w-full flex items-center justify-center h-[70vh]">
-                        <CircularProgress />
-                    </div>
-                )
-            }
-            {
-                !isLoadingPopup && rowsBookingDetail?.length > 0 && (
-                    <Modal
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                        id="BookingDetailModal"
-                    >
-                        <Box sx={style}>
-                            <Typography id="modal-modal-title" variant="h6" component="h2">
-                                <span style={{ fontSize: "3rem !important" }}>
-                                    Chi tiết dịch vụ
-                                </span>
-                                <div className="create-container">
-                                    <div className="group-input mb-24">
-                                        <label className='booking-detail-label'>Tên khách hàng:</label>
-                                        <div className="form-input">
-                                            <span className='booking-detail-info' >{bookingDetails[0]?.couple.account.name}</span>
-                                        </div>
-                                    </div>
-                                    <div className="group-input mb-24">
-                                        <label className='booking-detail-label'>Ngày cưới:</label>
-                                        <div className="form-input">
-                                            <span className='booking-detail-info' >{bookingDetails[0]?.couple.weddingDate}</span>
-                                        </div>
-                                    </div>
-                                    <div className="group-input mb-24">
+                            </div>
+                            <div className="group-input mb-24">
+                                <label className='booking-detail-label'>Ngày cưới:</label>
+                                <div className="form-input">
+                                    <span className='booking-detail-info' >{bookingDetails[0]?.couple.weddingDate}</span>
+                                </div>
+                            </div>
+                            {/* <div className="group-input mb-24">
                                         <label className='booking-detail-label'>Tổng tiền:</label>
                                         <div className="form-input">
                                             <span className='booking-detail-info' >{`${bookingDetails[0]?.price}`}</span>
                                         </div>
-                                    </div>
+                                    </div> */}
+                        </div>
+                        {
+                            isLoadingPopup && (
+                                <div className="w-full flex items-center justify-center h-[70vh]">
+                                    <CircularProgress />
                                 </div>
+                            )
+                        }
+                        {
+                            !isLoadingPopup && rowsBookingDetail?.length > 0 && (
                                 <div className="table" style={{ height: 400, width: "100%" }}>
                                     <DataGrid rows={rowsBookingDetail}
                                         columns={columnsBookingDetail}
                                         autoPageSize
                                         pagination />
                                 </div>
-                            </Typography>
-                            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                                <div className="btn-handle">
-                                    <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Huỷ</Button>
-                                </div>
-                            </Typography>
-                        </Box>
-                    </Modal>
-                )
-            }
+                            )
+                        }
+                        {
+                            (note != '') ? (
+                                <Modal
+                                    open={openNote}
+                                    onClose={handleCloseNote}
+                                    aria-labelledby="modal-modal-title"
+                                    aria-describedby="modal-modal-description"
+                                    id="BookingDetailModal"
+                                >
+                                    <Box sx={style}>
+                                        <Typography id="modal-modal-title" variant="h6" component="h2">
+                                            <span style={{ fontSize: "3rem !important" }}>
+                                                {note}
+                                            </span>
+                                        </Typography>
+                                        <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                            <div className="btn-handle">
+                                                <Button className="btn-close mr-24" variant="contained" onClick={() => { handleCloseNote() }}>Đóng</Button>
+                                            </div>
+                                        </Typography>
+                                    </Box>
+                                </Modal>
+                            ) : null
+                        }
+                    </Typography>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                        <div className="btn-handle">
+                            <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Đóng</Button>
+                        </div>
+                    </Typography>
+                </Box>
+            </Modal>
+
         </div>
     )
 }

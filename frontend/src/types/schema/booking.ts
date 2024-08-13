@@ -20,6 +20,15 @@ export interface ServiceBookingItem {
     bookingPrice: Number
 }
 
+export interface BookingItem {
+    coupleResponse: CoupleItem,
+    createAt: String,
+    id: String,
+    note: String,
+    status: String,
+    totalPrice: Number
+}
+
 
 // "bookingDetailId": "BOOKING-DETAIL-38",~
 // "partnerName1": "string",~

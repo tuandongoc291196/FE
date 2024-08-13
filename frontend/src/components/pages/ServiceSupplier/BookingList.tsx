@@ -105,66 +105,47 @@ const BookingList: FC<Props> = (props) => {
     })) : [];
 
     const columns: GridColDef[] = [
-        { field: "id", headerName: "ID", flex: 0.3 },
+        { field: "id", headerName: "ID", flex: 0.5 },
         { field: "coupleName", headerName: "Tên couple", flex: 0.5 },
-        {
-            field: 'serviceSupplyName',
-            headerName: 'Tên dịch vụ',
-            flex: 0.5,
-            width: 170,
-            renderCell: (params) => (
-                <div onClick={() => {
-                    handleOpen(params.row.booking)
-                }}>
-                    {params?.row?.serviceSupplyName}
-                </div>
-            ),
-        },
         { field: "price", headerName: "Giá", flex: 0.5 },
-        { field: "promotionName", headerName: "Giảm giá", flex: 0.5 },
+        { field: "completedDate", headerName: "Ngày hoàn thành", flex: 0.5 },
+        { field: "weddingDate", headerName: "Ngày cưới", flex: 0.5 },
+        { field: "status", headerName: "Trạng thái", flex: 0.5 },
         {
             field: 'note',
-            headerName: 'Ghi chú',
+            headerName: 'Chi tiết',
             flex: 0.5,
             width: 170,
             renderCell: (params) => (
                 <>
-                    {
-                        (params.row.note != '') ?
-                            (
-                                <button className="btn-admin-disable" onClick={() => {
-                                    handleOpen(params.row.note)
-                                }}>
-                                    Xem chi tiết
-                                </button>
-                            ) : null
-                    }
+                    <Button style={{ fontSize: '1.2rem' }} className="btn-admin-disable" onClick={() => {
+                        handleOpen(params.row.note)
+                    }}>
+                        Xem chi tiết
+                    </Button>
                 </>
             ),
         },
-        { field: "createAt", headerName: "Ngày booking", flex: 0.5 },
-        { field: "completedDate", headerName: "Ngày hoàn thành", flex: 0.5 },
-        { field: "status", headerName: "Trạng thái", flex: 0.5 },
         {
             field: '',
-            headerName: 'Xử lý',
-            flex: 0.6,
+            headerName: 'Tác vụ',
+            flex: 0.45,
             width: 170,
             renderCell: (params) => (
                 (params?.row.booking.status == "PENDING") ?
                     (
-                        <>
+                        <div className="group-btn">
                             <Button variant="contained" component="span" style={{ backgroundColor: 'red', marginRight: '15px' }}
                                 onClick={() => { rejectBooking(params?.row.id) }}
                             >
-                                {BOOKING_STATUS.reject}
+                                {BOOKING_STATUS.reject.replace(BOOKING_STATUS.reject, "REJECT")}
                             </Button>
                             <Button variant="contained" component="span" style={{ backgroundColor: 'green' }}
                                 onClick={() => { approveBooking(params?.row.id) }}
                             >
-                                {BOOKING_STATUS.approved}
+                                {BOOKING_STATUS.approved.replace(BOOKING_STATUS.approved, "APPROVE")}
                             </Button>
-                        </>
+                        </div>
                     ) : null
             ),
         },

@@ -29,6 +29,9 @@ export const CANCEL_BOOKING = '/booking-service/cancle';
 // Booking Detail
 export const UPDATE_REJECT_BOOKING_STATUS = '/booking-service/reject';
 export const UPDATE_CONFIRM_BOOKING_STATUS = '/booking-service/confirm';
+export const UPDATE_CONFIRM_PROCESSING_STATUS = '/booking-service/processing';
+export const UPDATE_CONFIRM_DONE_STATUS = '/booking-service/done';
+export const GET_BOOKING_DETAIL_BY_SUPPLIER_ID = '/booking/getBookingDetailBySupplierAndBooking';
 
 // Service
 export const CREATE_SERVICE = '/service/create';

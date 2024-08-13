@@ -46,12 +46,14 @@ export const LUXURY_SEGMENT = {
 };
 
 export const BOOKING_STATUS = {
-  cancel: 'CANCELLED',
+  cancel: 'CANCELED',
   pending: 'PENDING',
   approved: 'APPROVED',
   reject: 'REJECTED',
   processing: 'PROCESSING',
   completed: 'COMPLETED',
+  deposited: 'DEPOSITED',
+  done: 'DONE',
 };
 
 export const LOGO =

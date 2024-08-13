@@ -17,6 +17,7 @@ import {
   GET_BOOKING_BY_COUPLE,
   GET_BOOKING_BY_ID,
   GET_BOOKING_BY_SUPPLIER,
+  GET_BOOKING_DETAIL_BY_SUPPLIER_ID,
   GET_PENDING_BLOGS,
   GET_PROMOTION_BY_SUPPLIER,
   GET_REJECTED_BLOGS,
@@ -28,6 +29,8 @@ import {
   POST_BOOKING,
   REQUEST_PAYMENT,
   UPDATE_CONFIRM_BOOKING_STATUS,
+  UPDATE_CONFIRM_DONE_STATUS,
+  UPDATE_CONFIRM_PROCESSING_STATUS,
   UPDATE_REJECT_BOOKING_STATUS,
 } from '../constants/API_URLS';
 import { PROCESS_STATUS, ROLE, STATUS } from '../constants/consts';
@@ -420,6 +423,66 @@ export const cancelBooking = async (id, token) => {
 };
 
 // Booking Detail
+
+export const getBookingDetailBySupplierId = async (supplierId, bookingId, token) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.get(GET_BOOKING_DETAIL_BY_SUPPLIER_ID + `?bookingId=${bookingId}&supplierId=${supplierId}`, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const processingBookingDetail = async (id, token) => {
+  const data = {
+    key: 'value',
+  };
+  fetch(
+    'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
+      UPDATE_CONFIRM_PROCESSING_STATUS +
+      `?id=${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error));
+  return data.status;
+};
+export const doneBookingDetail = async (id, token) => {
+  const data = {
+    key: 'value',
+  };
+  fetch(
+    'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
+      UPDATE_CONFIRM_DONE_STATUS +
+      `?id=${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error));
+  return data.status;
+};
 
 export const confirmBookingDetail = async (id, token) => {
   const data = {

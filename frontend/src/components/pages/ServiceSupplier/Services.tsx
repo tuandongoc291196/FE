@@ -408,7 +408,7 @@ const Services: FC<Props> = (props) => {
                                 <label className="label-select">Loại:</label>
                                 {
                                     (categoryCreate) ? (
-                                        <FormControl className="select-box form-input mr-24" style={{ width: '50%' }}>
+                                        <FormControl className="select-box form-input mr-24" style={{ width: '100%' }}>
                                             <Select
                                                 className="input regis-input"
                                                 labelId="demo-simple-select-label"
@@ -430,7 +430,7 @@ const Services: FC<Props> = (props) => {
 
                             <div className="group-input mb-24">
                                 <label className="label-select">Phân khúc:</label>
-                                <FormControl className="select-box form-input price" style={{ width: '50%' }}>
+                                <FormControl className="select-box form-input price">
                                     <Select
                                         className="input regis-input"
                                         labelId="demo-simple-select-label"
@@ -481,7 +481,7 @@ const Services: FC<Props> = (props) => {
                                     (
                                         <div className="group-input mb-24">
                                             <label className="label-select">Dịch vụ:</label>
-                                            <FormControl className="select-box form-input mr-24" style={{ width: '50%' }}>
+                                            <FormControl className="select-box form-input mr-24" style={{ width: '100%' }}>
                                                 <Select
                                                     className="input regis-input"
                                                     labelId="demo-simple-select-label"

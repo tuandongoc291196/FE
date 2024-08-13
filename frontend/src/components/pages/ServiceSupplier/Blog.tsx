@@ -108,7 +108,12 @@ const Blogs: FC<Props> = (props) => {
                 <DataGrid rows={rows}
                     columns={columns}
                     autoPageSize
-                    pagination />
+                    pagination
+                    sx={{
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                            color: 'var(--primary-color)',
+                        },
+                    }} />
             </div>
             <Modal
                 open={open}

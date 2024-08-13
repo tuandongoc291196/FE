@@ -13,6 +13,7 @@ import {
   GET_ACTIVE_BLOGS,
   GET_ALL_BLOGS,
   GET_ALL_CATEGORIES,
+  GET_BALANCE_WALLET,
   GET_BOOKING_BY_COUPLE,
   GET_BOOKING_BY_ID,
   GET_BOOKING_BY_SUPPLIER,
@@ -464,4 +465,20 @@ export const rejectBookingDetail = async (id, token) => {
     .then((data) => console.log(data))
     .catch((error) => console.error('Error:', error));
   return data.status;
+};
+
+// Wallet
+export const getBalanceWallet = async (id, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(GET_BALANCE_WALLET + `/${id}`, {
+      headers: headers,
+    });
+    return res.data.data.balance;
+  } catch (error) {
+    return error;
+  }
 };

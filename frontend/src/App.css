@@ -42,6 +42,11 @@ body {
     cursor: pointer;
 }
 
+.hover:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
 .icon-back {
     position: absolute;
     left: 0;
@@ -109,4 +114,19 @@ body {
     text-align: left;
     margin-bottom: 24px;
     margin-left: 8px;
+}
+
+#demo-simple-select {
+    font-size: 1.5rem !important;
+    font-weight: bold;
+    padding-bottom: 6px;
+}
+
+.menu-select-item {
+    font-size: 1.5rem !important;
+}
+
+.divide-right {
+    border-right: 1px solid var(--black-color) !important;
+    height: 100%;
 }

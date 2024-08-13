@@ -28,7 +28,7 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: '50%',
+    width: '30%',
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
@@ -129,12 +129,12 @@ const Promotions: FC<Props> = (props) => {
         { field: "status", headerName: "Trạng thái", flex: 0.5 },
         {
             field: '',
-            headerName: '',
-            flex: 0.1,
+            headerName: 'Tác vụ',
+            flex: 0.2,
             width: 170,
             renderCell: (params) => (
                 <div className="action">
-                    <DeleteIcon></DeleteIcon>
+                    <DeleteIcon className="hover" style={{ color: "red" }}></DeleteIcon>
                 </div>
             ),
         }
@@ -150,7 +150,12 @@ const Promotions: FC<Props> = (props) => {
                 <DataGrid rows={rows}
                     columns={columns}
                     autoPageSize
-                    pagination />
+                    pagination
+                    sx={{
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                            color: 'var(--primary-color)',
+                        },
+                    }} />
             </div>
             <Modal
                 open={open}
@@ -161,20 +166,20 @@ const Promotions: FC<Props> = (props) => {
             >
                 <Box sx={style}>
                     <Typography id="modal-modal-title" variant="h2" component="h2">
-                        <span style={{ fontSize: "3rem !important" }}>
+                        <span>
                             Tạo giảm giá
                         </span>
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <div className="create-container group-create-promotion">
-                            <div className="group-input mb-24">
+                            <div className="group-input-100 mb-24">
                                 <label>Tên mã giảm giá:</label>
                                 <div className="form-input">
                                     <input type="Username" className="input regis-input" required onChange={(e) => { setName(e.target.value) }} />
                                     <span className="text-err"></span>
                                 </div>
                             </div>
-                            <div className="group-input mb-24 ml-8">
+                            {/* <div className="group-input-40 mb-24 ml-8">
                                 <label>Dịch vụ:</label>
                                 <div className="form-input">
                                     {
@@ -197,7 +202,7 @@ const Promotions: FC<Props> = (props) => {
                                         ) : null
                                     }
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="create-container group-create-promotion">
 
@@ -211,9 +216,10 @@ const Promotions: FC<Props> = (props) => {
                                             id="demo-simple-select"
                                             value={promotionType}
                                             onChange={(event) => { setPromotionType(event.target.value) }}
+                                            sx={{ padding: "8px 8px 17px" }}
                                         >
                                             {promotionTypes.map((type, index) => (
-                                                <MenuItem value={type} key={index}>
+                                                <MenuItem className="menu-select-item" value={type} key={index}>
                                                     {type}
                                                 </MenuItem>
                                             ))}
@@ -221,7 +227,7 @@ const Promotions: FC<Props> = (props) => {
                                     </FormControl>
                                 </div>
                             </div>
-                            <div className="group-input mb-24 ml-8">
+                            <div className="group-input-40 mb-24 ml-8">
                                 <label>Giảm:</label>
                                 <div className="form-input">
                                     <input type="Username" className="input regis-input" defaultValue={'0'} required onChange={(e) => { setPercent(e.target.value) }} />
@@ -232,7 +238,7 @@ const Promotions: FC<Props> = (props) => {
                         </div>
 
                         <div className="create-container group-create-promotion">
-                            <div className="group-input-35 mb-24 mr-24">
+                            <div className="group-input-40 mb-24">
                                 <label>Ngày bắt đầu:</label>
                                 <div className="form-input">
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -240,12 +246,13 @@ const Promotions: FC<Props> = (props) => {
                                             <DateTimePicker
                                                 value={startDate}
                                                 onChange={(newValue) => setStartDate(newValue)}
+                                                sx={{ width: '10%' }}
                                             />
                                         </DemoContainer>
                                     </LocalizationProvider>
                                 </div>
                             </div>
-                            <div className="group-input-35 mb-24">
+                            <div className="group-input-40 mb-24">
                                 <div className="form-input">
                                     <label>Ngày hết hạn:</label>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>

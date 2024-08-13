@@ -29,7 +29,7 @@ export const PROMOTION_TYPES = {
 };
 
 export const ALL_SELECT = {
-  name: 'Tất cả',
+  name: 'TẤT CẢ',
   id: 'all',
 };
 export const AVAILABLE_PRICE = 'Giá sẵn';

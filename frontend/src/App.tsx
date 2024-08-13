@@ -99,7 +99,10 @@ function App() {
               />
             </Route>
           ) : (
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={user?.roleName === ROLE.supplier ? <Services
+              setMessage={setMessage}
+              setMessageStatus={setMessageStatus}
+            /> : <HomePage />} />
           )}
 
           {/* Authenticate */}

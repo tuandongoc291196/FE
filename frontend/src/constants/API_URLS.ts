@@ -38,5 +38,8 @@ export const GET_SERVICE_BY_CATEGORY_ID = '/service/getByCategory';
 export const CREATE_SERVICE_SUPPLIER = '/service-supplier/create';
 export const GET_SERVICE_SUPPLIER_FILTER = '/service-supplier/filter';
 export const GET_SERVICE_SUPPLIER_BY_ID = '/service-supplier/getById';
-export const GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID =
-  '/service-supplier/getBySuppler';
+export const GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID = '/service-supplier/getBySuppler';
+
+// Wallet
+export const GET_BALANCE_WALLET = '/wallet/balance';
+

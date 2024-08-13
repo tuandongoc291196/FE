@@ -11,6 +11,7 @@
     box-shadow: 0 3px 13px 0 rgba(32, 40, 49, 0.1);
     padding: 8px 24px;
     border-radius: 5px;
+    margin-left: 12px;
 }
 
 #Services .create-service {
@@ -44,6 +45,10 @@
 
 #ModalCreateService input {
     padding: 5px;
+}
+
+#Services .percent-input {
+    padding: 8px 8px 17px !important;
 }
 
 .create-container {
@@ -94,8 +99,41 @@
     width: 35%;
 }
 
+.group-input-40 {
+    width: 40%;
+}
+
+.group-input-100 {
+    width: 100%;
+}
+
 .group-input label {
     margin-right: 24px;
+}
+
+.select-box-container {
+    display: flex;
+    align-items: center;
+}
+
+.label-select {
+    color: var(--primary-color);
+    font-size: 2rem;
+    text-transform: uppercase;
+    margin-right: 8px;
+    margin-left: 12px;
+    margin-bottom: 4px;
+}
+
+.select-box {
+    margin-right: 12px !important;
+}
+
+.group-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
 }
 
 #ModalCreateService .form-input input {
@@ -134,5 +172,15 @@
 }
 
 #ModalCreateService .group-create-promotion {
-    justify-content: left;
+    justify-content: space-between;
+}
+
+.css-v0pjtz-MuiStack-root>.MuiTextField-root,
+.css-v0pjtz-MuiStack-root>.MuiPickersTextField-root {
+    min-width: 200px !important;
+}
+
+#modal-modal-title * {
+    font-size: 2.5rem !important;
+    font-weight: bold;
 }

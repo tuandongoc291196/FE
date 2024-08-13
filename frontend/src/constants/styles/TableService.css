@@ -1,5 +1,6 @@
 .btn-create-service:hover {
-    background-color: var(--btn-hover-color) !important;
+    background-color: #4C3E3E !important;
+    color: #DDC48E !important;
 }
 
 .table {

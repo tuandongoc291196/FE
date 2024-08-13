@@ -38,11 +38,21 @@
     width: 70%;
 }
 
+#Header .balance {
+    margin-left: 8px;
+}
+
 #Header .nav-item {
     display: flex;
     align-items: center;
+    padding-left: 24px;
     padding-right: 24px;
     line-height: 96px;
+    font-size: 1.8rem;
+}
+
+#Header .nav-item-selected {
+    border-bottom: 1px solid var(--black-color);
 }
 
 #Header .nav-item:hover {
@@ -54,7 +64,7 @@
     display: flex;
     justify-content: right;
     flex-wrap: nowrap;
-    width: 30%;
+    width: 50%;
     align-items: center;
 }
 
@@ -159,11 +169,17 @@
 }
 
 #Header .dropdown-option {
+    justify-content: space-between;
     display: flex;
     flex-wrap: nowrap;
     width: 100%;
-    padding: 8px 24px;
+    padding: 8px 55px;
     align-items: center;
+}
+
+.profile-select {
+    width: 100px;
+    text-align: left;
 }
 
 #Header .dropdown-option:hover {

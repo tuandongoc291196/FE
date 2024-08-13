@@ -33,13 +33,13 @@ const segments = [
 
 const defaultValueCategory: CategoryItem = {
     id: 'all',
-    categoryName: 'Tất cả',
+    categoryName: 'TẤT CẢ',
     status: 'ACTIVATED'
 }
 
 const defaultValuePromotion: PromotionItem = {
     id: 'none',
-    name: 'Không',
+    name: 'KHÔNG',
     value: 0,
     startDate: '',
     endDate: '',
@@ -58,7 +58,7 @@ const Services: FC<Props> = (props) => {
 
     const defaultValueService: ServiceItem = {
         id: 'all',
-        name: 'Tất cả',
+        name: 'TẤT CẢ',
         createAt: '',
         description: '',
         listImages: [],
@@ -73,7 +73,6 @@ const Services: FC<Props> = (props) => {
     const [promotions, setPromotions] = useState<PromotionItem[]>([]);
     const [promotion, setPromotion] = useState<any>();
     const [segment, setSegment] = useState<any>(ALL_SELECT);
-    const [segmentCreate, setSegmentCreate] = useState<any>(ALL_SELECT);
     const [serviceName, setServiceName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [price, setPrice] = useState<string>('0');
@@ -158,7 +157,9 @@ const Services: FC<Props> = (props) => {
         const response = await getPromotionBySupplier(user?.userId);
         if (Array.isArray(response)) {
             setPromotions([defaultValuePromotion, ...response]);
-            setPromotion(defaultValuePromotion);
+            if (!promotion) {
+                setPromotion(defaultValuePromotion);
+            }
         } else {
             // Handle the case where response is not an array
             console.error('Response is not an array', response);
@@ -237,6 +238,7 @@ const Services: FC<Props> = (props) => {
                 supplierId: user?.userId,
                 type: segment.id,
             }
+            console.log(newService);
 
             const status = await createServiceSupplier(newService, user?.token, dispatch, navigate);
             fetchData();
@@ -258,7 +260,6 @@ const Services: FC<Props> = (props) => {
         idDisplay: service.id.split('SERVICE-SUPPLIER-')[1],
         // category: service?.categoryResponse?.categoryName,
         name: service?.name,
-        description: service?.description,
         rating: service?.rating,
         // promotion: (service?.promotionService) ? service?.promotionService.percent + "%" : "",
         createAt: service?.createAt,
@@ -270,9 +271,7 @@ const Services: FC<Props> = (props) => {
 
     const columns: GridColDef[] = [
         { field: "idDisplay", headerName: "ID", flex: 0.2 },
-        // { field: "category", headerName: "Loại", flex: 0.5 },
-        { field: "name", headerName: "Tên", flex: 0.8 },
-        { field: "description", headerName: "Mô tả", flex: 1 },
+        { field: "name", headerName: "Tên", flex: 1.8 },
         { field: "price", headerName: "Giá", flex: 0.5 },
         { field: "promotionName", headerName: "Giảm giá", flex: 0.5 },
         { field: "rating", headerName: "Đánh giá", flex: 0.3 },
@@ -281,13 +280,12 @@ const Services: FC<Props> = (props) => {
         {
             field: '',
             headerName: 'Tác vụ',
-            flex: 0.5,
+            flex: 0.35,
             width: 170,
             renderCell: (params) => (
                 <div className="action">
-                    <VisibilityIcon onClick={() => navigate(`/service-detail/${params.id}`)}></VisibilityIcon>
-                    <AppRegistrationIcon></AppRegistrationIcon>
-                    <DeleteIcon></DeleteIcon>
+                    <VisibilityIcon className="hover" style={{ color: "green" }} onClick={() => navigate(`/service-detail/${params.id}`)}></VisibilityIcon>
+                    <DeleteIcon className="hover" style={{ color: "red" }}></DeleteIcon>
                 </div>
             ),
         }
@@ -298,21 +296,19 @@ const Services: FC<Props> = (props) => {
             <>
                 <div className="create-service">
                     <h2 className="h2-title-page" >Dịch vụ</h2>
-                    <div>
+                    <div className="select-box-container">
+                        <span className='label-select'>Loại:</span>
                         {
                             (category) ? (
-                                <FormControl className="form-input mr-24">
-                                    <InputLabel id="demo-simple-select-label">Loại</InputLabel>
+                                <FormControl className="select-box form-input mr-24">
                                     <Select
                                         className="input regis-input"
-                                        labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        label="Loại"
                                         value={category?.id}
                                         onChange={handleChangeCategory}
                                     >
                                         {categories.map((category) => (
-                                            <MenuItem value={`${category?.id}`} key={`${category.id}`}>
+                                            <MenuItem className="menu-select-item" value={`${category?.id}`} key={`${category.id}`}>
                                                 {category.categoryName}
                                             </MenuItem>
                                         ))}
@@ -320,53 +316,58 @@ const Services: FC<Props> = (props) => {
                                 </FormControl>
                             ) : null
                         }
+                        <div className="divide-right"></div>
                         {
                             (category.id != 'all') ?
-                                (
-                                    <FormControl className="form-input mr-24">
-                                        <InputLabel id="demo-simple-select-label">Dịch vụ</InputLabel>
+                                (<>
+                                    <span className='label-select'>Dịch vụ:</span>
+                                    <FormControl className="select-box form-input mr-24">
                                         <Select
                                             className="input regis-input"
-                                            labelId="demo-simple-select-label"
                                             id="demo-simple-select"
-                                            label="Dịch vụ"
                                             value={service?.id}
                                             onChange={handleChangeService}
                                         >
                                             {services.map((ser) => (
-                                                <MenuItem value={`${ser?.id}`} key={`${ser.id}`}>
+                                                <MenuItem className="menu-select-item" value={`${ser?.id}`} key={`${ser.id}`}>
                                                     {ser.name}
                                                 </MenuItem>
                                             ))}
                                         </Select>
                                     </FormControl>
+                                    <div className="divide-right"></div>
+                                </>
                                 ) : null
                         }
-                        <FormControl className="form-input mr-24">
-                            <InputLabel id="demo-simple-select-label">Phân khúc</InputLabel>
+                        <span className='label-select'>Phân khúc:</span>
+                        <FormControl className="select-box form-input mr-24">
                             <Select
                                 className="input regis-input"
-                                labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                label="Loại"
                                 value={segment?.id}
                                 onChange={(event) => { setSegment(segments.find(seg => seg.id === event.target.value)) }}
                             >
                                 {segments.map((seg, index) => (
-                                    <MenuItem value={seg?.id} key={index}>
+                                    <MenuItem className="menu-select-item" value={seg?.id} key={index}>
                                         {seg.name}
                                     </MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
-                        <Button className="btn-create-service" onClick={() => { handleOpen() }}>Tạo mới</Button>
+                        <div className="divide-right"></div>
+                        <Button className="btn-create-service" onClick={() => { handleOpen() }}>TẠO MỚI</Button>
                     </div>
                 </div>
                 <div className="table" style={{ height: 400, width: "100%" }}>
                     <DataGrid rows={rows}
                         columns={columns}
                         autoPageSize
-                        pagination />
+                        pagination
+                        sx={{
+                            '& .MuiDataGrid-columnHeaderTitle': {
+                                color: 'var(--primary-color)',
+                            },
+                        }} />
                 </div>
             </>
 
@@ -407,16 +408,17 @@ const Services: FC<Props> = (props) => {
                                 <label className="label-select">Loại:</label>
                                 {
                                     (categoryCreate) ? (
-                                        <FormControl className="form-input mr-24" style={{ width: '50%' }}>
+                                        <FormControl className="select-box form-input mr-24" style={{ width: '100%' }}>
                                             <Select
                                                 className="input regis-input"
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
                                                 value={categoryCreate?.id}
                                                 onChange={handleChangeCategoryCreate}
+                                                sx={{ padding: "12px 8px 17px" }}
                                             >
                                                 {categoriesCreate.map((category) => (
-                                                    <MenuItem value={`${category?.id}`} key={`${category.id}`}>
+                                                    <MenuItem className="menu-select-item" value={`${category?.id}`} key={`${category.id}`}>
                                                         {category.categoryName}
                                                     </MenuItem>
                                                 ))}
@@ -428,18 +430,19 @@ const Services: FC<Props> = (props) => {
 
                             <div className="group-input mb-24">
                                 <label className="label-select">Phân khúc:</label>
-                                <FormControl className="form-input price" style={{ width: '50%' }}>
+                                <FormControl className="select-box form-input price">
                                     <Select
                                         className="input regis-input"
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         value={segment}
                                         onChange={(e) => { setSegment(e.target.value) }}
+                                        sx={{ padding: "12px 8px 17px" }}
                                     >
                                         {
                                             segments.map((segment: any, index) => {
                                                 return (
-                                                    <MenuItem value={segment} key={index}>{segment.name}</MenuItem>
+                                                    <MenuItem className="menu-select-item" value={segment} key={index}>{segment.name}</MenuItem>
                                                 )
                                             })
                                         }
@@ -451,18 +454,19 @@ const Services: FC<Props> = (props) => {
                                 (promotion?.id != undefined && promotion) ? (
                                     <div className="group-input mb-24">
                                         <label className="label-select">Mã giảm giá:</label>
-                                        <FormControl className="form-input price" style={{ width: '50%' }}>
+                                        <FormControl className="select-box form-input price" style={{ width: '50%' }}>
                                             <Select
                                                 className="input regis-input"
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
                                                 value={promotion}
                                                 onChange={(e) => { setPromotion(e.target.value) }}
+                                                sx={{ padding: "12px 8px 17px" }}
                                             >
                                                 {
                                                     promotions?.map((promotion: any, index) => {
                                                         return (
-                                                            <MenuItem value={promotion} key={index}>{promotion.name}</MenuItem>
+                                                            <MenuItem className="menu-select-item" value={promotion} key={index}>{promotion.name}</MenuItem>
                                                         )
                                                     })
                                                 }
@@ -477,16 +481,17 @@ const Services: FC<Props> = (props) => {
                                     (
                                         <div className="group-input mb-24">
                                             <label className="label-select">Dịch vụ:</label>
-                                            <FormControl className="form-input mr-24" style={{ width: '50%' }}>
+                                            <FormControl className="select-box form-input mr-24" style={{ width: '100%' }}>
                                                 <Select
                                                     className="input regis-input"
                                                     labelId="demo-simple-select-label"
                                                     id="demo-simple-select"
                                                     value={serviceCreate?.id}
                                                     onChange={handleChangeServiceCreate}
+                                                    sx={{ padding: "12px 8px 17px" }}
                                                 >
                                                     {servicesCreate.map((ser) => (
-                                                        <MenuItem value={`${ser?.id}`} key={`${ser.id}`}>
+                                                        <MenuItem className="menu-select-item" value={`${ser?.id}`} key={`${ser.id}`}>
                                                             {ser.name}
                                                         </MenuItem>
                                                     ))}

@@ -180,7 +180,12 @@ const StaffList: FC<Props> = (props) => {
                 <DataGrid rows={rows}
                     columns={columns}
                     autoPageSize
-                    pagination />
+                    pagination
+                    sx={{
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                            color: 'var(--primary-color)',
+                        },
+                    }} />
             </div>
             <button className="btn float-right mt-24" onClick={handleOpen}>Tạo nhân viên mới</button>
             <Modal

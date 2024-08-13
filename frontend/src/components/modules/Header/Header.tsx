@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Header.css';
 import NavSearching from '../../pages/NavSearching/NavSearching';
-import { Outlet, useNavigate } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import Nav from 'react-bootstrap/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,11 +9,13 @@ import {
   faAddressCard,
   faRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
-import { logoutUser } from '../../../redux/apiRequest';
+import { getBalanceWallet, logoutUser } from '../../../redux/apiRequest';
 import { LOGO, ROLE } from '../../../constants/consts';
 import { HeaderNav } from './HeaderNav';
 import { Badge, IconButton } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import { getCart } from '../../../utils/CartStorage';
@@ -27,6 +29,8 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [services, setServices] = useState(getCart());
+  const [isDisplayBalance, setIsDisplayBalance] = useState<boolean>(true);
+  const location = useLocation();
   useEffect(() => {
 
     const handleStorageChange = () => {
@@ -40,12 +44,14 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
     };
   }, [getCart()]);
   const [show, setShow] = useState<string>('display-none');
+  const [balance, setBalance] = useState<string>('0');
   const user = useSelector((state: any) => state.auth.login.currentUser);
 
   const navItemRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    fetchBalanceWallet();
     const handleMouseOver = (event: MouseEvent) => {
       const target = event.target as Node;
       if (
@@ -65,6 +71,11 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
     };
   }, [setModalVisible]);
 
+  async function fetchBalanceWallet() {
+    const response = await getBalanceWallet(user?.accountId, user?.token);
+    setBalance(response);
+  }
+
   const handleNav = () => {
     if (user && user.roleName !== ROLE.couple) {
       const navItems = HeaderNav.find((e) => e.user === user?.roleName)?.items;
@@ -74,7 +85,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
           {navItems?.map((item, index) => {
             return (
               <li
-                className="nav-item"
+                className={`nav-item` + `${(item.navigate == location.pathname) ? " nav-item-selected" : ""}`}
                 onClick={() => {
                   navigate(`${item.navigate}`);
                 }}
@@ -151,29 +162,52 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
           </div>
         ) : (
           <div className="header-right">
+            {
+              (isDisplayBalance) ?
+                (
+                  <>
+                    <RemoveRedEyeIcon className='hover-primary' style={{ color: "var(--black-color)" }} onClick={() => (setIsDisplayBalance(false))}></RemoveRedEyeIcon>
+                    <span className="balance">{balance} VNĐ</span>
+
+                  </>
+                ) : (
+                  <>
+                    <VisibilityOffIcon className='hover-primary' style={{ color: "var(--black-color)" }} onClick={() => (setIsDisplayBalance(true))}></VisibilityOffIcon>
+                    <span className="balance">******* VNĐ</span>
+                  </>
+                )
+            }
+
             <IconButton
               onClick={() => {
                 console.log(1);
               }}
             >
-              <AccountBalanceWalletIcon sx={{ fontSize: 30 }} />
+              <AccountBalanceWalletIcon sx={{ fontSize: 30, color: "var(--black-color)" }} />
             </IconButton>
-            <IconButton
-              onClick={() => {
-                navigate('/booking-history');
-              }}
-            >
-              <ReceiptLongIcon sx={{ fontSize: 30 }} />
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                navigate('/quotation');
-              }}
-            >
-              <Badge badgeContent={services.length} color="error">
-                <ShoppingCartIcon sx={{ fontSize: 30 }} />{' '}
-              </Badge>
-            </IconButton>
+            {
+              user?.roleName != ROLE.supplier ? (
+                <>
+                  <IconButton
+                    onClick={() => {
+                      navigate('/booking-history');
+                    }}
+                  >
+                    <ReceiptLongIcon sx={{ fontSize: 30, color: "var(--black-color)" }} />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => {
+                      navigate('/quotation');
+                    }}
+                  >
+                    <Badge badgeContent={services.length} color="error">
+                      <ShoppingCartIcon sx={{ fontSize: 30, color: "var(--black-color)" }} />{' '}
+                    </Badge>
+                  </IconButton>
+                </>
+              ) : null
+            }
+
 
             <div
               className="navlink user-wrap"
@@ -183,7 +217,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
               }}
             >
               <div className="flex-css relative hover-primary">
-                <div className="user-name">{user?.email}</div>
+                <div className="user-name">{user?.name}</div>
                 <img
                   className="avt"
                   src="https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg"
@@ -209,12 +243,12 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                   }}
                   style={{ color: 'var(--black-color)' }}
                 >
-                  <FontAwesomeIcon icon={faAddressCard} className="icon" />
-                  Cá nhân
+                  <FontAwesomeIcon icon={faAddressCard} />
+                  <span className='profile-select'>Cá nhân</span>
                 </div>
                 <div className="dropdown-option" onClick={logoutHandler}>
-                  <FontAwesomeIcon icon={faRightFromBracket} className="icon" />
-                  Đăng xuất
+                  <FontAwesomeIcon icon={faRightFromBracket} />
+                  <span className='profile-select'>Đăng xuất</span>
                 </div>
               </div>
             </div>

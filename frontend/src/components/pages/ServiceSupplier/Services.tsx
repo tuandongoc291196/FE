@@ -256,8 +256,7 @@ const Services: FC<Props> = (props) => {
     }
 
     const rows = serviceSupplierList?.length > 0 ? serviceSupplierList.map((service) => ({
-        id: service.id,
-        idDisplay: service.id.split('SERVICE-SUPPLIER-')[1],
+        id: parseInt(`${service.id.split('SERVICE-SUPPLIER-')[1]}`),
         // category: service?.categoryResponse?.categoryName,
         name: service?.name,
         rating: service?.rating,
@@ -270,7 +269,7 @@ const Services: FC<Props> = (props) => {
     })) : [];
 
     const columns: GridColDef[] = [
-        { field: "idDisplay", headerName: "ID", flex: 0.2 },
+        { field: "id", headerName: "ID", flex: 0.2 },
         { field: "name", headerName: "Tên", flex: 1.8 },
         { field: "price", headerName: "Giá", flex: 0.5 },
         { field: "promotionName", headerName: "Giảm giá", flex: 0.5 },
@@ -284,7 +283,7 @@ const Services: FC<Props> = (props) => {
             width: 170,
             renderCell: (params) => (
                 <div className="action">
-                    <VisibilityIcon className="hover" style={{ color: "green" }} onClick={() => navigate(`/service-detail/${params.id}`)}></VisibilityIcon>
+                    <VisibilityIcon className="hover" style={{ color: "green" }} onClick={() => navigate(`/service-detail/SERVICE-SUPPLIER-${params.id}`)}></VisibilityIcon>
                     <DeleteIcon className="hover" style={{ color: "red" }}></DeleteIcon>
                 </div>
             ),

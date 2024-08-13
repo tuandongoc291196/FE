@@ -39,7 +39,7 @@ const defaultValueCategory: CategoryItem = {
 
 const defaultValuePromotion: PromotionItem = {
     id: 'none',
-    name: 'Không',
+    name: 'KHÔNG',
     value: 0,
     startDate: '',
     endDate: '',
@@ -73,7 +73,6 @@ const Services: FC<Props> = (props) => {
     const [promotions, setPromotions] = useState<PromotionItem[]>([]);
     const [promotion, setPromotion] = useState<any>();
     const [segment, setSegment] = useState<any>(ALL_SELECT);
-    const [segmentCreate, setSegmentCreate] = useState<any>(ALL_SELECT);
     const [serviceName, setServiceName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [price, setPrice] = useState<string>('0');
@@ -158,7 +157,9 @@ const Services: FC<Props> = (props) => {
         const response = await getPromotionBySupplier(user?.userId);
         if (Array.isArray(response)) {
             setPromotions([defaultValuePromotion, ...response]);
-            setPromotion(defaultValuePromotion);
+            if (!promotion) {
+                setPromotion(defaultValuePromotion);
+            }
         } else {
             // Handle the case where response is not an array
             console.error('Response is not an array', response);
@@ -237,6 +238,7 @@ const Services: FC<Props> = (props) => {
                 supplierId: user?.userId,
                 type: segment.id,
             }
+            console.log(newService);
 
             const status = await createServiceSupplier(newService, user?.token, dispatch, navigate);
             fetchData();
@@ -269,7 +271,6 @@ const Services: FC<Props> = (props) => {
 
     const columns: GridColDef[] = [
         { field: "idDisplay", headerName: "ID", flex: 0.2 },
-        // { field: "category", headerName: "Loại", flex: 0.5 },
         { field: "name", headerName: "Tên", flex: 1.8 },
         { field: "price", headerName: "Giá", flex: 0.5 },
         { field: "promotionName", headerName: "Giảm giá", flex: 0.5 },
@@ -283,8 +284,8 @@ const Services: FC<Props> = (props) => {
             width: 170,
             renderCell: (params) => (
                 <div className="action">
-                    <VisibilityIcon onClick={() => navigate(`/service-detail/${params.id}`)}></VisibilityIcon>
-                    <DeleteIcon></DeleteIcon>
+                    <VisibilityIcon className="hover" style={{ color: "green" }} onClick={() => navigate(`/service-detail/${params.id}`)}></VisibilityIcon>
+                    <DeleteIcon className="hover" style={{ color: "red" }}></DeleteIcon>
                 </div>
             ),
         }
@@ -414,6 +415,7 @@ const Services: FC<Props> = (props) => {
                                                 id="demo-simple-select"
                                                 value={categoryCreate?.id}
                                                 onChange={handleChangeCategoryCreate}
+                                                sx={{ padding: "12px 8px 17px" }}
                                             >
                                                 {categoriesCreate.map((category) => (
                                                     <MenuItem className="menu-select-item" value={`${category?.id}`} key={`${category.id}`}>
@@ -435,6 +437,7 @@ const Services: FC<Props> = (props) => {
                                         id="demo-simple-select"
                                         value={segment}
                                         onChange={(e) => { setSegment(e.target.value) }}
+                                        sx={{ padding: "12px 8px 17px" }}
                                     >
                                         {
                                             segments.map((segment: any, index) => {
@@ -458,6 +461,7 @@ const Services: FC<Props> = (props) => {
                                                 id="demo-simple-select"
                                                 value={promotion}
                                                 onChange={(e) => { setPromotion(e.target.value) }}
+                                                sx={{ padding: "12px 8px 17px" }}
                                             >
                                                 {
                                                     promotions?.map((promotion: any, index) => {
@@ -484,6 +488,7 @@ const Services: FC<Props> = (props) => {
                                                     id="demo-simple-select"
                                                     value={serviceCreate?.id}
                                                     onChange={handleChangeServiceCreate}
+                                                    sx={{ padding: "12px 8px 17px" }}
                                                 >
                                                     {servicesCreate.map((ser) => (
                                                         <MenuItem className="menu-select-item" value={`${ser?.id}`} key={`${ser.id}`}>

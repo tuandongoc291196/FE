@@ -16,6 +16,8 @@ import { confirmBookingDetail, getBookingBySupplierId, rejectBookingDetail } fro
 import { BOOKING_STATUS } from '../../../constants/consts';
 import "./BookingList.css";
 import { BookingDetailItem } from '../../../types/schema/booking';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
 
 interface Props {
     setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -129,22 +131,14 @@ const BookingList: FC<Props> = (props) => {
         {
             field: '',
             headerName: 'Tác vụ',
-            flex: 0.45,
+            flex: 0.255,
             width: 170,
             renderCell: (params) => (
                 (params?.row.booking.status == "PENDING") ?
                     (
                         <div className="group-btn">
-                            <Button variant="contained" component="span" style={{ backgroundColor: 'red', marginRight: '15px' }}
-                                onClick={() => { rejectBooking(params?.row.id) }}
-                            >
-                                {BOOKING_STATUS.reject.replace(BOOKING_STATUS.reject, "REJECT")}
-                            </Button>
-                            <Button variant="contained" component="span" style={{ backgroundColor: 'green' }}
-                                onClick={() => { approveBooking(params?.row.id) }}
-                            >
-                                {BOOKING_STATUS.approved.replace(BOOKING_STATUS.approved, "APPROVE")}
-                            </Button>
+                            <HighlightOffIcon className="hover" style={{ color: "red" }} sx={{ fontSize: 30 }} onClick={() => { rejectBooking(params?.row.id) }}></HighlightOffIcon>
+                            <TaskAltIcon className="hover" style={{ color: "green" }} sx={{ fontSize: 30 }} onClick={() => { approveBooking(params?.row.id) }}></TaskAltIcon>
                         </div>
                     ) : null
             ),

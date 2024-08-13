@@ -129,12 +129,12 @@ const Promotions: FC<Props> = (props) => {
         { field: "status", headerName: "Trạng thái", flex: 0.5 },
         {
             field: '',
-            headerName: '',
-            flex: 0.1,
+            headerName: 'Tác vụ',
+            flex: 0.2,
             width: 170,
             renderCell: (params) => (
                 <div className="action">
-                    <DeleteIcon></DeleteIcon>
+                    <DeleteIcon className="hover" style={{ color: "red" }}></DeleteIcon>
                 </div>
             ),
         }

@@ -63,17 +63,23 @@ const BookingList: FC<Props> = (props) => {
     const [bookingList, setBookingList] = useState<BookingItem[]>([]);
     const [note, setNote] = useState<string>('');
     const [bookingDetails, setBookingDetails] = useState<BookingDetailItem[]>([]);
-    const [bookingDetailId, setBookingDetailId] = useState<string>();
+    const [rejectReason, setRejectReason] = useState<string>('');
+    const [rejectId, setRejectId] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isLoadingPopup, setIsLoadingPopup] = useState<boolean>(false);
     const [rowsBookingDetail, setRowsBookingDetail] = useState<any>([]);
     const [columnsBookingDetail, setColumnsBookingDetail] = useState<GridColDef[]>([]);
 
     const [open, setOpen] = useState(false);
+    const [openRejectBooking, setOpenRejectBooking] = useState(false);
     const [openNote, setOpenNote] = useState(false);
     const handleClose = () => { setNote(''); setOpen(false) };
     const handleCloseNote = () => { setNote(''); setOpenNote(false) };
-
+    const handleCloseRejectBooking = () => {
+        setRejectId('');
+        setRejectReason('');
+        setOpenRejectBooking(false);
+    }
     useEffect(() => {
         fetchData();
     }, [])
@@ -85,13 +91,18 @@ const BookingList: FC<Props> = (props) => {
         setIsLoading(false);
     }
 
-    async function rejectBooking(id: string) {
+    async function rejectBooking() {
         try {
-            await rejectBookingDetail(id, user?.token)
+            const rejectObject = {
+                "bookingDetailId": rejectId,
+                "reason": rejectReason
+            }
+            await rejectBookingDetail(rejectObject, user?.token);
             setIsLoadingPopup(true);
         } catch (error) {
 
         } finally {
+            handleCloseRejectBooking();
             await fetchBookingDetails();
         }
     }
@@ -187,7 +198,7 @@ const BookingList: FC<Props> = (props) => {
             const columns: GridColDef[] = [
                 { field: "name", headerName: "Tên dịch vụ", flex: 1.2 },
                 { field: "price", headerName: "Giá tiền", flex: 0.5 },
-                { field: "completedDate", headerName: "Ngày hoàn thành", flex: 0.5 },
+                { field: "completedDate", headerName: "Hoàn thành", flex: 0.5 },
                 { field: "status", headerName: "Trạng thái", flex: 0.5 },
                 {
                     field: 'note',
@@ -222,7 +233,7 @@ const BookingList: FC<Props> = (props) => {
             case convertStatusName(BOOKING_STATUS.pending):
                 return (
                     <div className="group-btn">
-                        <HighlightOffIcon className="hover" style={{ color: "red" }} sx={{ fontSize: 30 }} onClick={() => { rejectBooking(id) }}></HighlightOffIcon>
+                        <HighlightOffIcon className="hover" style={{ color: "red" }} sx={{ fontSize: 30 }} onClick={() => { handleOpenRejectBooking(id) }}></HighlightOffIcon>
                         <TaskAltIcon className="hover" style={{ color: "green" }} sx={{ fontSize: 30 }} onClick={() => { approveBooking(id) }}></TaskAltIcon>
                     </div>
                 )
@@ -260,6 +271,11 @@ const BookingList: FC<Props> = (props) => {
 
     const handleOpenNote = () => {
         setOpenNote(true);
+    }
+
+    const handleOpenRejectBooking = (id: string) => {
+        setRejectId(id)
+        setOpenRejectBooking(true);
     }
 
     return (
@@ -310,12 +326,6 @@ const BookingList: FC<Props> = (props) => {
                                     <span className='booking-detail-info' >{bookingDetails[0]?.couple.weddingDate}</span>
                                 </div>
                             </div>
-                            {/* <div className="group-input mb-24">
-                                        <label className='booking-detail-label'>Tổng tiền:</label>
-                                        <div className="form-input">
-                                            <span className='booking-detail-info' >{`${bookingDetails[0]?.price}`}</span>
-                                        </div>
-                                    </div> */}
                         </div>
                         {
                             isLoadingPopup && (
@@ -358,10 +368,36 @@ const BookingList: FC<Props> = (props) => {
                                 </Modal>
                             ) : null
                         }
+                        <Modal
+                            open={openRejectBooking}
+                            onClose={handleCloseRejectBooking}
+                            aria-labelledby="modal-modal-title"
+                            aria-describedby="modal-modal-description"
+                            id="BookingDetailModal"
+                        >
+                            <Box sx={style}>
+                                <Typography id="modal-modal-title" variant="h6" component="h2">
+                                    <div className="group-input individual-input mb-24">
+                                        <label>Lý do từ chối:</label>
+                                        <div className="form-input">
+                                            <textarea className="textarea regis-input" required onChange={(e) => { setRejectReason(e.target.value) }} />
+                                            <span className="text-err"></span>
+                                        </div>
+                                    </div>
+                                </Typography>
+                                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                                    <div className="btn-handle">
+                                        <Button className="btn-close mr-24" variant="contained" onClick={() => { handleCloseRejectBooking() }}>Đóng</Button>
+                                        <Button className="btn-reject mr-24" variant="contained" onClick={() => { rejectBooking() }}>Từ chối</Button>
+
+                                    </div>
+                                </Typography>
+                            </Box>
+                        </Modal>
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <div className="btn-handle">
-                            <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Đóng</Button>
+                            <Button className="btn-close mr-24" variant="contained" onClick={() => { handleCloseRejectBooking() }}>Đóng</Button>
                         </div>
                     </Typography>
                 </Box>

@@ -6,7 +6,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router';
-import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
@@ -76,6 +76,7 @@ const Services: FC<Props> = (props) => {
     const [serviceName, setServiceName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [price, setPrice] = useState<string>('0');
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
@@ -103,6 +104,7 @@ const Services: FC<Props> = (props) => {
     }, [serviceCreate])
 
     async function fetchData() {
+        setIsLoading(true);
         const categoryId = category?.id !== 'all' ? `${category?.id}` : undefined;
         const serviceId = service?.id !== 'all' ? `${service?.id}` : undefined;
         const segmentId = segment?.id !== 'all' ? `${segment?.id}` : undefined;
@@ -112,6 +114,7 @@ const Services: FC<Props> = (props) => {
         } else {
             setServiceSupplierList([]);
         }
+        setIsLoading(false);
     }
 
     async function getServicesCreate() {
@@ -357,17 +360,27 @@ const Services: FC<Props> = (props) => {
                         <Button className="btn-create-service" onClick={() => { handleOpen() }}>TẠO MỚI</Button>
                     </div>
                 </div>
-                <div className="table" style={{ height: 400, width: "100%" }}>
-                    <DataGrid rows={rows}
-                        columns={columns}
-                        autoPageSize
-                        pagination
-                        sx={{
-                            '& .MuiDataGrid-columnHeaderTitle': {
-                                color: 'var(--primary-color)',
-                            },
-                        }} />
-                </div>
+                {isLoading && (
+                    <div className="w-full flex items-center justify-center h-[70vh]">
+                        <CircularProgress />
+                    </div>
+                )}
+
+                {
+                    !isLoading && (
+                        <div className="table" style={{ height: 400, width: "100%" }}>
+                            <DataGrid rows={rows}
+                                columns={columns}
+                                autoPageSize
+                                pagination
+                                sx={{
+                                    '& .MuiDataGrid-columnHeaderTitle': {
+                                        color: 'var(--primary-color)',
+                                    },
+                                }} />
+                        </div>
+                    )
+                }
             </>
 
             <Modal

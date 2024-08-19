@@ -41,6 +41,17 @@ export interface ServiceCreate {
     type: String,
 }
 
+export interface ServiceUpdate {
+    description: String,
+    images: String,
+    name: String,
+    price: Number,
+    promotionId: String,
+    id: String,
+    supplierId: String,
+    type: String,
+}
+
 export interface ProductPriceReporterEntity {
     id: String,
     coupleName: String,

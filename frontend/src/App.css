@@ -97,9 +97,20 @@ body {
     color: var(--white-color) !important;
 }
 
+.btn-reject {
+    background-color: red !important;
+    color: var(--white-color) !important;
+}
+
 .btn-create {
     background-color: #4caf50 !important;
     color: var(--white-color) !important;
+}
+
+.btn-remove-image {
+    position: absolute;
+    right: 0;
+    margin: 5px;
 }
 
 .underline {

@@ -1,4 +1,5 @@
-.btn-create-service:hover {
+.btn-create-service:hover,
+.btn-edit-service:hover {
     background-color: #4C3E3E !important;
     color: #DDC48E !important;
 }

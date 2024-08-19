@@ -32,6 +32,7 @@ import {
   UPDATE_CONFIRM_DONE_STATUS,
   UPDATE_CONFIRM_PROCESSING_STATUS,
   UPDATE_REJECT_BOOKING_STATUS,
+  UPDATE_SERVICE_SUPPLIER,
 } from '../constants/API_URLS';
 import { PROCESS_STATUS, ROLE, STATUS } from '../constants/consts';
 import { LOGIN_SUCCESS } from '../message/authen/Login';
@@ -226,6 +227,26 @@ export const createServiceSupplier = async (
   };
   try {
     const res = await axios.post(CREATE_SERVICE_SUPPLIER, newService, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const updateServiceSupplier = async (
+  newService,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.put(UPDATE_SERVICE_SUPPLIER, newService, {
       headers: headers,
     });
     return res.data.status;
@@ -507,14 +528,10 @@ export const confirmBookingDetail = async (id, token) => {
   return data.status;
 };
 
-export const rejectBookingDetail = async (id, token) => {
-  const data = {
-    key: 'value',
-  };
+export const rejectBookingDetail = async (data, token) => {
   fetch(
     'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
-      UPDATE_REJECT_BOOKING_STATUS +
-      `?id=${id}`,
+      UPDATE_REJECT_BOOKING_STATUS,
     {
       method: 'PUT',
       headers: {

@@ -1,5 +1,6 @@
 import { CategoryItem } from "./category";
 import { PromotionItem } from "./promotion";
+import { SegmentItem } from "./segment";
 import { ServiceItem } from "./service";
 
 export interface ServiceSupplierListResponse {

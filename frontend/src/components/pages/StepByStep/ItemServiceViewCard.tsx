@@ -151,7 +151,7 @@ const ItemServiceViewCard: React.FC<VenueCardProps> = ({
               window.location.href = '/quotation';
             }}
           >
-            {price.toLocaleString('vi-VN')} VND
+            Thêm vào giỏ hàng
           </Button>
           <RequestPricePopup
             open={open}

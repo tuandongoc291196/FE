@@ -241,7 +241,7 @@ const CoupleService = () => {
                   key={index}
                   id={item.id}
                   imageUrl={item?.listImages[0]}
-                  location="Tp. Hồ Chí Minh"
+                  location={''}
                   title={item.name}
                   type={item.type}
                   ratingValue={4.5}

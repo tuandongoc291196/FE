@@ -32,7 +32,6 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
   const [isDisplayBalance, setIsDisplayBalance] = useState<boolean>(true);
   const location = useLocation();
   useEffect(() => {
-
     const handleStorageChange = () => {
       setServices(getCart());
     };
@@ -85,7 +84,14 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
           {navItems?.map((item, index) => {
             return (
               <li
-                className={`nav-item` + `${(item.navigate == location.pathname) ? " nav-item-selected" : ""}`}
+                className={
+                  `nav-item` +
+                  `${
+                    item.navigate == location.pathname
+                      ? ' nav-item-selected'
+                      : ''
+                  }`
+                }
                 onClick={() => {
                   navigate(`${item.navigate}`);
                 }}
@@ -162,52 +168,59 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
           </div>
         ) : (
           <div className="header-right">
-            {
-              (isDisplayBalance) ?
-                (
-                  <>
-                    <RemoveRedEyeIcon className='hover-primary' style={{ color: "var(--black-color)" }} onClick={() => (setIsDisplayBalance(false))}></RemoveRedEyeIcon>
-                    <span className="balance">{balance} VNĐ</span>
-
-                  </>
-                ) : (
-                  <>
-                    <VisibilityOffIcon className='hover-primary' style={{ color: "var(--black-color)" }} onClick={() => (setIsDisplayBalance(true))}></VisibilityOffIcon>
-                    <span className="balance">******* VNĐ</span>
-                  </>
-                )
-            }
+            {isDisplayBalance ? (
+              <>
+                <RemoveRedEyeIcon
+                  className="hover-primary"
+                  style={{ color: 'var(--black-color)' }}
+                  onClick={() => setIsDisplayBalance(false)}
+                ></RemoveRedEyeIcon>
+                <span className="balance">{balance.toLocaleString()} VNĐ</span>
+              </>
+            ) : (
+              <>
+                <VisibilityOffIcon
+                  className="hover-primary"
+                  style={{ color: 'var(--black-color)' }}
+                  onClick={() => setIsDisplayBalance(true)}
+                ></VisibilityOffIcon>
+                <span className="balance">******* VNĐ</span>
+              </>
+            )}
 
             <IconButton
               onClick={() => {
                 console.log(1);
               }}
             >
-              <AccountBalanceWalletIcon sx={{ fontSize: 30, color: "var(--black-color)" }} />
+              <AccountBalanceWalletIcon
+                sx={{ fontSize: 30, color: 'var(--black-color)' }}
+              />
             </IconButton>
-            {
-              user?.roleName != ROLE.supplier ? (
-                <>
-                  <IconButton
-                    onClick={() => {
-                      navigate('/booking-history');
-                    }}
-                  >
-                    <ReceiptLongIcon sx={{ fontSize: 30, color: "var(--black-color)" }} />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => {
-                      navigate('/quotation');
-                    }}
-                  >
-                    <Badge badgeContent={services.length} color="error">
-                      <ShoppingCartIcon sx={{ fontSize: 30, color: "var(--black-color)" }} />{' '}
-                    </Badge>
-                  </IconButton>
-                </>
-              ) : null
-            }
-
+            {user?.roleName != ROLE.supplier ? (
+              <>
+                <IconButton
+                  onClick={() => {
+                    navigate('/booking-history');
+                  }}
+                >
+                  <ReceiptLongIcon
+                    sx={{ fontSize: 30, color: 'var(--black-color)' }}
+                  />
+                </IconButton>
+                <IconButton
+                  onClick={() => {
+                    navigate('/quotation');
+                  }}
+                >
+                  <Badge badgeContent={services.length} color="error">
+                    <ShoppingCartIcon
+                      sx={{ fontSize: 30, color: 'var(--black-color)' }}
+                    />{' '}
+                  </Badge>
+                </IconButton>
+              </>
+            ) : null}
 
             <div
               className="navlink user-wrap"
@@ -244,11 +257,11 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                   style={{ color: 'var(--black-color)' }}
                 >
                   <FontAwesomeIcon icon={faAddressCard} />
-                  <span className='profile-select'>Cá nhân</span>
+                  <span className="profile-select">Cá nhân</span>
                 </div>
                 <div className="dropdown-option" onClick={logoutHandler}>
                   <FontAwesomeIcon icon={faRightFromBracket} />
-                  <span className='profile-select'>Đăng xuất</span>
+                  <span className="profile-select">Đăng xuất</span>
                 </div>
               </div>
             </div>

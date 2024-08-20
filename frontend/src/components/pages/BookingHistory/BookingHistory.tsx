@@ -35,13 +35,7 @@ const BookingHistory: React.FC = () => {
     setLoading(true);
     const res = await getBookingHistoryByCoupleId(user.userId, user.token);
     if (res) {
-      const list: any[] = [];
-      res.map((booking: any) => {
-        booking.listBookingDetail.map((item: any) => {
-          list.push(item);
-        });
-      });
-      setData(list);
+      setData(res);
     }
     setLoading(false);
   };
@@ -70,10 +64,32 @@ const BookingHistory: React.FC = () => {
   };
 
   const totalPrice = data?.reduce((total: any, service: any) => {
-    if (service.status === BOOKING_STATUS.processing)
-      return total + service.price;
+    if (service.status === BOOKING_STATUS.approved)
+      return total + service.totalPrice;
     else return total;
   }, 0);
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+
+    // Format the time as HH:mm
+    const formattedTime = date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    // Format the date as dd/MM/yyyy
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
+    // Combine time and date
+    return `${formattedTime}, ${formattedDate}`;
+  };
   return (
     <Box p={3}>
       <Typography
@@ -112,7 +128,7 @@ const BookingHistory: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    STT
+                    Mã đơn
                   </TableCell>
                   <TableCell
                     sx={{
@@ -122,6 +138,34 @@ const BookingHistory: React.FC = () => {
                     }}
                   >
                     Dịch vụ
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 16,
+                      color: 'var(--primary-color)',
+                      fontWeight: 600,
+                      textAlign: 'center',
+                    }}
+                  >
+                    Số lượng
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 16,
+                      color: 'var(--primary-color)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Tổng giá
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontSize: 16,
+                      color: 'var(--primary-color)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    Ngày tạo đơn
                   </TableCell>
                   <TableCell
                     sx={{
@@ -139,41 +183,34 @@ const BookingHistory: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Giá bán
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontSize: 16,
-                      color: 'var(--primary-color)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Số lượng
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontSize: 16,
-                      color: 'var(--primary-color)',
-                      fontWeight: 600,
-                    }}
-                  >
                     Hủy
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {data &&
-                  data.map((product: any) => (
-                    <TableRow key={product.id}>
-                      <TableCell sx={{ fontSize: 14 }}>
-                        {product?.serviceSupplier.id}
-                      </TableCell>
+                  data.map((booking: any) => (
+                    <TableRow key={booking.id}>
+                      <TableCell sx={{ fontSize: 14 }}>{booking?.id}</TableCell>
                       <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
-                        {product?.serviceSupplier.name}
+                        {booking.listBookingDetail.map((item: any) => (
+                          <div>{item?.serviceSupplier?.name}</div>
+                        ))}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: 14 }}>
+                        {booking.listBookingDetail.map((item: any) => (
+                          <div className="text-center">{item?.quantity}</div>
+                        ))}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: 14 }}>
+                        {booking.totalPrice.toLocaleString()} VND
+                      </TableCell>
+                      <TableCell sx={{ fontSize: 14 }}>
+                        {formatDate(booking.createdAt)}
                       </TableCell>
                       <TableCell sx={{ fontSize: 14 }}>
                         <Chip
-                          label={product.status}
+                          label={booking.status}
                           sx={{
                             height: '24px',
                             width: '100px',
@@ -182,24 +219,18 @@ const BookingHistory: React.FC = () => {
                           }}
                         />
                       </TableCell>
-                      <TableCell sx={{ fontSize: 14 }}>
-                        {product?.price.toLocaleString()} VND
-                      </TableCell>
-                      <TableCell sx={{ fontSize: 14 }}>
-                        {product?.quantity}
-                      </TableCell>
                       <TableCell>
                         <IconButton
                           disabled={
-                            product.status !== BOOKING_STATUS.processing
+                            booking.status !== BOOKING_STATUS.processing
                           }
-                          onClick={() => handleDelete(product.id)}
+                          onClick={() => handleDelete(booking.id)}
                         >
                           <DeleteIcon
                             sx={{
                               fontSize: 30,
                               color:
-                                product.status !== BOOKING_STATUS.processing
+                                booking.status !== BOOKING_STATUS.processing
                                   ? 'gray'
                                   : 'red',
                             }}
@@ -247,7 +278,7 @@ const BookingHistory: React.FC = () => {
                 Trở về
               </Button>
               <Button
-                disabled={totalPrice === 0}
+                // disabled={totalPrice === 0}
                 variant="contained"
                 sx={{
                   px: 4,

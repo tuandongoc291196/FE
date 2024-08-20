@@ -119,6 +119,11 @@ const CoupleServiceDetail = () => {
   const prevSlide = () => {
     setSlide(slide === 0 ? service?.listImages.length - 1 : slide - 1);
   };
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-GB').format(date);
+  };
 
   return (
     <div id="CoupleServiceDetail">
@@ -191,12 +196,21 @@ const CoupleServiceDetail = () => {
                 >
                   <FlagOutlined sx={{ marginRight: 1, fontSize: 20 }} />
                   <Typography variant="subtitle2" fontSize={14}>
-                    Đăng ngày: 2008
+                    Đăng ngày: {formatDate(service?.createAt)}
                   </Typography>
                 </Box>
-                <Typography variant="body1" sx={{ fontSize: 14 }} paragraph>
-                  {service?.description}
-                </Typography>
+                {service?.description
+                  .split('\n')
+                  .map((line: string, index: number) => (
+                    <Typography
+                      variant="body1"
+                      sx={{ fontSize: 14 }}
+                      paragraph
+                      key={index}
+                    >
+                      - {line}
+                    </Typography>
+                  ))}
               </Box>
 
               <Box mt={4} mb={4}>
@@ -336,6 +350,7 @@ const CoupleServiceDetail = () => {
                 <Box
                   sx={{
                     marginTop: 1,
+                    marginBottom: 1,
                     display: 'flex',
                     alignItems: 'center',
                   }}
@@ -356,6 +371,28 @@ const CoupleServiceDetail = () => {
                   <Typography variant="h5" sx={{ ml: 1 }}>
                     {getLabel(service?.rating)}
                   </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Chip
+                    label={service?.type === 'LUXURY' ? 'Cao cấp' : 'Phổ thông'}
+                    color={service?.type === 'LUXURY' ? 'secondary' : 'warning'}
+                    sx={{ width: 80, fontSize: 10, fontWeight: 600 }}
+                    size="small"
+                  />
+                  <Box sx={{ fontSize: 12 }}>
+                    Nhà cung cấp: {service?.supplierResponse?.supplierName}
+                  </Box>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: 16,
+                    marginTop: 2,
+                  }}
+                >
+                  <b> Đơn giá: {service?.price.toLocaleString()} VNĐ</b>
                 </Box>
                 <Box
                   sx={{
@@ -402,7 +439,6 @@ const CoupleServiceDetail = () => {
                     />
                   </Box>
                 )}
-
                 {service?.promotion && (
                   <Box>
                     <Box>
@@ -429,7 +465,6 @@ const CoupleServiceDetail = () => {
                     </Box>
                   </Box>
                 )}
-
                 <Button
                   variant="contained"
                   fullWidth={true}

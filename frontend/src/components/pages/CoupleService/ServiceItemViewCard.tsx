@@ -72,6 +72,10 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
           sx={{ width: 80, fontSize: 10, fontWeight: 600 }}
           size="small"
         />
+        <div className="font-bold text-2xl my-5">
+          {' '}
+          {price.toLocaleString('vi-VN')} VNĐ
+        </div>
 
         <p className="item-description">
           <span>{description}</span>
@@ -96,7 +100,7 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
               // navigate(`/quotation`);
             }}
           >
-            {price.toLocaleString('vi-VN')} VND
+            Thêm vào giỏ hàng
           </Button>
           {/* <RequestPricePopup open={open} handleClose={handleClose}
           serviceId={id}

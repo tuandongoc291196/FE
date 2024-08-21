@@ -10,7 +10,6 @@ export interface PromotionItem {
 
 export interface PromotionItemCreate {
     endDate: String,
-    listServiceSupplierId: Array<String>,
     name: String,
     startDate: String,
     supplierId: String,

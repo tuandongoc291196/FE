@@ -3,7 +3,7 @@ import { SetStateAction, Dispatch, FC, useEffect, useState } from 'react'
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router';
-import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
 import "../../../constants/styles/TableService.css";
 import { PromotionItem, PromotionItemCreate } from '../../../types/schema/promotion';
 import { createPromotion, getPromotionBySupplier, getServicesSupplierFilter } from '../../../redux/apiRequest';
@@ -15,7 +15,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import moment from 'moment';
 import { PROMOTION_TYPES } from '../../../constants/consts';
-import { ServiceSupplierItem } from '../../../types/schema/serviceSupplier';
 
 
 interface Props {
@@ -42,13 +41,9 @@ const Promotions: FC<Props> = (props) => {
     const [endDate, setEndDate] = React.useState<Dayjs | null>(dayjs(now));
     const promotionTypes = Object.values(PROMOTION_TYPES);
     const [promotionType, setPromotionType] = useState<string>(promotionTypes[0]);
-    const [serviceSupplierList, setServiceSupplierList] = useState<ServiceSupplierItem[]>([]);
-    const [serviceSupplier, setServiceSupplier] = useState<ServiceSupplierItem>();
     const [name, setName] = useState<string>();
 
-
-
-    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [promotions, setPromotions] = useState<PromotionItem[]>([]);
     const [percent, setPercent] = useState('0');
@@ -61,33 +56,14 @@ const Promotions: FC<Props> = (props) => {
 
     useEffect(() => {
         fetchData();
-        fetchServiceSupplierData();
     }, [])
 
     async function fetchData() {
+        setIsLoading(true);
         const response = await getPromotionBySupplier(user?.userId);
-        console.log(response);
-
         setPromotions(response);
+        setIsLoading(false);
     }
-
-    async function fetchServiceSupplierData() {
-        const response = await getServicesSupplierFilter(user?.userId);
-        if (Array.isArray(response)) {
-            setServiceSupplierList([...response]);
-            setServiceSupplier(response[0]);
-        } else {
-            // Handle the case where response is not an array
-            console.error('Response is not an array', response);
-        }
-    }
-
-    const handleChangeServiceSupplier = (event: any) => {
-        const selectedService = serviceSupplierList.find(ser => ser.id === event.target.value);
-        if (selectedService) {
-            setServiceSupplier(selectedService);
-        }
-    };
 
     const handleCreate = async () => {
         try {
@@ -97,7 +73,6 @@ const Promotions: FC<Props> = (props) => {
                 name: `${name}`,
                 startDate: startDate ? moment(startDate.toString()).format('YYYY-MM-DD') : '',
                 endDate: endDate ? moment(endDate.toString()).format('YYYY-MM-DD') : '',
-                listServiceSupplierId: [`${serviceSupplier?.id}`],
                 type: promotionType
             }
 
@@ -143,20 +118,31 @@ const Promotions: FC<Props> = (props) => {
     return (
         <div id="Services">
             <div className="create-service">
-                <h2 className="h2-title-page" >Giảm giá</h2>
+                <h2 className="h2-title-page" >Khuyến mãi</h2>
                 <Button className="btn-create-service" onClick={() => { handleOpen() }}>Tạo mới</Button>
             </div>
-            <div className="table" style={{ height: 400, width: "100%" }}>
-                <DataGrid rows={rows}
-                    columns={columns}
-                    autoPageSize
-                    pagination
-                    sx={{
-                        '& .MuiDataGrid-columnHeaderTitle': {
-                            color: 'var(--primary-color)',
-                        },
-                    }} />
-            </div>
+            {
+                (isLoading) && (
+                    <div className="w-full flex items-center justify-center h-[70vh]">
+                        <CircularProgress />
+                    </div>
+                )
+            }
+            {
+                (!isLoading) && (
+                    <div className="table" style={{ height: 400, width: "100%" }}>
+                        <DataGrid rows={rows}
+                            columns={columns}
+                            autoPageSize
+                            pagination
+                            sx={{
+                                '& .MuiDataGrid-columnHeaderTitle': {
+                                    color: 'var(--primary-color)',
+                                },
+                            }} />
+                    </div>
+                )
+            }
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -179,30 +165,6 @@ const Promotions: FC<Props> = (props) => {
                                     <span className="text-err"></span>
                                 </div>
                             </div>
-                            {/* <div className="group-input-40 mb-24 ml-8">
-                                <label>Dịch vụ:</label>
-                                <div className="form-input">
-                                    {
-                                        (serviceSupplier) ? (
-                                            <FormControl className="form-input mr-24">
-                                                <Select
-                                                    className="input regis-input"
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    value={serviceSupplier?.id}
-                                                    onChange={handleChangeServiceSupplier}
-                                                >
-                                                    {serviceSupplierList.map((service, index) => (
-                                                        <MenuItem value={`${service?.id}`} key={index}>
-                                                            {service?.name}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                        ) : null
-                                    }
-                                </div>
-                            </div> */}
                         </div>
                         <div className="create-container group-create-promotion">
 

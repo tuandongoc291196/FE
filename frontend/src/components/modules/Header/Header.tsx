@@ -29,7 +29,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [services, setServices] = useState(getCart());
-  const [isDisplayBalance, setIsDisplayBalance] = useState<boolean>(true);
+  const [isDisplayBalance, setIsDisplayBalance] = useState<boolean>(false);
   const location = useLocation();
   useEffect(() => {
     const handleStorageChange = () => {
@@ -72,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
 
   async function fetchBalanceWallet() {
     const response = await getBalanceWallet(user?.accountId, user?.token);
-    setBalance(response);
+    setBalance(response?.balance);
   }
 
   const handleNav = () => {
@@ -86,10 +86,9 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
               <li
                 className={
                   `nav-item` +
-                  `${
-                    item.navigate == location.pathname
-                      ? ' nav-item-selected'
-                      : ''
+                  `${item.navigate == location.pathname
+                    ? ' nav-item-selected'
+                    : ''
                   }`
                 }
                 onClick={() => {

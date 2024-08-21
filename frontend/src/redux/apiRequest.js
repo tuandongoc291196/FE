@@ -26,6 +26,7 @@ import {
   GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID,
   GET_SERVICE_SUPPLIER_FILTER,
   GET_SUPPLIERS_BLOGS,
+  GET_WALLET_HISTORY,
   POST_BOOKING,
   REQUEST_PAYMENT,
   UPDATE_CONFIRM_BOOKING_STATUS,
@@ -557,7 +558,23 @@ export const getBalanceWallet = async (id, token) => {
     const res = await axios.get(GET_BALANCE_WALLET + `/${id}`, {
       headers: headers,
     });
-    return res.data.data.balance;
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+// Wallet history
+export const getWalletHistory = async (id, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(GET_WALLET_HISTORY + `?isAscending=true&pageNo=0&pageSize=10&sortBy=id&walletId=${id}`, {
+      headers: headers,
+    });
+    return res.data.data;
   } catch (error) {
     return error;
   }

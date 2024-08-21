@@ -39,12 +39,16 @@ export const HeaderNav = [
                 navigate: "/services"
             },
             {
-                name: "giảm giá",
+                name: "khuyến mãi",
                 navigate: "/promotions"
             },
             {
                 name: "booking",
                 navigate: "/booking-list"
+            },
+            {
+                name: "giao dịch",
+                navigate: "/transactions"
             }
         ]
     }

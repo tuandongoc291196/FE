@@ -81,6 +81,17 @@ const Services: FC<Props> = (props) => {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const handleCancel = () => {
+        setCategoryCreate(defaultValueCategory);
+        setServiceCreate(undefined);
+        setPromotion(undefined);
+        setServiceName("");
+        setDescription("");
+        setPrice("");
+        setImages([]);
+        setSegment(undefined);
+        setOpen(false)
+    };
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -93,7 +104,7 @@ const Services: FC<Props> = (props) => {
 
     useEffect(() => {
         fetchData();
-    }, [])
+    }, [category, service, segment])
 
     useEffect(() => {
         fetchCategoriesCreate();
@@ -544,7 +555,7 @@ const Services: FC<Props> = (props) => {
                             </div>
                         </div>
                         <div className="btn-handle">
-                            <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Huỷ</Button>
+                            <Button className="btn-close mr-24" variant="contained" onClick={() => { handleCancel() }}>Huỷ</Button>
                             <Button className="btn-create" variant="contained" onClick={() => { handleCreate() }}>Tạo mới</Button>
                         </div>
                     </Typography>

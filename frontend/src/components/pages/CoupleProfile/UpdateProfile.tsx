@@ -10,12 +10,18 @@ import {
   IconButton,
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
+import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { useSelector } from 'react-redux';
+
+const storage = getStorage();
 
 const UpdateProfile: React.FC = () => {
+  const user = useSelector((state: any) => state.auth.login.currentUser);
+
   const [profile, setProfile] = useState({
-    name: '',
-    phone: '',
-    address: '',
+    name: user?.name,
+    phone: user?.phone,
+    email: user?.email,
     logo: '',
     password: '',
     confirmPassword: '',
@@ -29,16 +35,27 @@ const UpdateProfile: React.FC = () => {
     });
   };
 
-  const handleLogoChange = () => {
-    // const file = e.target.files[0];
-    // const reader = new FileReader();
-    // reader.onloadend = () => {
-    //   setProfile({
-    //     ...profile,
-    //     logo: reader.result
-    //   });
-    // };
-    // reader.readAsDataURL(file);
+  async function uploadImage(files: FileList | null) {
+    if (files) {
+      const fileRef = files[0];
+      const storageRef = ref(storage, `images/${fileRef?.name}`);
+
+      try {
+        // Upload the file to Firebase Storage
+        const snapshot = await uploadBytes(storageRef, fileRef);
+
+        // Get the download URL for the file
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        // Set the state to the download URL
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          logo: downloadURL,
+        }));
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   const handleUpdateInfo = () => {
@@ -47,7 +64,7 @@ const UpdateProfile: React.FC = () => {
       'Updating user info:',
       profile.name,
       profile.phone,
-      profile.address
+      profile.email
     );
   };
 
@@ -73,13 +90,7 @@ const UpdateProfile: React.FC = () => {
               alt="Profile Logo"
               sx={{ width: 100, height: 100 }}
             />
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="upload-logo"
-              type="file"
-              onChange={handleLogoChange}
-            />
+            <input type="file" id="upload-logo" accept='.jpg, .png' style={{ display: "none" }} onChange={(e) => { uploadImage(e.target.files) }} />
             <label htmlFor="upload-logo">
               <Button
                 variant="contained"
@@ -114,9 +125,9 @@ const UpdateProfile: React.FC = () => {
             margin="normal"
           />
           <TextField
-            label="Address"
-            name="address"
-            value={profile.address}
+            label="Email"
+            name="email"
+            value={profile.email}
             onChange={handleChange}
             fullWidth
             margin="normal"

@@ -29,6 +29,8 @@ const segments = [
   LUXURY_SEGMENT
 ]
 
+const storage = getStorage();
+
 const defaultValuePromotion: PromotionItem = {
   id: 'none',
   name: 'KHÔNG',
@@ -39,28 +41,20 @@ const defaultValuePromotion: PromotionItem = {
   type: ''
 }
 
-const storage = getStorage();
-
 const ServiceDetail: FC<Props> = (props) => {
   const user = useSelector((state: any) => state.auth.login.currentUser);
   const { id } = useParams();
   const [serviceDetail, setServiceDetail] = useState<ServiceSupplierDetail>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isLoadingEdit, setIsLoadingEdit] = useState<boolean>(false);
-  const [isLoadingService, setIsLoadingService] = useState<boolean>(false);
-
-  const [servicesCreate, setServicesCreate] = useState<ServiceItem[]>([]);
-  const [serviceCreate, setServiceCreate] = useState<ServiceItem>();
 
   const [promotions, setPromotions] = useState<PromotionItem[]>([]);
-  const [promotion, setPromotion] = useState<PromotionItem>();
+  const [promotion, setPromotion] = useState<PromotionItem>(defaultValuePromotion);
   const [segment, setSegment] = useState<SegmentItem>();
   const [serviceName, setServiceName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [price, setPrice] = useState<string>('0');
   const [images, setImages] = useState<string[]>([]);
-  const [categoriesCreate, setCategoriesCreate] = useState<CategoryItem[]>([]);
-  const [categoryCreate, setCategoryCreate] = useState<CategoryItem>();
 
   const [open, setOpen] = useState(false);
 
@@ -71,9 +65,11 @@ const ServiceDetail: FC<Props> = (props) => {
     setOpen(true);
     try {
       setIsLoadingEdit(true);
-      setCategoryCreate(serviceDetail?.serviceResponse?.categoryResponse);
-      setPromotion(serviceDetail?.promotion);
-      fetchCategoriesCreate();
+      if (serviceDetail?.promotion == null) {
+        setPromotion(defaultValuePromotion);
+      } else {
+        setPromotion(serviceDetail?.promotion);
+      }
       fetchPromotions();
       setServiceName(`${serviceDetail?.name}`);
       setDescription(`${serviceDetail?.description}`);
@@ -93,12 +89,6 @@ const ServiceDetail: FC<Props> = (props) => {
     fetchData();
   }, [])
 
-
-  useEffect(() => {
-    if (open) {
-      getServicesCreate();
-    }
-  }, [categoryCreate])
 
   async function fetchData() {
     setIsLoading(true);
@@ -131,47 +121,12 @@ const ServiceDetail: FC<Props> = (props) => {
   const fetchPromotions = async () => {
     const response = await getPromotionBySupplier(user?.userId);
     if (Array.isArray(response)) {
-      setPromotions([...response]);
+      setPromotions([defaultValuePromotion, ...response]);
     } else {
       // Handle the case where response is not an array
       console.error('Response is not an array', response);
     }
   }
-
-  async function getServicesCreate() {
-    const response = await getServicesByCategoryId(categoryCreate?.id);
-    if (Array.isArray(response)) {
-      setServicesCreate([...response]);
-      console.log([...response]);
-      if ([...response]?.find((ser) => ser.id == serviceDetail?.serviceResponse?.id)) {
-        setServiceCreate(serviceDetail?.serviceResponse);
-      } else {
-        setServiceCreate(response[0]);
-      }
-    } else {
-      // Handle the case where response is not an array
-      console.error('Response is not an array', response);
-    }
-    setIsLoadingService(false);
-  }
-
-  const handleChangeCategoryCreate = (event: any) => {
-    setIsLoadingService(true);
-    const selectedCategory = categoriesCreate.find(cat => cat.id === event.target.value);
-    if (selectedCategory) {
-      setCategoryCreate(selectedCategory);
-    }
-    else {
-      setServicesCreate([]);
-    }
-  };
-
-  const handleChangeServiceCreate = (event: any) => {
-    const selectedService = servicesCreate.find(ser => ser.id === event.target.value);
-    if (selectedService) {
-      setServiceCreate(selectedService);
-    }
-  };
 
   const handleChangePromotion = (event: any) => {
     const selectedPromotion = promotions.find(pro => pro.id === event.target.value);
@@ -187,15 +142,6 @@ const ServiceDetail: FC<Props> = (props) => {
     }
   };
 
-
-  const fetchCategoriesCreate = async () => {
-    const response = await getListCategories(0, 1000);
-    if (response)
-      if (response.status === "SUCCESS") {
-        setCategoriesCreate([...response?.data]);
-      }
-      else setCategoriesCreate([]);
-  }
   const handleCreate = async () => {
     try {
       let getImagesPayload = "";
@@ -270,7 +216,7 @@ const ServiceDetail: FC<Props> = (props) => {
             </Container>
             <div className="service-information">
               <div className="edit">
-                <Button className="btn-edit-service" onClick={() => { handleOpen() }}>SỬA</Button>
+                <Button className="btn-edit-service mb-24" onClick={() => { handleOpen() }}>SỬA</Button>
               </div>
               <div className="information-container">
                 <h1 className="header">{serviceDetail?.name}</h1>
@@ -289,197 +235,131 @@ const ServiceDetail: FC<Props> = (props) => {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
+        aria-labelledby="modal-title-h2"
         aria-describedby="modal-modal-description"
         id="ModalCreateService"
       >
         <Box
           className="box"
         >
+          <Typography id="modal-title-h2" variant="h2" component="h2">
+            Sửa dịch vụ
+          </Typography>
           {
-            (isLoadingService) &&
-            (
+            (isLoadingEdit) && (
               <div className="w-full flex items-center justify-center h-[70vh]">
                 <CircularProgress />
               </div>
             )
           }
           {
-            (!isLoadingService) && (
-              <>
-                <Typography id="modal-modal-title" variant="h2" component="h2">
-                  <span style={{ fontSize: "3rem !important" }}>
-                    Sửa dịch vụ
-                  </span>
-                </Typography>
-                {
-                  (isLoadingEdit) && (
-                    <div className="w-full flex items-center justify-center h-[70vh]">
-                      <CircularProgress />
+            (!isLoadingEdit) && (
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                <div className="create-container">
+                  <div className="group-input mb-24">
+                    <label>Tên dịch vụ:</label>
+                    <div className="form-input">
+                      <input type="Username" className="input regis-input" value={serviceName} required onChange={(e) => { setServiceName(e.target.value) }} />
+                      <span className="text-err"></span>
                     </div>
-                  )
-                }
-                {
-                  (!isLoadingEdit) && (
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                      <div className="create-container">
-                        <div className="group-input mb-24">
-                          <label>Tên dịch vụ:</label>
-                          <div className="form-input">
-                            <input type="Username" className="input regis-input" value={serviceName} required onChange={(e) => { setServiceName(e.target.value) }} />
-                            <span className="text-err"></span>
-                          </div>
-                        </div>
-                        <div className="group-input mb-24">
-                          <label>Giá:</label>
-                          <div className="form-input price">
-                            <div className="form-input price-input">
-                              <input type="Username" value={price} className="input regis-input" required onChange={(e) => { setPrice(e.target.value) }} />
-                              <span className="text-err"></span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="group-input mb-24">
-                          <label className="label-select">Loại:</label>
-                          {
-                            (categoryCreate) ? (
-                              <FormControl className="select-box form-input mr-24" style={{ width: '100%' }}>
-                                <Select
-                                  className="input regis-input"
-                                  labelId="demo-simple-select-label"
-                                  id="demo-simple-select"
-                                  value={`${categoryCreate?.id}`}
-                                  onChange={handleChangeCategoryCreate}
-                                  sx={{ padding: "12px 8px 17px" }}
-                                >
-                                  {categoriesCreate.map((category) => (
-                                    <MenuItem className="menu-select-item" value={`${category?.id}`} key={`${category.id}`}>
-                                      {category.categoryName}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </FormControl>
-                            ) : null
-                          }
-                        </div>
+                  </div>
 
-                        <div className="group-input mb-24">
-                          <label className="label-select">Phân khúc:</label>
-                          <FormControl className="select-box form-input price">
-                            <Select
-                              className="input regis-input"
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              value={segment?.id}
-                              onChange={handleChangeSegment}
-                              sx={{ padding: "12px 8px 17px" }}
-                            >
-                              {
-                                segments.map((segment) => {
-                                  return (
-                                    <MenuItem className="menu-select-item" value={segment?.id} key={segment?.id}>{segment?.name}</MenuItem>
-                                  )
-                                })
-                              }
-                            </Select>
-                          </FormControl>
-                        </div>
-
+                  <div className="group-input mb-24">
+                    <label>Phân khúc:</label>
+                    <FormControl className="select-box form-input price" style={{ width: '50%' }}>
+                      <Select
+                        className="input regis-input"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={segment?.id}
+                        onChange={handleChangeSegment}
+                        sx={{ padding: "12px 8px 17px" }}
+                      >
                         {
-                          (promotion?.id != undefined && promotion) ? (
-                            <div className="group-input mb-24">
-                              <label className="label-select">Mã giảm giá:</label>
-                              <FormControl className="select-box form-input price" style={{ width: '50%' }}>
-                                <Select
-                                  className="input regis-input"
-                                  labelId="demo-simple-select-label"
-                                  id="demo-simple-select"
-                                  value={promotion?.id}
-                                  onChange={handleChangePromotion}
-                                  sx={{ padding: "12px 8px 17px" }}
-                                >
-                                  {
-                                    promotions?.map((pro) => {
-                                      return (
-                                        <MenuItem className="menu-select-item" value={`${pro?.id}`} key={`${pro?.id}`}>{`${pro?.name}`}</MenuItem>
-                                      )
-                                    })
-                                  }
-                                </Select>
-                              </FormControl>
-                            </div>
-                          ) : null
+                          segments.map((segment) => {
+                            return (
+                              <MenuItem className="menu-select-item" value={segment?.id} key={segment?.id}>{segment?.name}</MenuItem>
+                            )
+                          })
                         }
+                      </Select>
+                    </FormControl>
+                  </div>
 
+                  <div className="group-input mb-24">
+                    <label>Mã giảm giá:</label>
+                    <FormControl className="select-box form-input price" style={{ width: '50%' }}>
+                      <Select
+                        className="input regis-input"
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={promotion?.id}
+                        onChange={handleChangePromotion}
+                        sx={{ padding: "12px 8px 17px" }}
+                      >
                         {
-                          (serviceCreate?.id != undefined && servicesCreate) ?
-                            (
-                              <div className="group-input mb-24">
-                                <label className="label-select">Dịch vụ:</label>
-                                <FormControl className="select-box form-input mr-24" style={{ width: '100%' }}>
-                                  <Select
-                                    className="input regis-input"
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={serviceCreate?.id}
-                                    onChange={handleChangeServiceCreate}
-                                    sx={{ padding: "12px 8px 17px" }}
-                                  >
-                                    {servicesCreate.map((ser) => (
-                                      <MenuItem className="menu-select-item" value={`${ser?.id}`} key={`${ser.id}`}>
-                                        {ser.name}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                </FormControl>
+                          promotions?.map((pro) => {
+                            return (
+                              <MenuItem className="menu-select-item" value={`${pro?.id}`} key={`${pro?.id}`}>{`${pro?.name}`}</MenuItem>
+                            )
+                          })
+                        }
+                      </Select>
+                    </FormControl>
+                  </div>
+
+                  <div className="group-input mb-24">
+                    <label>Giá:</label>
+                    <div className="form-input price">
+                      <div className="form-input price-input">
+                        <input type="Username" value={price} className="input regis-input" required onChange={(e) => { setPrice(e.target.value) }} />
+                        <span className="text-err"></span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="group-input mb-24"></div>
+                  <div className="group-input individual-input mb-24">
+                    <label>Mô tả:</label>
+                    <div className="form-input">
+                      <textarea className="textarea regis-input" value={description} required onChange={(e) => { setDescription(e.target.value) }} />
+                      <span className="text-err"></span>
+                    </div>
+                  </div>
+                  <div className="group-input individual-input mb-24">
+                    <label>Ảnh:</label>
+                    <div className="form-input">
+                      <div className="img-input" style={{ cursor: "pointer" }} onClick={(e) => {
+                        document.getElementById("img-file")?.click();
+                      }}>
+                        <input type="file" id="img-file" accept='.jpg, .png' style={{ display: "none" }} onChange={(e) => { uploadImage(e.target.files) }} />
+                        <Button className="btn-create" variant="contained">Thêm ảnh</Button>
+                      </div>
+                      <div className="images">
+                        {
+                          images.map((item, index) => {
+                            return (
+                              <div className="img-item" key={index}>
+                                <HighlightOffIcon className="hover btn-remove-image" style={{ color: "grey" }} onClick={() => { handleRemoveImage(item) }}></HighlightOffIcon>
+                                <img src={item} alt="" />
                               </div>
-                            ) : null
+                            )
+                          })
                         }
-                        <div className="group-input mb-24"></div>
-                        <div className="group-input individual-input mb-24">
-                          <label>Mô tả:</label>
-                          <div className="form-input">
-                            <textarea className="textarea regis-input" value={description} required onChange={(e) => { setDescription(e.target.value) }} />
-                            <span className="text-err"></span>
-                          </div>
-                        </div>
-                        <div className="group-input individual-input mb-24">
-                          <label>Ảnh:</label>
-                          <div className="form-input">
-                            <div className="img-input" style={{ cursor: "pointer" }} onClick={(e) => {
-                              document.getElementById("img-file")?.click();
-                            }}>
-                              <input type="file" id="img-file" accept='.jpg, .png' style={{ display: "none" }} onChange={(e) => { uploadImage(e.target.files) }} />
-                              <Button className="btn-create" variant="contained">Thêm ảnh</Button>
-                            </div>
-                            <div className="images">
-                              {
-                                images.map((item, index) => {
-                                  return (
-                                    <div className="img-item" key={index}>
-                                      <HighlightOffIcon className="hover btn-remove-image" style={{ color: "grey" }} onClick={() => { handleRemoveImage(item) }}></HighlightOffIcon>
-                                      <img src={item} alt="" />
-                                    </div>
-                                  )
-                                })
-                              }
-                            </div>
-                          </div>
-                        </div>
                       </div>
-                      <div className="btn-handle">
-                        <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Huỷ</Button>
-                        <Button className="btn-create" variant="contained" onClick={() => { handleCreate() }}>Xác nhận</Button>
-                      </div>
-                    </Typography>
-                  )
-                }
-              </>
+                    </div>
+                  </div>
+                </div>
+                <div className="btn-handle">
+                  <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Huỷ</Button>
+                  <Button className="btn-create" variant="contained" onClick={() => { handleCreate() }}>Xác nhận</Button>
+                </div>
+              </Typography>
             )
           }
         </Box>
-      </Modal>
-    </div>
+      </Modal >
+    </div >
   )
 }
 

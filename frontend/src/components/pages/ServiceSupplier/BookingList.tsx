@@ -142,9 +142,9 @@ const BookingList: FC<Props> = (props) => {
 
     const rows = bookingList?.length > 0 ? bookingList.map((booking) => ({
         id: booking.id,
+        idDisplay: booking.id.split("BOOKING-")[1],
         coupleName: booking.coupleResponse.account.name,
         weddingDate: booking.coupleResponse.weddingDate,
-        totalPrice: booking.totalPrice,
         createAt: booking.createAt,
         status: convertStatusName(`${booking.status}`),
         booking: booking
@@ -153,7 +153,6 @@ const BookingList: FC<Props> = (props) => {
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID", flex: 0.5 },
         { field: "coupleName", headerName: "Tên couple", flex: 0.5 },
-        { field: "totalPrice", headerName: "Giá", flex: 0.5 },
         { field: "weddingDate", headerName: "Ngày cưới", flex: 0.5 },
         { field: "status", headerName: "Trạng thái", flex: 0.5 },
         {
@@ -326,6 +325,12 @@ const BookingList: FC<Props> = (props) => {
                                     <span className='booking-detail-info' >{bookingDetails[0]?.couple.weddingDate}</span>
                                 </div>
                             </div>
+                            <div className="group-input mb-24">
+                                <label className='booking-detail-label'>Tổng tiền:</label>
+                                <div className="form-input">
+                                    <span className='booking-detail-info' >{bookingDetails.reduce((sum, item) => sum + parseInt(item.price.toString()), 0)}</span>
+                                </div>
+                            </div>
                         </div>
                         {
                             isLoadingPopup && (
@@ -397,7 +402,7 @@ const BookingList: FC<Props> = (props) => {
                     </Typography>
                     <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                         <div className="btn-handle">
-                            <Button className="btn-close mr-24" variant="contained" onClick={() => { handleCloseRejectBooking() }}>Đóng</Button>
+                            <Button className="btn-close mr-24" variant="contained" onClick={() => { handleClose() }}>Đóng</Button>
                         </div>
                     </Typography>
                 </Box>

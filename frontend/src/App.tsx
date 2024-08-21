@@ -29,9 +29,6 @@ import StaffManageBlogs from './components/pages/StaffManager/StaffManageBlogs';
 import StaffManageCategories from './components/pages/StaffManager/StaffManageCategories';
 import Services from './components/pages/ServiceSupplier/Services';
 import ServiceDetail from './components/pages/ServiceSupplier/ServiceDetail';
-import ProductPriceReporter from './components/pages/ServiceSupplier/ProductPriceReport';
-import BlogDetail from './components/pages/ServiceSupplier/BlogDetail';
-import Blogs from './components/pages/ServiceSupplier/Blog';
 import SupplierBookingList from './components/pages/ServiceSupplier/BookingList';
 import Promotions from './components/pages/ServiceSupplier/Promotions';
 import HomePage from './components/pages/HomePage/HomePage';
@@ -46,6 +43,8 @@ import CoupleServiceListImage from './components/pages/CoupleServiceDetail/Coupl
 import CoupleServiceDetail from './components/pages/CoupleServiceDetail/CoupleServiceDetail';
 import CoupleService from './components/pages/CoupleService/CoupleService';
 import ComboServiceDetail from './components/pages/ComboService/ComboServiceDetail';
+import Transactions from './components/pages/ServiceSupplier/Transactions';
+import Footer from './components/modules/Footer/Footer';
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -155,33 +154,6 @@ function App() {
               }
             />
             <Route
-              path="/product-price-reporter"
-              element={
-                <ProductPriceReporter
-                  setMessage={setMessage}
-                  setMessageStatus={setMessageStatus}
-                />
-              }
-            />
-            <Route
-              path="/blogs"
-              element={
-                <Blogs
-                  setMessage={setMessage}
-                  setMessageStatus={setMessageStatus}
-                />
-              }
-            />
-            <Route
-              path="/blog-detail/:id"
-              element={
-                <BlogDetail
-                  setMessage={setMessage}
-                  setMessageStatus={setMessageStatus}
-                />
-              }
-            />
-            <Route
               path="/booking-list"
               element={
                 <SupplierBookingList
@@ -199,7 +171,17 @@ function App() {
                 />
               }
             />
+            <Route
+              path="/transactions"
+              element={
+                <Transactions
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
           </Route>
+
 
           {/* Test View */}
           <Route path="/profile" element={<UpdateProfile />} />
@@ -231,60 +213,11 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-      </UserProvider>
-      {/* <Routes>
-        {user == null || user?.roleName === ROLE.couple ? (
-          <Route
-            element={
-              <Header
-                isModalVisible={isModalVisible}
-                setModalVisible={setModalVisible}
-              />
-            }
-          >
-            <Route path="/" element={<Landing />} />
-            <Route
-              path="/login"
-              element={
-                <Login
-                  setRoleLogin={setRoleLogin}
-                  setMessageStatus={setMessageStatus}
-                  setMessage={setMessage}
-                />
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                <Register
-                  roleLogin={roleLogin}
-                  setMessageStatus={setMessageStatus}
-                  setMessage={setMessage}
-                />
-              }
-            />
-            <Route path="/photographer" element={<Photographer />} />
-          </Route>
-        ) : (
-          <Route element={<StaffLayout />}>
-            <Route path="/suppliers" element={<StaffManageSuppliers />} />
-            <Route path="/services" element={<StaffManageServices />} />
-             Service Supplier 
-            <Route
-              path="/service-suppliers-dashboard"
-              element={<Dashboard />}
-            />
-          </Route>
+        {isDisplayHeader && (
+          <Footer
+          />
         )}
-        <Route
-          path="*"
-          element={
-            <Navigate
-              to={isProtectedRoute(location.pathname) ? "/login" : "/"}
-            />
-          }
-        />
-      </Routes> */}
+      </UserProvider>
     </div>
   );
 }

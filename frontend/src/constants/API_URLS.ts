@@ -47,3 +47,6 @@ export const GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID = '/service-supplier/getBySuppl
 // Wallet
 export const GET_BALANCE_WALLET = '/wallet/balance';
 
+// Wallet history
+export const GET_WALLET_HISTORY = '/wallet-history/byFilter';
+

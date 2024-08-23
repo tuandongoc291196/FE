@@ -36,12 +36,12 @@ export const AVAILABLE_PRICE = 'Giá sẵn';
 export const CONTACT_PRICE = 'Giá liên hệ';
 
 export const ECONOMY_SEGMENT = {
-  name: 'Phổ thông',
+  name: 'PHỔ THÔNG',
   id: 'ECONOMY',
 };
 
 export const LUXURY_SEGMENT = {
-  name: 'Cao cấp',
+  name: 'CAO CẤP',
   id: 'LUXURY',
 };
 

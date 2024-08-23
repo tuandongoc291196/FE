@@ -26,7 +26,6 @@ interface Props {
 const storage = getStorage();
 
 const segments = [
-    ALL_SELECT,
     ECONOMY_SEGMENT,
     LUXURY_SEGMENT
 ]
@@ -72,7 +71,8 @@ const Services: FC<Props> = (props) => {
 
     const [promotions, setPromotions] = useState<PromotionItem[]>([]);
     const [promotion, setPromotion] = useState<any>();
-    const [segment, setSegment] = useState<any>(ALL_SELECT);
+    const [segment, setSegment] = useState<any>(ECONOMY_SEGMENT);
+    const [segmentCreate, setSegmentCreate] = useState<any>(ECONOMY_SEGMENT);
     const [serviceName, setServiceName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
     const [price, setPrice] = useState<string>('0');
@@ -89,7 +89,7 @@ const Services: FC<Props> = (props) => {
         setDescription("");
         setPrice("");
         setImages([]);
-        setSegment(undefined);
+        setSegmentCreate(ECONOMY_SEGMENT);
         setOpen(false)
     };
 
@@ -118,7 +118,7 @@ const Services: FC<Props> = (props) => {
         setIsLoading(true);
         const categoryId = category?.id !== 'all' ? `${category?.id}` : undefined;
         const serviceId = service?.id !== 'all' ? `${service?.id}` : undefined;
-        const segmentId = segment?.id !== 'all' ? `${segment?.id}` : undefined;
+        const segmentId = segment?.id;
         const response = await getServicesSupplierFilter(user?.userId, categoryId, serviceId, segmentId);
         if (response) {
             setServiceSupplierList(response);
@@ -458,8 +458,8 @@ const Services: FC<Props> = (props) => {
                                         className="input regis-input"
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        value={segment}
-                                        onChange={(e) => { setSegment(e.target.value) }}
+                                        value={segmentCreate}
+                                        onChange={(e) => { setSegmentCreate(e.target.value) }}
                                         sx={{ padding: "12px 8px 17px" }}
                                     >
                                         {

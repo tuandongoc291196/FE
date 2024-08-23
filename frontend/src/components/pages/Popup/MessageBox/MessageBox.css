@@ -1,5 +1,5 @@
 .msg-request {
-    background-color: #ffeae6;
+    background-color: var(--white-color);
     position: fixed;
     top: 110px;
     right: 10px;

@@ -21,14 +21,14 @@ import "./Authentication.css";
 import { LoginPayload } from "../../../types/authen/Login";
 import { loginUser, loginUserByGoogle } from "../../../redux/apiRequest";
 import { LOGO, ROLE } from "../../../constants/consts";
-import { useMessageContext } from "../Popup/MessageBox/MessageContext";
 interface Props {
   setRoleLogin: Dispatch<SetStateAction<string>>;
+  setMessageStatus: Dispatch<SetStateAction<string>>;
+  setMessage: Dispatch<SetStateAction<string>>;
 }
 
 const Login: FC<Props> = (props) => {
   const user = useSelector((state: any) => state.auth.login.currentUser);
-  const { setMessageStatus, setMessage } = useMessageContext();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -54,37 +54,26 @@ const Login: FC<Props> = (props) => {
       };
 
       const status = await loginUser(userLogin, dispatch, navigate);
-
       switch (status) {
-        case "Login Fail":
-          setMessageStatus("red");
-          setMessage("Tên đăng nhập hoặc mật khẩu không đúng");
+        case "FAIL":
+          props.setMessageStatus("red");
+          props.setMessage("Tên đăng nhập hoặc mật khẩu không đúng");
           break;
         case "DISABLE":
-          setMessageStatus("red");
-          setMessage(
+          props.setMessageStatus("red");
+          props.setMessage(
             "Tài khoản của bạn đã chưa được kích hoạt, vui lòng liên hệ chúng tôi"
           );
           break;
         case "SUCCESS":
+          props.setMessageStatus("green");
+          props.setMessage(
+            "Đăng nhập thành công"
+          );
           break;
         default:
-          setMessageStatus("red");
-          setMessage("Có lỗi xảy ra");
+          setMessageLogin(status);
           break;
-      }
-
-      if ((await loginUser(userLogin, dispatch, navigate)) == "Login Fail") {
-        setMessageLogin(
-          "The user or password that you've entered is incorrect."
-        );
-      } else if (
-        (await loginUser(userLogin, dispatch, navigate)) == "DISABLE"
-      ) {
-        setMessageLogin("Your account is disable, please contact to us!");
-      } else {
-        setMessageStatus("");
-        setMessage("");
       }
     } catch (error) {
       console.log(error);
@@ -151,6 +140,7 @@ const Login: FC<Props> = (props) => {
               }}
             />
             <div className="forgot">Quên mật khẩu?</div>
+            <span className="error-message">{messageLogin}</span>
           </div>
           <div className="item">
             <Button type="submit" className="btn-login" variant="contained">

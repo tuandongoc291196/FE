@@ -6,6 +6,7 @@ import {
   Divider,
   Grid,
   InputAdornment,
+  Modal,
   TextField,
   Typography,
 } from '@mui/material';
@@ -14,8 +15,8 @@ import { useNavigate, useParams } from 'react-router';
 import PersonIcon from '@mui/icons-material/Person';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import PlaceIcon from '@mui/icons-material/Place';
-import { getCart } from '../../../utils/CartStorage';
 import {
+  getBalanceWallet,
   getBookingById,
   getUserById,
   requestPayment,
@@ -23,18 +24,24 @@ import {
 import { useSelector } from 'react-redux';
 import { BOOKING_STATUS } from '../../../constants/consts';
 import { Email } from '@mui/icons-material';
-
-interface OrderFormProps {
-  // Props có thể nhận thêm từ bên ngoài nếu cần
-}
-
-const BookingDetails: React.FC<OrderFormProps> = () => {
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+};
+const BookingDetails: React.FC = () => {
+  const [open, setOpen] = useState(false);
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: any) => state.auth.login.currentUser);
   const [detail, setDetail] = useState<any>(null);
   const [userData, setUserData] = useState<any>(null);
-
+  const [balance, setBalance] = useState<string>('0');
   const navigate = useNavigate();
   const getBookingDetails = async (bookingId: string) => {
     setLoading(true);
@@ -45,15 +52,14 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
   const getUserData = async () => {
     const res = await getUserById(user.userId, user.token);
     if (res) setUserData(res);
-    setLoading(false);
   };
   useEffect(() => {
     if (id) {
       getBookingDetails(id);
       getUserData();
+      fetchBalanceWallet();
     }
   }, []);
-  useEffect(() => {}, []);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -61,7 +67,11 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
     note: '',
     paymentMethod: 'BO',
   });
-
+  async function fetchBalanceWallet() {
+    const response = await getBalanceWallet(user?.accountId, user?.token);
+    setBalance(response?.balance);
+    setLoading(false);
+  }
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -79,7 +89,14 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
     const args = { deposit: true, listBookingDetailId: listBookingIds };
     const res = await requestPayment(args, user.token);
     if (res) {
-      window.location.href = res;
+      console.log(res);
+      if (
+        res.urlPaymentVNPay === '' ||
+        res.urlPaymentVNPay === null ||
+        res.urlPaymentVNPay === undefined
+      )
+        window.location.href = '/booking-history';
+      else window.location.href = res.urlPaymentVNPay;
     }
   };
 
@@ -313,11 +330,77 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
                       backgroundColor: 'var(--btn-hover-color)',
                     },
                   }}
-                  onClick={depositPayment}
+                  onClick={() => setOpen(true)}
                 >
                   Thanh toán
                 </Button>
               </Box>
+              <Modal
+                open={open}
+                onClose={() => setOpen(true)}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={style}>
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'space-between' }}
+                  >
+                    <Typography variant="h5">Số dư ví:</Typography>
+                    <Typography variant="h5">
+                      <Box
+                        component="span"
+                        sx={{ color: 'green', fontWeight: 'bold' }}
+                      >
+                        {balance.toLocaleString()} VNĐ
+                      </Box>
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mt: 3,
+                    }}
+                  >
+                    <Typography variant="h5">
+                      {' '}
+                      Tổng tiền cần thanh toán:
+                    </Typography>
+                    <Typography variant="h5">
+                      <Box
+                        component="span"
+                        sx={{ color: 'red', fontWeight: 'bold' }}
+                      >
+                        {(totalPrice * 0.2).toLocaleString()} VNĐ
+                      </Box>
+                    </Typography>
+                  </Box>
+                  <Typography color={'red'} mt={2}>
+                    <i>
+                      Ghi chú: Số tiền sẽ được trừ trực tiếp vào ví nếu số dư
+                      còn đủ. Nếu không, bạn cần thanh toán qua phương thức trực
+                      tuyến.
+                    </i>
+                  </Typography>
+
+                  <Box sx={{ textAlign: 'end', mt: 2 }}>
+                    <Button
+                      onClick={depositPayment}
+                      sx={{
+                        px: 2,
+                        py: 0.5,
+                        fontSize: 12,
+                        fontWeight: 600,
+                        backgroundColor: 'var(--primary-color)',
+                        color: 'white',
+                      }}
+                      variant="contained"
+                    >
+                      Xác nhận
+                    </Button>
+                  </Box>
+                </Box>
+              </Modal>
             </Box>
           </Grid>
         </Grid>

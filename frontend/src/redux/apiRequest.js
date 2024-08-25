@@ -58,35 +58,33 @@ export const loginUser = async (user, dispatch, navigate) => {
     if (res.data.message != LOGIN_SUCCESS) {
       return res.message;
     } else {
-      if (res.data) {
-        if (res.data.data.roleName === ROLE.admin) {
-          dispatch(loginSuccess(res.data.data));
-          navigate('/');
-          return res.data.status;
-        }
-        if (res.data.data.roleName === ROLE.staff) {
-          dispatch(loginSuccess(res.data.data));
-          navigate('/staff/suppliers');
-          return res.data.status;
-        }
-        if (res.data.data.roleName === ROLE.supplier) {
-          dispatch(loginSuccess(res.data.data));
-          navigate('/service-suppliers-dashboard');
-          return res.data.status;
-        } else {
-          if (res.data.data.status == STATUS.active) {
+      if (res.data && (res.data.data.status == STATUS.active)) {
+        switch (res.data.data.roleName) {
+          case ROLE.admin:
             dispatch(loginSuccess(res.data.data));
             navigate('/');
             return res.data.status;
-          } else {
+          case ROLE.staff:
+            dispatch(loginSuccess(res.data.data));
+            navigate('/staff/suppliers');
+            return res.data.status;
+          case ROLE.supplier:
+            dispatch(loginSuccess(res.data.data));
+            navigate('/service-suppliers-dashboard');
+            return res.data.status;
+          default:
             return res.data.message;
-          }
-        }
+        } 
+      } else if(res.data.data.status == STATUS.disabled) {
+        dispatch(loginSuccess(res.data.data));
+        navigate('/');
+        return res.data.status;
       } else {
-        return res.message;
+        return res.data.message;
       }
     }
   } catch (err) {
+    return err.response.data.message;
     dispatch(loginFailed());
   }
 };

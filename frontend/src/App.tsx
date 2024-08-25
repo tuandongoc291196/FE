@@ -22,7 +22,6 @@ import Dashboard from './components/pages/ServiceSupplier/Dashboard';
 import { UserProvider } from './constants/UserContex';
 import ProtectedRoute from './constants/ProtectedRole';
 import StaffList from './components/pages/Admin/StaffList';
-import MessageBoxContainer from './components/pages/Popup/MessageBox/MessageContainer';
 import { ROLE } from './constants/consts';
 import './constants/styles/Filter.css';
 import StaffManageBlogs from './components/pages/StaffManager/StaffManageBlogs';
@@ -72,6 +71,7 @@ function App() {
   }, [location.pathname, user]);
   return (
     <div className="App">
+      <MessageBox status={messageStatus} message={message} setMessage={setMessage} title='inasd'></MessageBox>
       <UserProvider>
         {isDisplayHeader && (
           <Header
@@ -119,7 +119,9 @@ function App() {
           {/* Authenticate */}
           <Route
             path="/login"
-            element={<Login setRoleLogin={setRoleLogin} />}
+            element={<Login setRoleLogin={setRoleLogin}
+              setMessageStatus={setMessageStatus}
+              setMessage={setMessage} />}
           />
           <Route
             path="/register"

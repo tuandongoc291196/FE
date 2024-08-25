@@ -113,3 +113,8 @@
     font-weight: 500;
     color: var(--white-color);
 }
+
+#Authentication .error-message {
+    color: red;
+    font-size: 1.2rem;
+}

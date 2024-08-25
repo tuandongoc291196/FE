@@ -58,8 +58,12 @@ export const loginUser = async (user, dispatch, navigate) => {
     if (res.data.message != LOGIN_SUCCESS) {
       return res.message;
     } else {
-      if (res.data && (res.data.data.status == STATUS.active)) {
+      if (res.data && res.data.data.status == STATUS.active) {
         switch (res.data.data.roleName) {
+          case ROLE.couple:
+            dispatch(loginSuccess(res.data.data));
+            navigate('/');
+            return res.data.status;
           case ROLE.admin:
             dispatch(loginSuccess(res.data.data));
             navigate('/');
@@ -74,8 +78,8 @@ export const loginUser = async (user, dispatch, navigate) => {
             return res.data.status;
           default:
             return res.data.message;
-        } 
-      } else if(res.data.data.status == STATUS.disabled) {
+        }
+      } else if (res.data.data.status == STATUS.disabled) {
         dispatch(loginSuccess(res.data.data));
         navigate('/');
         return res.data.status;

@@ -18,6 +18,7 @@ import {
   GET_BOOKING_BY_ID,
   GET_BOOKING_BY_SUPPLIER,
   GET_BOOKING_DETAIL_BY_SUPPLIER_ID,
+  GET_COUPLE_BY_ID,
   GET_PENDING_BLOGS,
   GET_PROMOTION_BY_SUPPLIER,
   GET_REJECTED_BLOGS,
@@ -26,8 +27,11 @@ import {
   GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID,
   GET_SERVICE_SUPPLIER_FILTER,
   GET_SUPPLIERS_BLOGS,
+  GET_TRANSACTION_BY_COUPLE,
   GET_WALLET_HISTORY,
+  GET_WALLET_HISTORY_BY_COUPLE,
   POST_BOOKING,
+  RATING_BOOKING,
   REQUEST_PAYMENT,
   UPDATE_CONFIRM_BOOKING_STATUS,
   UPDATE_CONFIRM_DONE_STATUS,
@@ -392,6 +396,20 @@ export const getBookingById = async (id, token) => {
   }
 };
 
+export const getUserById = async (id, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(GET_COUPLE_BY_ID + `?id=${id}`, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
 export const requestPayment = async (data, token) => {
   try {
     const headers = {
@@ -421,17 +439,46 @@ export const getBookingHistoryByCoupleId = async (id, token) => {
     return error;
   }
 };
-
-export const cancelBooking = async (id, token) => {
+export const getTransactionHistoryByCoupleId = async (id, token) => {
   try {
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     };
-    console.log(headers);
+    const res = await axios.get(GET_TRANSACTION_BY_COUPLE + `?coupleId=${id}`, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+export const getWalletByAccountId = async (id, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(GET_TRANSACTION_BY_COUPLE + `/${id}`, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+export const cancelBooking = async (id, reason, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
     const res = await axios.put(
-      CANCEL_BOOKING + `?id=${id}`,
-      {},
+      CANCEL_BOOKING,
+      {
+        bookingDetailId: id,
+        reason: reason,
+      },
       {
         headers: headers,
       }
@@ -442,17 +489,54 @@ export const cancelBooking = async (id, token) => {
   }
 };
 
+export const ratingBooking = async (
+  id,
+  rating,
+  coupldId,
+  description,
+  token
+) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.post(
+      RATING_BOOKING,
+      {
+        bookingDetailId: id,
+        coupleId: coupldId,
+        ratingValue: rating,
+        description: description,
+      },
+      {
+        headers: headers,
+      }
+    );
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
 // Booking Detail
 
-export const getBookingDetailBySupplierId = async (supplierId, bookingId, token) => {
+export const getBookingDetailBySupplierId = async (
+  supplierId,
+  bookingId,
+  token
+) => {
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   };
   try {
-    const res = await axios.get(GET_BOOKING_DETAIL_BY_SUPPLIER_ID + `?bookingId=${bookingId}&supplierId=${supplierId}`, {
-      headers: headers,
-    });
+    const res = await axios.get(
+      GET_BOOKING_DETAIL_BY_SUPPLIER_ID +
+        `?bookingId=${bookingId}&supplierId=${supplierId}`,
+      {
+        headers: headers,
+      }
+    );
     return res.data.data;
   } catch (error) {
     return error;
@@ -569,9 +653,13 @@ export const getWalletHistory = async (id, token) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     };
-    const res = await axios.get(GET_WALLET_HISTORY + `?isAscending=true&pageNo=0&pageSize=10&sortBy=id&walletId=${id}`, {
-      headers: headers,
-    });
+    const res = await axios.get(
+      GET_WALLET_HISTORY +
+        `?isAscending=true&pageNo=0&pageSize=100&sortBy=id&walletId=${id}`,
+      {
+        headers: headers,
+      }
+    );
     return res.data.data;
   } catch (error) {
     return error;

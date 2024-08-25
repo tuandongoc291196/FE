@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   Box,
-  Button,
   Card,
-  Chip,
   CircularProgress,
   Divider,
   IconButton,
@@ -14,82 +12,67 @@ import {
   TableHead,
   TableRow,
   Typography,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import { useNavigate } from 'react-router';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector } from 'react-redux';
-import {
-  cancelBooking,
-  getBookingHistoryByCoupleId,
-  requestPayment,
-} from '../../../redux/apiRequest';
+import { getBookingHistoryByCoupleId } from '../../../redux/apiRequest';
+import { Inventory, Visibility } from '@mui/icons-material';
+import StatusChip from './StatusChip';
 import { BOOKING_STATUS } from '../../../constants/consts';
 
 const BookingHistory: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>('all'); // Default to 'all'
   const navigate = useNavigate();
-  const [data, setData] = useState<any>(null);
   const user = useSelector((state: any) => state.auth.login.currentUser);
-  console.log(data);
+
   const getData = async () => {
     setLoading(true);
     const res = await getBookingHistoryByCoupleId(user.userId, user.token);
     if (res) {
       setData(res);
+      setFilteredData(res); // Set initial filtered data
     }
     setLoading(false);
   };
+
   useEffect(() => {
     getData();
   }, []);
-  const remainingPayment = async () => {
-    const listBookingIds: string[] = [];
-    data.map((item: any) => {
-      if (item.status === BOOKING_STATUS.processing)
-        listBookingIds.push(item.id);
-    });
-    const args = { deposit: false, listBookingDetailId: listBookingIds };
-    const res = await requestPayment(args, user.token);
-    if (res) {
-      window.location.href = res;
-    }
-  };
 
-  const handleDelete = async (id: string) => {
-    setLoading(true);
-    const res = await cancelBooking(id, user.token);
-    if (res) {
-      getData();
+  useEffect(() => {
+    if (selectedStatus === 'all') {
+      setFilteredData(data);
+    } else {
+      setFilteredData(
+        data.filter((booking: any) => booking.status === selectedStatus)
+      );
     }
-  };
-
-  const totalPrice = data?.reduce((total: any, service: any) => {
-    if (service.status === BOOKING_STATUS.approved)
-      return total + service.totalPrice;
-    else return total;
-  }, 0);
+  }, [selectedStatus, data]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
 
     const date = new Date(dateString);
 
-    // Format the time as HH:mm
     const formattedTime = date.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
     });
 
-    // Format the date as dd/MM/yyyy
     const formattedDate = date.toLocaleDateString('en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
     });
 
-    // Combine time and date
     return `${formattedTime}, ${formattedDate}`;
   };
+
   return (
     <Box p={3}>
       <Typography
@@ -111,6 +94,36 @@ const BookingHistory: React.FC = () => {
           Đơn hàng
         </Divider>
       </Typography>
+
+      <Tabs
+        value={selectedStatus}
+        onChange={(event, newValue) => setSelectedStatus(newValue)}
+        TabIndicatorProps={{
+          style: {
+            backgroundColor: 'var(--primary-color)',
+          },
+        }}
+        sx={{
+          '& .MuiTab-root': {
+            fontWeight: 600,
+          },
+          '& .MuiTab-root.Mui-selected': {
+            color: 'var(--primary-color)',
+            fontSize: 9,
+            fontWeight: 600,
+          },
+        }}
+      >
+        <Tab label="Tất cả" value="all" />
+        <Tab label="Chờ xử lý" value={BOOKING_STATUS.pending} />
+        <Tab label="Đã phê duyệt" value={BOOKING_STATUS.approved} />
+        <Tab label="Đã đặt cọc" value={BOOKING_STATUS.deposited} />
+        <Tab label="Đang xử lý" value={BOOKING_STATUS.processing} />
+        <Tab label="Hoàn tất" value={BOOKING_STATUS.done} />
+        <Tab label="Đã hoàn thành" value={BOOKING_STATUS.completed} />
+        <Tab label="Đã hủy" value={BOOKING_STATUS.cancel} />
+      </Tabs>
+
       {loading ? (
         <div className="flex h-[50vh] justify-center items-center">
           <CircularProgress />
@@ -130,25 +143,7 @@ const BookingHistory: React.FC = () => {
                   >
                     Mã đơn
                   </TableCell>
-                  <TableCell
-                    sx={{
-                      fontSize: 16,
-                      color: 'var(--primary-color)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Dịch vụ
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontSize: 16,
-                      color: 'var(--primary-color)',
-                      fontWeight: 600,
-                      textAlign: 'center',
-                    }}
-                  >
-                    Số lượng
-                  </TableCell>
+
                   <TableCell
                     sx={{
                       fontSize: 16,
@@ -172,6 +167,7 @@ const BookingHistory: React.FC = () => {
                       fontSize: 16,
                       color: 'var(--primary-color)',
                       fontWeight: 600,
+                      textAlign: 'center',
                     }}
                   >
                     Trạng thái
@@ -181,119 +177,57 @@ const BookingHistory: React.FC = () => {
                       fontSize: 16,
                       color: 'var(--primary-color)',
                       fontWeight: 600,
+                      textAlign: 'center',
                     }}
                   >
-                    Hủy
+                    Chi tiết
                   </TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
-                {data &&
-                  data.map((booking: any) => (
-                    <TableRow key={booking.id}>
-                      <TableCell sx={{ fontSize: 14 }}>{booking?.id}</TableCell>
-                      <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
-                        {booking.listBookingDetail.map((item: any) => (
-                          <div>{item?.serviceSupplier?.name}</div>
-                        ))}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: 14 }}>
-                        {booking.listBookingDetail.map((item: any) => (
-                          <div className="text-center">{item?.quantity}</div>
-                        ))}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: 14 }}>
-                        {booking.totalPrice.toLocaleString()} VND
-                      </TableCell>
-                      <TableCell sx={{ fontSize: 14 }}>
-                        {formatDate(booking.createdAt)}
-                      </TableCell>
-                      <TableCell sx={{ fontSize: 14 }}>
-                        <Chip
-                          label={booking.status}
+                {filteredData.map((booking: any) => (
+                  <TableRow key={booking.id}>
+                    <TableCell sx={{ fontSize: 14 }}>{booking?.id}</TableCell>
+
+                    <TableCell sx={{ fontSize: 14 }}>
+                      {booking.totalPrice.toLocaleString()} VND
+                    </TableCell>
+                    <TableCell sx={{ fontSize: 14 }}>
+                      {formatDate(booking.createdAt)}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: 14, textAlign: 'center' }}>
+                      <StatusChip status={booking.status} />
+                    </TableCell>
+                    <TableCell sx={{ textAlign: 'center' }}>
+                      <IconButton
+                        onClick={() =>
+                          navigate(`/booking-history/${booking.id}`)
+                        }
+                      >
+                        <Visibility
                           sx={{
-                            height: '24px',
-                            width: '100px',
-                            fontSize: 10,
-                            fontWeight: 600,
+                            fontSize: 20,
+                            color: 'blue',
                           }}
                         />
-                      </TableCell>
-                      <TableCell>
-                        <IconButton
-                          disabled={
-                            booking.status !== BOOKING_STATUS.processing
-                          }
-                          onClick={() => handleDelete(booking.id)}
-                        >
-                          <DeleteIcon
-                            sx={{
-                              fontSize: 30,
-                              color:
-                                booking.status !== BOOKING_STATUS.processing
-                                  ? 'gray'
-                                  : 'red',
-                            }}
-                          />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
+            {filteredData.length === 0 && (
+              <div className="w-full h-[40vh] flex flex-col justify-center items-center gap-4">
+                <div>
+                  <Inventory sx={{ width: 60, height: 60, color: 'gray' }} />
+                </div>
+                <div className="font-semibold text-3xl text-gray-500">
+                  Không có kết quả tìm kiếm
+                </div>
+              </div>
+            )}
           </TableContainer>
-          <Box
-            my={2}
-            display="flex"
-            flexDirection="column"
-            alignItems="flex-end"
-          >
-            <Typography my={1} variant="h5">
-              Tổng cộng:{' '}
-              <Box component="span" sx={{ color: 'green', fontWeight: 'bold' }}>
-                {totalPrice?.toLocaleString()} VND
-              </Box>
-            </Typography>
-            <Typography my={1} variant="h5">
-              Đã cọc:{' '}
-              <Box component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
-                {(totalPrice * 0.2)?.toLocaleString()} VND
-              </Box>
-            </Typography>
-            <Typography my={1} variant="h5">
-              Còn lại:{' '}
-              <Box component="span" sx={{ color: 'blue', fontWeight: 'bold' }}>
-                {(totalPrice - totalPrice * 0.2)?.toLocaleString()} VND
-              </Box>
-            </Typography>
-            <Box mt={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ mr: 2, px: 4, py: 1, fontSize: 14, fontWeight: 600 }}
-                onClick={() => {
-                  navigate('/');
-                }}
-              >
-                Trở về
-              </Button>
-              <Button
-                // disabled={totalPrice === 0}
-                variant="contained"
-                sx={{
-                  px: 4,
-                  py: 1,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  backgroundColor: 'var(--primary-color)',
-                  color: 'white',
-                }}
-                onClick={remainingPayment}
-              >
-                Tất toán
-              </Button>
-            </Box>
-          </Box>
         </>
       )}
     </Box>

@@ -44,6 +44,9 @@ import CoupleService from './components/pages/CoupleService/CoupleService';
 import ComboServiceDetail from './components/pages/ComboService/ComboServiceDetail';
 import Transactions from './components/pages/ServiceSupplier/Transactions';
 import Footer from './components/modules/Footer/Footer';
+import BookingHistoryDetail from './components/pages/BookingHistory/BookingHistoryDetail';
+import TransactionHistory from './components/pages/TransactionHistory/TransactionHistory';
+import WalletHistory from './components/pages/WalletHistory/WalletHistory';
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -98,10 +101,19 @@ function App() {
               />
             </Route>
           ) : (
-            <Route path="/" element={user?.roleName === ROLE.supplier ? <Services
-              setMessage={setMessage}
-              setMessageStatus={setMessageStatus}
-            /> : <HomePage />} />
+            <Route
+              path="/"
+              element={
+                user?.roleName === ROLE.supplier ? (
+                  <Services
+                    setMessage={setMessage}
+                    setMessageStatus={setMessageStatus}
+                  />
+                ) : (
+                  <HomePage />
+                )
+              }
+            />
           )}
 
           {/* Authenticate */}
@@ -184,7 +196,6 @@ function App() {
             />
           </Route>
 
-
           {/* Test View */}
           <Route path="/profile" element={<UpdateProfile />} />
 
@@ -194,6 +205,13 @@ function App() {
           <Route path="/quotation" element={<CoupleQuotation />} />
           <Route path="/booking-details/:id" element={<BookingDetails />} />
           <Route path="/booking-history" element={<BookingHistory />} />
+          <Route path="/transaction-history" element={<TransactionHistory />} />
+          <Route path="/wallet-history" element={<WalletHistory />} />
+
+          <Route
+            path="/booking-history/:id"
+            element={<BookingHistoryDetail />}
+          />
 
           <Route
             path="/combo-service/details/:id"
@@ -215,10 +233,7 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
-        {isDisplayHeader && (
-          <Footer
-          />
-        )}
+        {isDisplayHeader && <Footer />}
       </UserProvider>
     </div>
   );

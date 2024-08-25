@@ -22,23 +22,25 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Dayjs } from 'dayjs';
 import { createBooking } from '../../../redux/apiRequest';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
 import { clearCart } from '../../../utils/CartStorage';
+import { useNavigate } from 'react-router';
 
 interface CartItem {
   id: string;
   name: string;
   price: number;
   image: string;
-  promotion: number;
+  promotion: any;
   quantity: number;
 }
+
 interface BookingItem {
   serviceSupplierId: string;
   dateCompleted: string;
   note: string;
   quantity: number;
 }
+
 interface ServiceModalProps {
   open: boolean;
   onClose: () => void;
@@ -54,7 +56,14 @@ const FormBooking: React.FC<ServiceModalProps> = ({
   totalPrice,
   totalPromotionPrice,
 }) => {
+  const navigate = useNavigate();
+
   const [serviceData, setServiceData] = useState<BookingItem[]>([]);
+  const [weddingDate, setWeddingDate] = useState<Dayjs | null>(null);
+  const [usedDates, setUsedDates] = useState<Set<string>>(new Set());
+  const [loading, setLoading] = useState(false);
+  const user = useSelector((state: any) => state.auth.login.currentUser);
+
   useEffect(() => {
     setServiceData(
       services.map((service) => ({
@@ -66,12 +75,21 @@ const FormBooking: React.FC<ServiceModalProps> = ({
     );
   }, [services]);
 
-  const [loading, setLoading] = useState(false);
-  const user = useSelector((state: any) => state.auth.login.currentUser);
-  const handleDateChange = (index: number, date: string) => {
+  const formatDate = (date: Dayjs | null): string => {
+    return date ? date.format('YYYY-MM-DDTHH:mm:ss') : '';
+  };
+
+  const handleDateChange = (index: number, date: Dayjs | null) => {
+    if (!date || !weddingDate) return;
+
+    const selectedDate = formatDate(date);
+
     const newServiceData = [...serviceData];
-    newServiceData[index].dateCompleted = date;
+    newServiceData[index].dateCompleted = selectedDate;
     setServiceData(newServiceData);
+
+    // Update used dates
+    setUsedDates((prevDates) => new Set(prevDates).add(selectedDate));
   };
 
   const handleNoteChange = (index: number, note: string) => {
@@ -79,13 +97,16 @@ const FormBooking: React.FC<ServiceModalProps> = ({
     newServiceData[index].note = note;
     setServiceData(newServiceData);
   };
+
   const handleSubmit = async () => {
     try {
       setLoading(true);
+
       const res = await createBooking(
         {
           coupleId: user.userId,
           listServiceSupplier: serviceData,
+          weddingDate: weddingDate && formatDate(weddingDate),
         },
         user?.token
       );
@@ -93,10 +114,11 @@ const FormBooking: React.FC<ServiceModalProps> = ({
         clearCart();
         setLoading(false);
         onClose();
-        window.location.href = `/booking-details/${res.id}`;
+        window.location.href = '/booking-history';
       }
     } catch (error) {
       console.error('Failed to submit booking:', error);
+      setLoading(false);
     }
   };
 
@@ -122,6 +144,20 @@ const FormBooking: React.FC<ServiceModalProps> = ({
         }}
       >
         <Typography id="modal-modal-description">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker']}>
+              <DatePicker
+                onChange={(value: Dayjs | null) => {
+                  if (value) {
+                    setWeddingDate(value);
+                    setUsedDates(new Set());
+                  }
+                }}
+                disablePast
+                label="Ngày cưới"
+              />
+            </DemoContainer>
+          </LocalizationProvider>
           <div className="create-container">
             <TableContainer>
               <Table>
@@ -146,7 +182,7 @@ const FormBooking: React.FC<ServiceModalProps> = ({
                         fontWeight: 600,
                       }}
                     >
-                      Số lượng
+                      SL
                     </TableCell>
                     <TableCell
                       sx={{
@@ -155,11 +191,12 @@ const FormBooking: React.FC<ServiceModalProps> = ({
                         fontWeight: 600,
                       }}
                     >
-                      %KM
+                      Giảm giá
                     </TableCell>
                     <TableCell sx={{ fontSize: '14px', fontWeight: 600 }}>
                       Ngày hoàn thành
                     </TableCell>
+
                     <TableCell sx={{ fontSize: '14px', fontWeight: 600 }}>
                       Ghi chú
                     </TableCell>
@@ -178,27 +215,58 @@ const FormBooking: React.FC<ServiceModalProps> = ({
                         {services[index]?.quantity}
                       </TableCell>
                       <TableCell sx={{ fontSize: '12px', textAlign: 'center' }}>
-                        {services[index]?.promotion}%
+                        {services[index]?.promotion ? (
+                          services[index]?.promotion?.type === 'MONEY' ? (
+                            <span>
+                              -{' '}
+                              {services[
+                                index
+                              ]?.promotion?.value.toLocaleString()}{' '}
+                              VNĐ{' '}
+                            </span>
+                          ) : (
+                            <span>
+                              - {services[index]?.promotion?.value} %{' '}
+                            </span>
+                          )
+                        ) : (
+                          <>-</>
+                        )}
                       </TableCell>
                       <TableCell sx={{ fontSize: '12px' }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DemoContainer components={['DatePicker']}>
-                            <DatePicker
+                          <DemoContainer components={['DateTimePicker']}>
+                            <DateTimePicker
+                              sx={{
+                                minWidth: '100px !important',
+                                width: '140px !important',
+                                '& .Mui-error': {
+                                  color: 'black !important',
+                                },
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                  borderColor: 'gray !important',
+                                },
+                              }}
                               onChange={(value: Dayjs | null) => {
-                                if (value) {
-                                  handleDateChange(
-                                    index,
-                                    value.format('YYYY-MM-DD')
-                                  );
-                                }
+                                handleDateChange(index, value);
                               }}
                               disablePast
                               label="Ngày hoàn thành"
+                              disabled={weddingDate === null}
+                              maxDate={
+                                weddingDate
+                                  ? weddingDate.subtract(1, 'day')
+                                  : undefined
+                              }
+                              shouldDisableDate={(date) =>
+                                usedDates.has(formatDate(date))
+                              }
                             />
                           </DemoContainer>
                         </LocalizationProvider>
                       </TableCell>
-                      <TableCell sx={{ fontSize: '12px', width: '30%' }}>
+
+                      <TableCell sx={{ fontSize: '12px', width: '25%' }}>
                         <TextField
                           value={service.note}
                           onChange={(e) =>
@@ -206,7 +274,7 @@ const FormBooking: React.FC<ServiceModalProps> = ({
                           }
                           fullWidth
                           multiline
-                          rows={3}
+                          rows={2}
                           placeholder="Nhập ghi chú"
                         />
                       </TableCell>

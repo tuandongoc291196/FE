@@ -4,14 +4,8 @@ import {
   Button,
   CircularProgress,
   Divider,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
   Grid,
   InputAdornment,
-  InputLabel,
-  Radio,
-  RadioGroup,
   TextField,
   Typography,
 } from '@mui/material';
@@ -21,8 +15,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import PlaceIcon from '@mui/icons-material/Place';
 import { getCart } from '../../../utils/CartStorage';
-import { getBookingById, requestPayment } from '../../../redux/apiRequest';
+import {
+  getBookingById,
+  getUserById,
+  requestPayment,
+} from '../../../redux/apiRequest';
 import { useSelector } from 'react-redux';
+import { BOOKING_STATUS } from '../../../constants/consts';
+import { Email } from '@mui/icons-material';
 
 interface OrderFormProps {
   // Props có thể nhận thêm từ bên ngoài nếu cần
@@ -33,16 +33,25 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state: any) => state.auth.login.currentUser);
   const [detail, setDetail] = useState<any>(null);
+  const [userData, setUserData] = useState<any>(null);
+
   const navigate = useNavigate();
   const getBookingDetails = async (bookingId: string) => {
     setLoading(true);
+
     const res = await getBookingById(bookingId, user.token);
     if (res) setDetail(res);
+  };
+  const getUserData = async () => {
+    const res = await getUserById(user.userId, user.token);
+    if (res) setUserData(res);
     setLoading(false);
   };
-
   useEffect(() => {
-    if (id) getBookingDetails(id);
+    if (id) {
+      getBookingDetails(id);
+      getUserData();
+    }
   }, []);
   useEffect(() => {}, []);
   const [formData, setFormData] = useState({
@@ -62,13 +71,11 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(formData);
   };
   const depositPayment = async () => {
-    const listBookingIds: string[] = [];
-    detail.listBookingDetail.map((item: any) => {
-      listBookingIds.push(item.id);
-    });
+    const listBookingIds: string[] = detail.listBookingDetail
+      .filter((item: any) => item.status === BOOKING_STATUS.approved)
+      .map((item: any) => item.id);
     const args = { deposit: true, listBookingDetailId: listBookingIds };
     const res = await requestPayment(args, user.token);
     if (res) {
@@ -107,6 +114,14 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
       setIsDragging(false);
     }
   };
+  const approvedItems = detail?.listBookingDetail?.filter(
+    (item: any) => item.status === BOOKING_STATUS.approved
+  );
+  console.log(approvedItems);
+  const totalPrice =
+    approvedItems?.reduce((sum: number, item: any) => {
+      return sum + item?.price;
+    }, 0) || 0;
 
   return (
     <Box sx={{ mt: 5, marginX: 10 }}>
@@ -146,11 +161,6 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
               sx={{
                 height: '70vh',
                 overflowY: 'auto',
-                '&::-webkit-scrollbar': {
-                  display: 'none',
-                },
-                '-ms-overflow-style': 'none',
-                'scrollbar-width': 'none',
                 cursor: 'grab',
               }}
               onMouseDown={handleMouseDown}
@@ -159,9 +169,13 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
               onMouseLeave={handleMouseLeave}
             >
               {detail?.listBookingDetail?.length > 0 &&
-                detail?.listBookingDetail.map((item: any) => {
-                  return (
+                detail.listBookingDetail
+                  .filter(
+                    (item: any) => item.status === BOOKING_STATUS.approved
+                  )
+                  .map((item: any) => (
                     <ItemCardView
+                      key={item.id}
                       location={
                         item.serviceSupplier.supplierResponse.area.ward +
                         ', ' +
@@ -174,11 +188,10 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
                       description={item.serviceSupplier.description}
                       rating={item.serviceSupplier.rating}
                       price={item?.serviceSupplier?.price}
-                      promotion={item.promotionServiceSupplier?.value}
+                      promotion={item.promotionServiceSupplier}
                       quantity={item.quantity}
                     />
-                  );
-                })}
+                  ))}
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -193,11 +206,8 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
               <TextField
                 disabled
                 label="Tên liên hệ"
-                variant="outlined"
-                name="name"
-                value={'Nguyễn Văn A'}
-                onChange={handleChange}
-                required
+                value={userData?.account.name}
+                defaultValue={''}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -215,14 +225,10 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
               <TextField
                 disabled
                 label="Số điện thoại"
-                variant="outlined"
-                name="phone"
-                // value={formData.phone}
-                value={'0979996665'}
-                onChange={handleChange}
-                required
-                fullWidth
+                value={userData?.account.phoneNumber}
+                defaultValue={''}
                 margin="normal"
+                fullWidth
                 InputProps={{
                   style: { fontSize: 16 },
                   endAdornment: (
@@ -234,16 +240,31 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
                 InputLabelProps={{
                   style: { fontSize: 14 },
                 }}
+              />{' '}
+              <TextField
+                disabled
+                label="Email"
+                value={userData?.account.email}
+                defaultValue={''}
+                margin="normal"
+                fullWidth
+                InputProps={{
+                  style: { fontSize: 16 },
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Email sx={{ fontSize: 24 }} />
+                    </InputAdornment>
+                  ),
+                }}
+                InputLabelProps={{
+                  style: { fontSize: 14 },
+                }}
               />
               <TextField
                 disabled
                 label="Địa chỉ"
-                variant="outlined"
-                name="address"
-                // value={formData.address}
-                value={'Long thạnh mỹ, Thủ Đức, TP. HCM'}
-                onChange={handleChange}
-                required
+                value={userData?.account.address}
+                defaultValue={''}
                 fullWidth
                 margin="normal"
                 InputProps={{
@@ -254,44 +275,22 @@ const BookingDetails: React.FC<OrderFormProps> = () => {
                     </InputAdornment>
                   ),
                 }}
-                InputLabelProps={{
-                  style: { fontSize: 14 },
-                }}
               />
-              <TextField
-                disabled
-                label="Ghi chú"
-                variant="outlined"
-                name="note"
-                value={formData.note}
-                onChange={handleChange}
-                multiline
-                rows={4}
-                fullWidth
-                margin="normal"
-                InputProps={{
-                  style: { fontSize: 16 },
-                }}
-                InputLabelProps={{
-                  style: { fontSize: 14 },
-                }}
-              />
-              <Typography variant="h5" mt={2} textAlign={'right'}>
+              <Typography variant="h5" mt={12} textAlign={'right'}>
                 Tổng giá:{' '}
                 <Box
                   component="span"
                   sx={{ color: 'green', fontWeight: 'bold' }}
                 >
-                  {detail?.totalPrice.toLocaleString()} VND
+                  {totalPrice.toLocaleString()} VND
                 </Box>
               </Typography>
               <Typography variant="h5" mt={2} textAlign={'right'}>
                 Cọc trước (20%):{' '}
                 <Box component="span" sx={{ color: 'red', fontWeight: 'bold' }}>
-                  {(detail?.totalPrice * 0.2).toLocaleString()} VND
+                  {(totalPrice * 0.2).toLocaleString()} VND
                 </Box>
               </Typography>
-
               <Box display="flex" justifyContent="space-between" mt={2}>
                 <Button
                   variant="contained"

@@ -11,15 +11,18 @@ import {
 import { useLocation } from 'react-router-dom';
 import ServiceItemViewCard from './ServiceItemViewCard';
 import { ServiceData } from '../../../utils/ServiceData';
-import { getServiceByCategory } from '../../../api/CoupleAPI';
+import {
+  getServiceByCategory,
+  getServicesByCategory,
+} from '../../../api/CoupleAPI';
+import { HourglassEmpty, Inventory } from '@mui/icons-material';
 
 const CoupleService = () => {
   const location = useLocation();
   const path = location.pathname.split('/')[2];
   const coupleServiceData = ServiceData.find((e) => e.name === path);
-  const [selectedService, setSelectedService] = useState(
-    coupleServiceData?.items[0]?.name ?? ''
-  );
+  const [selectedService, setSelectedService] = useState<any[]>([]);
+
   const [selectedServiceList, setSelectedServiceList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -30,15 +33,23 @@ const CoupleService = () => {
   // New filter states
   const [type, setType] = useState('');
   const [priceRange, setPriceRange] = useState('');
+  const [service, setService] = useState('');
 
+  const getServices = async (categoryID: string) => {
+    setLoading(true);
+
+    const response = await getServicesByCategory(categoryID);
+    setSelectedService(response);
+  };
   const getSelectedServiceList = async (
     categoryID: string,
     type: string,
-    priceRange: string
+    priceRange: string,
+    serviceID: string
   ) => {
+    // Convert price range to minPrice and maxPrice
     setLoading(true);
 
-    // Convert price range to minPrice and maxPrice
     let minPrice, maxPrice;
     switch (priceRange) {
       case '1':
@@ -71,14 +82,16 @@ const CoupleService = () => {
       categoryID,
       minPrice,
       maxPrice,
-      type
+      type,
+      serviceID
     );
     setSelectedServiceList(response);
     setLoading(false);
   };
 
   useEffect(() => {
-    getSelectedServiceList(coupleServiceData?.id ?? '', '', '');
+    getServices(coupleServiceData?.id ?? '');
+    getSelectedServiceList(coupleServiceData?.id ?? '', '', '', '');
   }, [coupleServiceData]);
 
   // Handle page change
@@ -91,28 +104,52 @@ const CoupleService = () => {
 
   // Handle type change
   const handleTypeChange = (event: any) => {
+    setCurrentPage(1);
     const newType = event.target.value;
     setType(newType);
-    getSelectedServiceList(coupleServiceData?.id ?? '', newType, priceRange);
+    getSelectedServiceList(
+      coupleServiceData?.id ?? '',
+      newType,
+      priceRange,
+      service
+    );
+  };
+  const handleServiceChange = (event: any) => {
+    setCurrentPage(1);
+    const newService = event.target.value;
+    setService(newService);
+    getSelectedServiceList(
+      coupleServiceData?.id ?? '',
+      type,
+      priceRange,
+      newService
+    );
   };
 
   // Handle price range change
   const handlePriceRangeChange = (event: any) => {
+    setCurrentPage(1);
     const newPriceRange = event.target.value;
     setPriceRange(newPriceRange);
-    getSelectedServiceList(coupleServiceData?.id ?? '', type, newPriceRange);
+    getSelectedServiceList(
+      coupleServiceData?.id ?? '',
+      type,
+      newPriceRange,
+      service
+    );
   };
-
   // Paginate items
-  const paginatedItems = selectedServiceList.slice(
+  const paginatedItems = selectedServiceList?.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
   const resetFilters = () => {
     setType('');
     setPriceRange('');
+    setService('');
     setCurrentPage(1);
-    getSelectedServiceList(coupleServiceData?.id ?? '', '', '');
+    getSelectedServiceList(coupleServiceData?.id ?? '', '', '', '');
   };
   return (
     <div id="CoupleService">
@@ -149,23 +186,24 @@ const CoupleService = () => {
             </ul>
           </div>
 
-          {coupleServiceData?.items.length !== 0 && (
+          {selectedService?.length !== 0 && (
             <div className="filter-component">
               <legend className="filter-name">Dịch vụ</legend>
               <ul className="filter-list">
                 <RadioGroup
                   aria-labelledby="demo-radio-buttons-group-label"
-                  value={selectedService}
-                  onChange={(e) => setSelectedService(e.target.value)}
+                  value={service}
+                  onChange={handleServiceChange}
                   name="radio-buttons-group"
                 >
-                  {coupleServiceData?.items.map((item, index) => (
+                  {selectedService.map((item, index) => (
                     <li key={index} className="filter-item">
                       <Radio
                         sx={{ '& .MuiSvgIcon-root': { fontSize: 18 } }}
-                        value={item.name}
+                        value={item.id}
                       />
-                      {item.name}
+                      {item.name.charAt(0).toUpperCase() +
+                        item.name.slice(1).toLowerCase()}
                     </li>
                   ))}
                 </RadioGroup>
@@ -226,7 +264,7 @@ const CoupleService = () => {
         </aside>
         <div className="filter-content">
           <div className="content-header">
-            <strong>{selectedServiceList.length}</strong> kết quả
+            <strong>{selectedServiceList?.length}</strong> kết quả
           </div>
           <ul className="content-list">
             {loading && (
@@ -234,9 +272,18 @@ const CoupleService = () => {
                 <CircularProgress />
               </div>
             )}
-
+            {!paginatedItems && (
+              <div className="w-full h-[70vh] flex flex-col justify-center items-center gap-4">
+                <div>
+                  <Inventory sx={{ width: 60, height: 60, color: 'gray' }} />
+                </div>
+                <div className="font-semibold text-3xl text-gray-500">
+                  Không có kết quả tìm kiếm
+                </div>
+              </div>
+            )}
             {!loading &&
-              paginatedItems.map((item, index) => (
+              paginatedItems?.map((item, index) => (
                 <ServiceItemViewCard
                   key={index}
                   id={item.id}
@@ -244,7 +291,7 @@ const CoupleService = () => {
                   location={''}
                   title={item.name}
                   type={item.type}
-                  ratingValue={4.5}
+                  promotion={item.promotion}
                   description={item.description}
                   price={item.price}
                   suplierID={item.id}
@@ -253,7 +300,7 @@ const CoupleService = () => {
           </ul>
           <Box display="flex" justifyContent="center" mt={2}>
             <Pagination
-              count={Math.ceil(selectedServiceList.length / itemsPerPage)}
+              count={Math.ceil(selectedServiceList?.length / itemsPerPage)}
               page={currentPage}
               onChange={handlePageChange}
               variant="outlined"

@@ -10,11 +10,11 @@ interface ServiceItemViewCardProps {
   imageUrl: string;
   location: string;
   title: string;
-  ratingValue: number;
   description: string;
   type: string;
   price: number;
   suplierID: string;
+  promotion: any;
 }
 
 const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
@@ -22,11 +22,11 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
   imageUrl,
   location,
   title,
-  ratingValue,
   description,
   type,
   price,
   suplierID,
+  promotion,
 }) => {
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
           <div className="item-location">{location}</div>
         </div>
         <h2
-          className="item-title"
+          className="item-title mb-2"
           onClick={() => {
             navigate(`/services/details/${id}`);
           }}
@@ -51,21 +51,6 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
           {title}
         </h2>
 
-        <div className="item-subtitle">
-          <div className="item-rating-star">
-            <Rating
-              name="text-feedback"
-              value={ratingValue}
-              readOnly
-              precision={0.1}
-              size="large"
-              emptyIcon={
-                <StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />
-              }
-            />
-          </div>
-          <div className="item-rating">{ratingValue.toFixed(1)}</div>
-        </div>
         <Chip
           label={type === 'LUXURY' ? 'Cao cấp' : 'Phổ thông'}
           color={type === 'LUXURY' ? 'secondary' : 'warning'}
@@ -75,6 +60,15 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
         <div className="font-bold text-2xl my-5">
           {' '}
           {price.toLocaleString('vi-VN')} VNĐ
+          {promotion && (
+            <div className="text-xl font-medium text-green-400">
+              {promotion.type === 'MONEY' ? (
+                <span>(- {promotion.value.toLocaleString()} VNĐ) </span>
+              ) : (
+                <span>(- {promotion.value} %) </span>
+              )}
+            </div>
+          )}
         </div>
 
         <p className="item-description">
@@ -92,21 +86,13 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
                 image: imageUrl,
                 name: title,
                 price: price,
-                promotion: 0,
+                promotion: promotion,
                 quantity: 1,
               });
-              window.location.href = '/quotation';
-
-              // navigate(`/quotation`);
             }}
           >
-            Thêm vào giỏ hàng
+            Đặt hàng
           </Button>
-          {/* <RequestPricePopup open={open} handleClose={handleClose}
-          serviceId={id}
-          serviceName={title}
-          suplierID={suplierID}
-          /> */}
         </div>
       </div>
     </li>

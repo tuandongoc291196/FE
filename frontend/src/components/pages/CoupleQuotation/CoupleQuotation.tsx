@@ -22,7 +22,6 @@ import {
   removeFromCart,
   updateCartItemQuantity,
 } from '../../../utils/CartStorage';
-import { useSelector } from 'react-redux';
 import FormBooking from './FormBooking';
 
 const CoupleQuotation: React.FC = () => {
@@ -40,12 +39,13 @@ const CoupleQuotation: React.FC = () => {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [getCart()]);
+  }, []);
 
   const handleRemoveFromCart = (id: string) => {
     removeFromCart(id);
     setServicePrice(getCart());
   };
+
   const totalPrice = servicesPrice.reduce((total, product) => {
     const price = product.price ?? 0;
     return total + product.quantity * price;
@@ -53,12 +53,18 @@ const CoupleQuotation: React.FC = () => {
 
   const totalPromotionPrice = servicesPrice.reduce((total, product) => {
     const price = product.price ?? 0;
-    const promotion = product.promotion ?? 0;
-    const serviceTotalPrice = 1 * price;
-    const serviceTotalPriceWithPromotion =
-      serviceTotalPrice * (promotion / 100);
-    return total + serviceTotalPriceWithPromotion * product.quantity;
+    const quantity = product.quantity ?? 1;
+    const promotion = product.promotion ?? { type: 'PERCENT', value: 0 };
+
+    if (promotion.type === 'MONEY') {
+      return total + promotion.value * quantity;
+    } else if (promotion.type === 'PERCENT') {
+      return total + price * (promotion.value / 100) * quantity;
+    }
+    return total;
   }, 0);
+
+  const finalTotalPrice = totalPrice - totalPromotionPrice;
 
   return (
     <Box p={3}>
@@ -130,7 +136,6 @@ const CoupleQuotation: React.FC = () => {
               >
                 Số lượng
               </TableCell>
-
               <TableCell
                 sx={{
                   fontSize: 16,
@@ -154,6 +159,7 @@ const CoupleQuotation: React.FC = () => {
                   fontSize: 16,
                   color: 'var(--primary-color)',
                   fontWeight: 600,
+                  textAlign: 'center',
                 }}
               >
                 Xóa
@@ -178,7 +184,7 @@ const CoupleQuotation: React.FC = () => {
                   {product.name}
                 </TableCell>
                 <TableCell sx={{ fontSize: 14 }}>
-                  {product.price.toLocaleString()} VND
+                  {product.price.toLocaleString()} VNĐ
                 </TableCell>
                 <TableCell sx={{ fontSize: 14 }}>
                   <TextField
@@ -197,17 +203,44 @@ const CoupleQuotation: React.FC = () => {
                     InputProps={{ inputProps: { min: 1 } }}
                   />
                 </TableCell>
-
-                <TableCell sx={{ fontSize: 14, fontWeight: 550 }}>
-                  {product.promotion ?? 0}%
+                <TableCell
+                  sx={{ fontSize: 14, fontWeight: 550, color: 'green' }}
+                >
+                  {product.promotion ? (
+                    product.promotion?.type === 'MONEY' ? (
+                      <span>
+                        - {product.promotion?.value.toLocaleString()} VNĐ{' '}
+                      </span>
+                    ) : (
+                      <span>- {product.promotion?.value} % </span>
+                    )
+                  ) : (
+                    <>-</>
+                  )}
                 </TableCell>
                 <TableCell sx={{ fontSize: 14 }}>
-                  {(
-                    (product.price -
-                      (product.price * (product.promotion ?? 0)) / 100) *
-                    product.quantity
-                  ).toLocaleString()}{' '}
-                  VND
+                  {product.promotion ? (
+                    product.promotion?.type === 'MONEY' ? (
+                      <>
+                        {(
+                          (product.price - product.promotion?.value) *
+                          product.quantity
+                        ).toLocaleString()}
+                      </>
+                    ) : (
+                      <>
+                        {(
+                          (product.price -
+                            (product.price * (product.promotion?.value ?? 0)) /
+                              100) *
+                          product.quantity
+                        ).toLocaleString()}{' '}
+                      </>
+                    )
+                  ) : (
+                    <>{(product.price * product.quantity).toLocaleString()}</>
+                  )}{' '}
+                  VNĐ
                 </TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleRemoveFromCart(product.id)}>
@@ -235,7 +268,7 @@ const CoupleQuotation: React.FC = () => {
         <Typography my={2} variant="h5">
           Tổng thanh toán:{' '}
           <Box component="span" sx={{ color: 'green', fontWeight: 'bold' }}>
-            {(totalPrice - totalPromotionPrice).toLocaleString('vi-VN')} VND
+            {finalTotalPrice.toLocaleString('vi-VN')} VND
           </Box>
         </Typography>
         <Box>

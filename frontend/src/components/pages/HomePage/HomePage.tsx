@@ -1,78 +1,108 @@
-import React, { useEffect, useRef, useState, MouseEvent } from "react";
-import { Container, CssBaseline, Box, Button } from "@mui/material";
-import { Grid, Card, CardMedia, CardContent, Typography } from "@mui/material";
-import { useNavigate } from "react-router";
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import "./HomePage.css";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { ServiceData } from "../../../utils/ServiceData";
-
+import React, { useEffect, useRef, useState, MouseEvent } from 'react';
+import { Container, CssBaseline, Box, Button } from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, Typography } from '@mui/material';
+import { useNavigate } from 'react-router';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import './HomePage.css';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { ServiceData } from '../../../utils/ServiceData';
+import { getBlogsList } from '../../../api/CoupleAPI';
 
 const blogs = [
   {
-    image: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
-    title: "Blog 1",
-    date: "2023-07-29",
+    image: 'https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg',
+    title: 'Blog 1',
+    date: '2023-07-29',
     description:
-      "Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1",
+      'Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1',
   },
   {
-    image: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
-    title: "Blog 2",
-    date: "2023-07-28",
+    image: 'https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg',
+    title: 'Blog 2',
+    date: '2023-07-28',
     description:
-      "Blog description 2Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1",
+      'Blog description 2Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1',
   },
   {
-    image: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
+    image: 'https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg',
     title:
-      "Blog 3Blog 3Blog og 3Blog 3Blog og 3Blog 3Blog 3Blog 3Blog 3Blog 3Blog 3Blog 3",
-    date: "2023-07-29",
+      'Blog 3Blog 3Blog og 3Blog 3Blog og 3Blog 3Blog 3Blog 3Blog 3Blog 3Blog 3Blog 3',
+    date: '2023-07-29',
     description:
-      "Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1",
+      'Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1Blog description 1',
   },
   {
-    image: "https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg",
-    title: "Blog 4",
-    date: "2023-07-28",
-    description: "Blog description 2",
+    image: 'https://ggmeo.com/images/linh-thu-dtcl/ahri-ti-ni.jpg',
+    title: 'Blog 4',
+    date: '2023-07-28',
+    description: 'Blog description 2',
   },
 ];
 
 const data = [
   {
     id: 1,
-    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-1.png?alt=media&token=d9ff6e1d-2fe7-41a3-badb-b35a8c57e9f1",
-    alt: "",
+    src: 'https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-1.png?alt=media&token=d9ff6e1d-2fe7-41a3-badb-b35a8c57e9f1',
+    alt: '',
   },
   {
     id: 2,
-    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-2.png?alt=media&token=bce06610-c646-4c92-8086-510d594455de",
-    alt: "",
+    src: 'https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-2.png?alt=media&token=bce06610-c646-4c92-8086-510d594455de',
+    alt: '',
   },
   {
     id: 3,
-    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-3.png?alt=media&token=cee403f4-5a70-4c22-ad64-a06fa625fc7d",
-    alt: "",
+    src: 'https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-3.png?alt=media&token=cee403f4-5a70-4c22-ad64-a06fa625fc7d',
+    alt: '',
   },
   {
     id: 4,
-    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-4.png?alt=media&token=a095049c-2cc4-4950-945d-c3bde6b8d221",
-    alt: "",
+    src: 'https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-4.png?alt=media&token=a095049c-2cc4-4950-945d-c3bde6b8d221',
+    alt: '',
   },
   {
     id: 5,
-    src: "https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-5.png?alt=media&token=cbf0f887-f0dd-41c0-b8e5-8a7c0038f74c",
-    alt: "",
+    src: 'https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2Fwedding-slide_show-5.png?alt=media&token=cbf0f887-f0dd-41c0-b8e5-8a7c0038f74c',
+    alt: '',
   },
 ];
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [slide, setSlide] = useState(0);
+  const [blogsList, setBlogsList] = useState<any[]>([]);
 
+  const getData = async () => {
+    const response = await getBlogsList({
+      pageNo: 0,
+      pageSize: 100,
+    });
+    setBlogsList(response);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+
+    const formattedTime = date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
+    return `${formattedTime}, ${formattedDate}`;
+  };
   const services = ServiceData;
 
   const nextSlide = () => {
@@ -134,12 +164,12 @@ const HomePage: React.FC = () => {
                 src={item.src}
                 alt={item.alt}
                 key={idx}
-                className={slide === idx ? "slide" : "slide slide-hidden"}
+                className={slide === idx ? 'slide' : 'slide slide-hidden'}
               />
             );
           })}
           <KeyboardArrowRightIcon
-            sx={{ color: "red" }}
+            sx={{ color: 'red' }}
             onClick={nextSlide}
             className="arrow arrow-right"
           />
@@ -149,7 +179,7 @@ const HomePage: React.FC = () => {
                 <button
                   key={idx}
                   className={
-                    slide === idx ? "indicator" : "indicator indicator-inactive"
+                    slide === idx ? 'indicator' : 'indicator indicator-inactive'
                   }
                   onClick={() => setSlide(idx)}
                 ></button>
@@ -164,7 +194,7 @@ const HomePage: React.FC = () => {
           mb={4}
           variant="h2"
           fontWeight={600}
-          sx={{ textTransform: "uppercase", color: "var(--primary-color)" }}
+          sx={{ textTransform: 'uppercase', color: 'var(--primary-color)' }}
         >
           Các dịch vụ chính
         </Typography>
@@ -173,10 +203,10 @@ const HomePage: React.FC = () => {
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Card
                 sx={{
-                  "&:hover": {
+                  '&:hover': {
                     boxShadow: 6,
-                    transform: "scale(1.05)",
-                    transition: "transform 0.2s",
+                    transform: 'scale(1.05)',
+                    transition: 'transform 0.2s',
                   },
                 }}
                 elevation={4}
@@ -186,9 +216,9 @@ const HomePage: React.FC = () => {
                   <Typography
                     variant="h5"
                     sx={{
-                      color: "var(--primary-color)",
-                      cursor: "pointer",
-                      textTransform: "uppercase",
+                      color: 'var(--primary-color)',
+                      cursor: 'pointer',
+                      textTransform: 'uppercase',
                       fontWeight: 600,
                     }}
                     onClick={() => {
@@ -208,22 +238,22 @@ const HomePage: React.FC = () => {
           mb={2}
           variant="h2"
           fontWeight={600}
-          sx={{ textTransform: "uppercase", color: "var(--primary-color)" }}
+          sx={{ textTransform: 'uppercase', color: 'var(--primary-color)' }}
         >
           Các Gói Combo
         </Typography>
         <Box
           ref={scrollRef}
           sx={{
-            display: "flex",
-            overflowX: "auto",
-            "&::-webkit-scrollbar": {
-              display: "none",
+            display: 'flex',
+            overflowX: 'auto',
+            '&::-webkit-scrollbar': {
+              display: 'none',
             },
-            msOverflowStyle: "none",
-            scrollbarWidth: "none",
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
             gap: 2,
-            cursor: "grab",
+            cursor: 'grab',
             padding: 2,
           }}
           onMouseDown={handleMouseDown}
@@ -236,23 +266,23 @@ const HomePage: React.FC = () => {
               key={index}
               sx={{
                 minWidth: 300,
-                "&:hover": {
+                '&:hover': {
                   boxShadow: 6,
-                  transform: "scale(1.05)",
-                  transition: "transform 0.2s",
+                  transform: 'scale(1.05)',
+                  transition: 'transform 0.2s',
                 },
               }}
               elevation={3}
             >
               <CardMedia sx={{ height: 200 }} image={service.imageSmall} />
-              <CardContent sx={{textAlign: 'left'}}>
+              <CardContent sx={{ textAlign: 'left' }}>
                 <Typography
                   variant="h5"
                   sx={{
-                    color: "var(--primary-color)",
-                    cursor: "pointer",
+                    color: 'var(--primary-color)',
+                    cursor: 'pointer',
                     textTransform: 'uppercase',
-                    fontWeight: 600
+                    fontWeight: 600,
                   }}
                   onClick={() => {
                     navigate(`/services/details/sfa`);
@@ -261,7 +291,10 @@ const HomePage: React.FC = () => {
                   {service.label}
                 </Typography>
                 <Typography fontSize={14}> 4 dịch vụ</Typography>
-                <Typography fontSize={14} fontWeight={600}> {(20000000).toLocaleString('vi-VN')} VND</Typography>
+                <Typography fontSize={14} fontWeight={600}>
+                  {' '}
+                  {(20000000).toLocaleString('vi-VN')} VND
+                </Typography>
               </CardContent>
             </Card>
           ))}
@@ -273,42 +306,46 @@ const HomePage: React.FC = () => {
           mb={4}
           variant="h2"
           fontWeight={600}
-          sx={{ textTransform: "uppercase", color: "var(--primary-color)" }}
+          sx={{ textTransform: 'uppercase', color: 'var(--primary-color)' }}
         >
           Cẩm nang cưới
         </Typography>
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-around",
-            flexWrap: "wrap",
+            display: 'flex',
+            justifyContent: 'space-around',
+            flexWrap: 'wrap',
           }}
         >
           {blogs.map((blog, index) => (
-            <Card key={index} sx={{
-               width: 250, m: 2 ,
-               cursor: 'pointer',
-               "&:hover": {
+            <Card
+              key={index}
+              sx={{
+                width: 250,
+                m: 2,
+                cursor: 'pointer',
+                '&:hover': {
                   boxShadow: 6,
-                  transform: "scale(1.05)",
-                  transition: "transform 0.2s",
+                  transform: 'scale(1.05)',
+                  transition: 'transform 0.2s',
                 },
-               }} elevation={3}
-               onClick={() => {
-                navigate("/blogs/details/sdaf");
               }}
-               >
+              elevation={3}
+              onClick={() => {
+                navigate('/blogs/details/sdaf');
+              }}
+            >
               <CardMedia sx={{ height: 200 }} image={blog.image} />
-              <CardContent sx={{ textAlign: "left" }}>
+              <CardContent sx={{ textAlign: 'left' }}>
                 <Typography
                   gutterBottom
                   variant="h4"
                   sx={{
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
                     WebkitLineClamp: 2,
-                    textOverflow: "ellipsis",
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   {blog.title}
@@ -325,11 +362,11 @@ const HomePage: React.FC = () => {
                   color="text.secondary"
                   sx={{
                     mt: 1,
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
                     WebkitLineClamp: 3,
-                    textOverflow: "ellipsis",
+                    textOverflow: 'ellipsis',
                   }}
                 >
                   {blog.description}
@@ -337,33 +374,34 @@ const HomePage: React.FC = () => {
               </CardContent>
             </Card>
           ))}
-          <Card sx={{ width: 250, m: 2,
-            "&:hover": {
-                  boxShadow: 6,
-                  transform: "scale(1.05)",
-                  transition: "transform 0.2s",
-                },
-
-           }} elevation={3}
-           onClick={() => {
-            navigate("/blogs");
-          }}
-           >
+          <Card
+            sx={{
+              width: 250,
+              m: 2,
+              '&:hover': {
+                boxShadow: 6,
+                transform: 'scale(1.05)',
+                transition: 'transform 0.2s',
+              },
+            }}
+            elevation={3}
+            onClick={() => {
+              navigate('/blogs');
+            }}
+          >
             <CardContent
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-                height: "100%",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                height: '100%',
               }}
             >
               <ArrowForwardIcon
-                sx={{ fontSize: 40, mb: 1, color: "var(--primary-color)" ,
-
-                }}
+                sx={{ fontSize: 40, mb: 1, color: 'var(--primary-color)' }}
               />
-              <Typography variant="h4" sx={{ color: "var(--primary-color)" }}>
+              <Typography variant="h4" sx={{ color: 'var(--primary-color)' }}>
                 Xem thêm
               </Typography>
             </CardContent>

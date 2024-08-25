@@ -3,7 +3,7 @@ interface CartItem {
   name: string;
   price: number;
   image: string;
-  promotion: number;
+  promotion: any;
   quantity: number;
 }
 
@@ -21,12 +21,16 @@ export const addToCart = (item: CartItem): void => {
     cart.push(item);
   }
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  const event = new CustomEvent('cartUpdated');
+  window.dispatchEvent(event);
 };
 
 export const removeFromCart = (id: string): void => {
   let cart = getCart();
   cart = cart.filter((cartItem) => cartItem.id !== id);
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  const event = new CustomEvent('cartUpdated');
+  window.dispatchEvent(event);
 };
 
 export const clearCart = (): void => {

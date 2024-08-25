@@ -14,7 +14,7 @@ export interface VenueCardProps {
   title: string;
   price: number;
   description: string;
-  promotion?: number;
+  promotion?: any;
   rating: number;
   location: string;
   quantity: number;
@@ -55,7 +55,7 @@ const ItemCardView: React.FC<VenueCardProps> = ({
               <Typography component="div" variant="h4" fontWeight={600}>
                 {title}
               </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'bottom' }}>
+              <Box sx={{ mb: 3, display: 'flex', alignItems: 'bottom' }}>
                 <Rating
                   name="text-feedback"
                   value={rating}
@@ -75,7 +75,21 @@ const ItemCardView: React.FC<VenueCardProps> = ({
                   {rating}
                 </Typography>
               </Box>
-              <Typography mt={3} fontSize={14} fontWeight={600}>
+              {promotion ? (
+                promotion?.type === 'MONEY' ? (
+                  <Typography fontSize={14} fontWeight={500} color={'red'}>
+                    Khuyến mãi: {promotion?.value.toLocaleString()} VNĐ
+                  </Typography>
+                ) : (
+                  <Typography fontSize={14} fontWeight={500} color={'red'}>
+                    Khuyến mãi: {promotion?.value} %
+                  </Typography>
+                )
+              ) : (
+                <></>
+              )}
+
+              <Typography fontSize={14} fontWeight={600}>
                 Giá: {price.toLocaleString()} VNĐ
               </Typography>
               <Typography fontSize={14} fontWeight={600}>
@@ -94,11 +108,6 @@ const ItemCardView: React.FC<VenueCardProps> = ({
               >
                 {description}
               </Typography>
-              {promotion && (
-                <Typography mt={1} fontSize={14} fontWeight={500} color={'red'}>
-                  Khuyến mãi: {promotion}%
-                </Typography>
-              )}
             </Grid>
           </Grid>
         </CardContent>

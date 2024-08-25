@@ -148,10 +148,10 @@ const ItemServiceViewCard: React.FC<VenueCardProps> = ({
                 promotion: 0,
                 quantity: 1,
               });
-              window.location.href = '/quotation';
+              // window.location.href = '/quotation';
             }}
           >
-            Thêm vào giỏ hàng
+            Đặt hàng
           </Button>
           <RequestPricePopup
             open={open}

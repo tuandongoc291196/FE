@@ -21,6 +21,14 @@ export const PROCESS_STATUS_VN = {
   active: 'Hoat động',
   rejected: 'Bị từ chối',
   inactive: 'Vô hiệu hóa',
+  cancel: 'Đã hủy',
+  approved: 'Đã duyệt',
+  reject: 'Bị từ chối',
+  processing: 'Đang xử lý',
+  completed: 'Đã hoàn thành',
+  deposited: 'Đã đặt cọc',
+  done: 'Hoàn tất',
+  canceled: 'Đã hủy',
 };
 
 export const PROMOTION_TYPES = {

@@ -34,8 +34,13 @@ const BookingHistory: React.FC = () => {
     setLoading(true);
     const res = await getBookingHistoryByCoupleId(user.userId, user.token);
     if (res) {
-      setData(res);
-      setFilteredData(res); // Set initial filtered data
+      // Sắp xếp data theo ngày tạo đơn từ mới đến cũ
+      const sortedData = res.sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setData(sortedData);
+      setFilteredData(sortedData); // Set initial filtered data
     }
     setLoading(false);
   };

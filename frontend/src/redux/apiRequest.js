@@ -552,7 +552,7 @@ export const processingBookingDetail = async (id, token) => {
     key: 'value',
   };
   fetch(
-    'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
+    'https://thedaywedding-hkaybdgafndhecbn.southeastasia-01.azurewebsites.net' +
       UPDATE_CONFIRM_PROCESSING_STATUS +
       `?id=${id}`,
     {
@@ -574,7 +574,7 @@ export const doneBookingDetail = async (id, token) => {
     key: 'value',
   };
   fetch(
-    'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
+    'https://thedaywedding-hkaybdgafndhecbn.southeastasia-01.azurewebsites.net' +
       UPDATE_CONFIRM_DONE_STATUS +
       `?id=${id}`,
     {
@@ -597,7 +597,7 @@ export const confirmBookingDetail = async (id, token) => {
     key: 'value',
   };
   fetch(
-    'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
+    'https://thedaywedding-hkaybdgafndhecbn.southeastasia-01.azurewebsites.net' +
       UPDATE_CONFIRM_BOOKING_STATUS +
       `?id=${id}`,
     {
@@ -617,7 +617,7 @@ export const confirmBookingDetail = async (id, token) => {
 
 export const rejectBookingDetail = async (data, token) => {
   fetch(
-    'https://the-day-eqh7h5gwadbga9fe.eastus-01.azurewebsites.net' +
+    'https://thedaywedding-hkaybdgafndhecbn.southeastasia-01.azurewebsites.net' +
       UPDATE_REJECT_BOOKING_STATUS,
     {
       method: 'PUT',

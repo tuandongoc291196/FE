@@ -31,9 +31,14 @@ export const PROCESS_STATUS_VN = {
   canceled: 'Đã hủy',
 };
 
-export const PROMOTION_TYPES = {
-  percent: 'PERCENT',
-  money: 'MONEY',
+export const PROMOTION_TYPE_MONEY = {
+  id: 'MONEY',
+  name: 'Tiền',
+};
+
+export const PROMOTION_TYPE_PERCENT = {
+  id: 'PERCENT',
+  name: 'Phần trăm',
 };
 
 export const ALL_SELECT = {

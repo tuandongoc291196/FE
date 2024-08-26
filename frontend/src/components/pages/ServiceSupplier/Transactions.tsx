@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { TransactionItem } from '../../../types/schema/transaction';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { CircularProgress } from '@mui/material';
+import { currencyMaskString } from '../../../constants/convert';
 
 
 interface Props {
@@ -31,8 +32,7 @@ const Transactions: FC<Props> = (props) => {
 
     const rows = transactions?.length > 0 ? transactions?.map((transaction) => ({
         id: transaction.id.split("WALLET-HISTORY-")[1],
-        amount: transaction.amount,
-        type: transaction.type,
+        amount: currencyMaskString(transaction.amount),
         createDate: transaction.createDate,
         description: transaction.description,
         walletId: transaction.walletId
@@ -41,7 +41,6 @@ const Transactions: FC<Props> = (props) => {
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID", flex: 0.3 },
         { field: "amount", headerName: "Số dư", flex: 0.5 },
-        { field: "type", headerName: "Loại", flex: 0.3 },
         { field: "createDate", headerName: "Thời gian giao dịch", flex: 0.5 },
         { field: "description", headerName: "Chi tiết", flex: 1.2 },
     ];

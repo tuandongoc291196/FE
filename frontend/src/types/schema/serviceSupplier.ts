@@ -43,7 +43,7 @@ export interface ServiceSupplierDetail {
     listImages: Array<String>,
     type: String,
     createAt: String,
-    price: String,
+    price: Number,
     status: String,
     supplierResponse: any,
     serviceResponse: ServiceItem,

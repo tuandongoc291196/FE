@@ -8,15 +8,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router';
 import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Modal, Select, Typography } from '@mui/material';
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
-import { ALL_SELECT, ECONOMY_SEGMENT, LUXURY_SEGMENT } from '../../../constants/consts';
-import { createService, createServiceSupplier, getListCategories, getPromotionBySupplier, getServicesByCategoryId, getServicesSupplierFilter } from '../../../redux/apiRequest';
+import { ECONOMY_SEGMENT, LUXURY_SEGMENT } from '../../../constants/consts';
+import { createServiceSupplier, getListCategories, getPromotionBySupplier, getServicesByCategoryId, getServicesSupplierFilter } from '../../../redux/apiRequest';
 import { CategoryItem } from '../../../types/schema/category';
 import { useDispatch, useSelector } from 'react-redux';
 import { PromotionItem } from '../../../types/schema/promotion';
-import { ServiceSupplierItem, ServiceSupplierListResponse } from '../../../types/schema/serviceSupplier';
+import { ServiceSupplierItem } from '../../../types/schema/serviceSupplier';
 import { ServiceItem } from '../../../types/schema/service';
+import { currencyMask, currencyMaskString, currencyToNumber } from '../../../constants/convert';
 
 interface Props {
     setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -141,6 +140,10 @@ const Services: FC<Props> = (props) => {
         }
     }
 
+    const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setPrice(e.target.value);
+    }
+
     const fetchCategoriesCreate = async () => {
         const response = await getListCategories(0, 10);
         if (response)
@@ -248,7 +251,7 @@ const Services: FC<Props> = (props) => {
                 images: getImagesPayload,
                 promotionId: (promotion?.id == 'none') ? '' : promotion?.id,
                 name: serviceName,
-                price: parseInt(price),
+                price: currencyToNumber(price),
                 supplierId: user?.userId,
                 type: segment.id,
             }
@@ -276,7 +279,7 @@ const Services: FC<Props> = (props) => {
         rating: service?.rating,
         // promotion: (service?.promotionService) ? service?.promotionService.percent + "%" : "",
         createAt: service?.createAt,
-        price: service?.price,
+        price: currencyMaskString(parseInt(`${service?.price}`)),
         type: service?.type,
         status: service?.status,
         promotionName: service?.promotion?.name
@@ -422,7 +425,9 @@ const Services: FC<Props> = (props) => {
                                 <label>Giá:</label>
                                 <div className="form-input price">
                                     <div className="form-input price-input">
-                                        <input type="Username" placeholder={price} className="input regis-input" required onChange={(e) => { setPrice(e.target.value) }} />
+                                        <input type="text" value={price} className="input regis-input" required onChange={(e) => {
+                                            handleChangePrice(currencyMask(e));
+                                        }} />
                                         <span className="text-err"></span>
                                     </div>
                                 </div>

@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { ServiceCreate, ServiceUpdate } from '../../../types/entity/Entity';
 import { SegmentItem } from '../../../types/schema/segment';
+import { currencyMask, currencyMaskString } from '../../../constants/convert';
 
 interface Props {
   setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -73,7 +74,7 @@ const ServiceDetail: FC<Props> = (props) => {
       fetchPromotions();
       setServiceName(`${serviceDetail?.name}`);
       setDescription(`${serviceDetail?.description}`);
-      setPrice(`${serviceDetail?.price}`);
+      (serviceDetail?.price) && setPrice(currencyMaskString(serviceDetail?.price));
       setImages(serviceDetail?.listImages?.map(image => image.toString()) ?? []);
       setSegment(segments?.find((seg) => seg.id === serviceDetail?.type) ?? undefined);
     } catch (error) {
@@ -96,6 +97,10 @@ const ServiceDetail: FC<Props> = (props) => {
       await getServiceSupplierById(id);
     setServiceDetail(response);
     setIsLoading(false);
+  }
+
+  const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPrice(e.target.value);
   }
 
   const uploadImage = async (files: FileList | null) => {
@@ -220,7 +225,7 @@ const ServiceDetail: FC<Props> = (props) => {
               </div>
               <div className="information-container">
                 <h1 className="header">{serviceDetail?.name}</h1>
-                <span className="service-price">{`${serviceDetail?.price}`} VNĐ</span>
+                <span className="service-price">{(serviceDetail?.price) && currencyMaskString(serviceDetail?.price)} VNĐ</span>
                 <div className="underline"></div>
                 <div className="description">
                   <p className="description-header">Chi tiết</p>
@@ -312,7 +317,9 @@ const ServiceDetail: FC<Props> = (props) => {
                     <label>Giá:</label>
                     <div className="form-input price">
                       <div className="form-input price-input">
-                        <input type="Username" value={price} className="input regis-input" required onChange={(e) => { setPrice(e.target.value) }} />
+                        <input type="text" value={price} className="input regis-input" required onChange={(e) => {
+                          handleChangePrice(currencyMask(e));
+                        }} />
                         <span className="text-err"></span>
                       </div>
                     </div>

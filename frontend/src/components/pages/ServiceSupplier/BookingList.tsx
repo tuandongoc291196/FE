@@ -19,6 +19,7 @@ import { BookingDetailItem, BookingItem } from '../../../types/schema/booking';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 var bookingDetailIdItem = "";
+var bookingDetailWeddingDateItem = "";
 interface Props {
     setMessageStatus: Dispatch<SetStateAction<string>>;
     setMessage: Dispatch<SetStateAction<string>>;
@@ -144,14 +145,14 @@ const BookingList: FC<Props> = (props) => {
         id: booking.id,
         idDisplay: booking.id.split("BOOKING-")[1],
         coupleName: booking.coupleResponse.account.name,
-        weddingDate: booking.coupleResponse.weddingDate,
+        weddingDate: booking.weddingDate,
         createAt: booking.createAt,
         status: convertStatusName(`${booking.status}`),
         booking: booking
     })) : [];
 
     const columns: GridColDef[] = [
-        { field: "id", headerName: "ID", flex: 0.5 },
+        { field: "idDisplay", headerName: "ID", flex: 0.5 },
         { field: "coupleName", headerName: "Tên couple", flex: 0.5 },
         { field: "weddingDate", headerName: "Ngày cưới", flex: 0.5 },
         { field: "status", headerName: "Trạng thái", flex: 0.5 },
@@ -164,7 +165,8 @@ const BookingList: FC<Props> = (props) => {
                 <>
                     <Button style={{ fontSize: '1.2rem' }} className="btn-admin-disable" onClick={() => {
                         handleOpen()
-                        bookingDetailIdItem = params.row.id
+                        bookingDetailIdItem = params.row.id;
+                        bookingDetailWeddingDateItem = params.row.weddingDate;
                         try {
                             fetchBookingDetails();
                         } catch (error) {
@@ -322,7 +324,7 @@ const BookingList: FC<Props> = (props) => {
                             <div className="group-input mb-24">
                                 <label className='booking-detail-label'>Ngày cưới:</label>
                                 <div className="form-input">
-                                    <span className='booking-detail-info' >{bookingDetails[0]?.couple.weddingDate}</span>
+                                    <span className='booking-detail-info' >{bookingDetailWeddingDateItem}</span>
                                 </div>
                             </div>
                             <div className="group-input mb-24">

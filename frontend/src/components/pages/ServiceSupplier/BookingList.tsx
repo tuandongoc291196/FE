@@ -18,6 +18,7 @@ import "./BookingList.css";
 import { BookingDetailItem, BookingItem } from '../../../types/schema/booking';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import { currencyMaskString } from '../../../constants/convert';
 var bookingDetailIdItem = "";
 var bookingDetailWeddingDateItem = "";
 interface Props {
@@ -191,7 +192,7 @@ const BookingList: FC<Props> = (props) => {
                 id: item.bookingDetailId,
                 name: item.serviceSupplierResponse.name,
                 completedDate: item.completedDate,
-                price: item.price,
+                price: currencyMaskString(parseInt(`${item.price}`)),
                 note: item.note,
                 status: convertStatusName(`${item.status}`),
             })) : [];
@@ -330,7 +331,7 @@ const BookingList: FC<Props> = (props) => {
                             <div className="group-input mb-24">
                                 <label className='booking-detail-label'>Tổng tiền:</label>
                                 <div className="form-input">
-                                    <span className='booking-detail-info' >{bookingDetails.reduce((sum, item) => sum + parseInt(item.price.toString()), 0)}</span>
+                                    <span className='booking-detail-info' >{currencyMaskString(bookingDetails.reduce((sum, item) => sum + parseInt(item.price.toString()), 0))}</span>
                                 </div>
                             </div>
                         </div>

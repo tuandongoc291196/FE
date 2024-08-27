@@ -145,3 +145,8 @@ body {
 #btn-show-detail {
     font-size: 1.5rem !important;
 }
+
+.MuiChartsAxis-left {
+    width: 80px;
+    /* Increase this value to make the container wider */
+}

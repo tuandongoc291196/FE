@@ -41,10 +41,36 @@ export const PROMOTION_TYPE_PERCENT = {
   name: 'Phần trăm',
 };
 
+export const SELECT_STAFF = {
+  name: 'NHÂN VIÊN',
+  id: 'STAFF',
+};
+
+export const SELECT_COUPLE = {
+  name: 'KHÁCH HÀNG',
+  id: 'COUPLE',
+};
+
+export const SELECT_SUPPLIER = {
+  name: 'NHÀ CUNG CẤP',
+  id: 'SUPPLIER',
+};
+
 export const ALL_SELECT = {
   name: 'TẤT CẢ',
   id: 'all',
 };
+
+export const ACTIVATED = {
+  name: 'ĐANG HOẠT ĐỘNG',
+  id: 'ACTIVATED',
+};
+
+export const DISABLED = {
+  name: 'NGƯNG HOẠT ĐỘNG',
+  id: 'DISABLED',
+};
+
 export const AVAILABLE_PRICE = 'Giá sẵn';
 export const CONTACT_PRICE = 'Giá liên hệ';
 
@@ -71,3 +97,18 @@ export const BOOKING_STATUS = {
 
 export const LOGO =
   'https://firebasestorage.googleapis.com/v0/b/weddingwise-daa83.appspot.com/o/images%2FD.png?alt=media&token=9d52357b-9b9f-4be7-ab78-8ef0889f0fd6';
+
+export const MONTHS = [
+  'Tháng 1',
+  'Tháng 2',
+  'Tháng 3',
+  'Tháng 4',
+  'Tháng 5',
+  'Tháng 6',
+  'Tháng 7',
+  'Tháng 8',
+  'Tháng 9',
+  'Tháng 10',
+  'Tháng 11',
+  'Tháng 12'
+]

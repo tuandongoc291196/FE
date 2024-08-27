@@ -178,7 +178,7 @@ const Register: FC<Props> = (props) => {
             <div className="item">
               <FontAwesomeIcon
                 icon={faArrowLeft}
-                className="icon icon-back"
+                className="icon-back"
                 onClick={() => {
                   setIsInput(false);
                 }}
@@ -259,7 +259,7 @@ const Register: FC<Props> = (props) => {
             <div className="item">
               <FontAwesomeIcon
                 icon={faArrowLeft}
-                className="icon icon-back"
+                className="icon-back"
                 onClick={() => {
                   setIsInput(false);
                 }}

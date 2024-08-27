@@ -47,6 +47,9 @@ import Footer from './components/modules/Footer/Footer';
 import BookingHistoryDetail from './components/pages/BookingHistory/BookingHistoryDetail';
 import TransactionHistory from './components/pages/TransactionHistory/TransactionHistory';
 import WalletHistory from './components/pages/WalletHistory/WalletHistory';
+import AdminDashboard from './components/pages/Admin/AdminDashboard';
+import Deposit from './components/pages/Admin/Deposit';
+import AdminTransaction from './components/pages/Admin/AdminTransaction';
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -137,9 +140,35 @@ function App() {
           {/* Admin */}
           <Route element={<ProtectedRoute requiredRole={ROLE.admin} />}>
             <Route
-              path="/staff"
+              path="/staffs"
               element={
                 <StaffList
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
+            <Route
+              path="/dashboards"
+              element={
+                <AdminDashboard
+
+                />
+              }
+            />
+            <Route
+              path="/deposit"
+              element={
+                <Deposit
+                  setMessage={setMessage}
+                  setMessageStatus={setMessageStatus}
+                />
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <AdminTransaction
                   setMessage={setMessage}
                   setMessageStatus={setMessageStatus}
                 />

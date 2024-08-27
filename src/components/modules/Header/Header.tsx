@@ -115,10 +115,9 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
               <li
                 className={
                   `nav-item` +
-                  `${
-                    item.navigate == location.pathname
-                      ? ' nav-item-selected'
-                      : ''
+                  `${item.navigate == location.pathname
+                    ? ' nav-item-selected'
+                    : ''
                   }`
                 }
                 onClick={() => {
@@ -303,20 +302,26 @@ const Header: React.FC<HeaderProps> = ({ isModalVisible, setModalVisible }) => {
                   <FontAwesomeIcon icon={faAddressCard} />
                   <span className="profile-select">Cá nhân</span>
                 </div>
-                <div
-                  className="dropdown-option"
-                  onClick={() => navigate('/transaction-history')}
-                >
-                  <FontAwesomeIcon icon={faCreditCard} />
-                  <span className="profile-select">Lịch sử thanh toán</span>
-                </div>
-                <div
-                  className="dropdown-option"
-                  onClick={() => navigate('/wallet-history')}
-                >
-                  <FontAwesomeIcon icon={faWallet} />
-                  <span className="profile-select">Lịch sử ví</span>
-                </div>
+                {
+                  user?.roleName == ROLE.couple && (
+                    <>
+                      <div
+                        className="dropdown-option"
+                        onClick={() => navigate('/transaction-history')}
+                      >
+                        <FontAwesomeIcon icon={faCreditCard} />
+                        <span className="profile-select">Lịch sử thanh toán</span>
+                      </div>
+                      <div
+                        className="dropdown-option"
+                        onClick={() => navigate('/wallet-history')}
+                      >
+                        <FontAwesomeIcon icon={faWallet} />
+                        <span className="profile-select">Lịch sử ví</span>
+                      </div>
+                    </>
+                  )
+                }
                 <div className="dropdown-option" onClick={logoutHandler}>
                   <FontAwesomeIcon icon={faRightFromBracket} />
                   <span className="profile-select">Đăng xuất</span>

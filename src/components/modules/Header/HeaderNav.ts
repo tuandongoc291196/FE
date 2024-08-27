@@ -5,16 +5,20 @@ export const HeaderNav = [
         user: ROLE.admin,
         items: [
             {
-                name: "nhân viên",
+                name: "Bảng điều khiển",
+                navigate: "/dashboards"
+            },
+            {
+                name: "tài khoản",
                 navigate: "/staffs"
             },
             {
-                name: "nhà cung cấp",
-                navigate: "/suppliers"
+                name: "thanh toán",
+                navigate: "/transactions"
             },
             {
-                name: "khách hàng",
-                navigate: "/couples"
+                name: "nạp tiền",
+                navigate: "/deposit"
             }
         ]
     },

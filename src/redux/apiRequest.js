@@ -5,19 +5,25 @@ import {
   ACCOUNT_REGISTER_COUPLE,
   ACCOUNT_REGISTER_STAFF,
   ACCOUNT_REGISTER_SUPPLIER,
+  ACTIVATED_BY_ADMIN,
   CANCEL_BOOKING,
   CREATE_CATEGORY,
   CREATE_PROMOTION,
   CREATE_SERVICE,
   CREATE_SERVICE_SUPPLIER,
+  DISABLED_BY_ADMIN,
   GET_ACTIVE_BLOGS,
+  GET_ALL_ACCOUNT_BY_ADMIN,
+  GET_ALL_ACCOUNT_BY_ROLE,
   GET_ALL_BLOGS,
   GET_ALL_CATEGORIES,
+  GET_ALL_COUPLE_BY_ADMIN,
   GET_BALANCE_WALLET,
   GET_BOOKING_BY_COUPLE,
   GET_BOOKING_BY_ID,
   GET_BOOKING_BY_SUPPLIER,
   GET_BOOKING_DETAIL_BY_SUPPLIER_ID,
+  GET_BY_ADMIN,
   GET_COUPLE_BY_ID,
   GET_PENDING_BLOGS,
   GET_PROMOTION_BY_SUPPLIER,
@@ -28,16 +34,21 @@ import {
   GET_SERVICE_SUPPLIER_FILTER,
   GET_SUPPLIERS_BLOGS,
   GET_TRANSACTION_BY_COUPLE,
+  GET_TRANSACTION_SUMMARY_DETAIL,
+  GET_TRANSACTION_SUMMARY_STATISTIC,
   GET_WALLET_HISTORY,
   GET_WALLET_HISTORY_BY_COUPLE,
   POST_BOOKING,
   RATING_BOOKING,
   REQUEST_PAYMENT,
+  TOP_UP_BY_STAFF,
   UPDATE_CONFIRM_BOOKING_STATUS,
   UPDATE_CONFIRM_DONE_STATUS,
   UPDATE_CONFIRM_PROCESSING_STATUS,
+  UPDATE_COUPLE_PROFILE,
   UPDATE_REJECT_BOOKING_STATUS,
   UPDATE_SERVICE_SUPPLIER,
+  UPDATE_SUPPLIER_PROFILE,
 } from '../constants/API_URLS';
 import { PROCESS_STATUS, ROLE, STATUS } from '../constants/consts';
 import { LOGIN_SUCCESS } from '../message/authen/Login';
@@ -143,6 +154,21 @@ export const registerCouple = async (newUser, navigate, dispatch) => {
 export const registerSupplier = async (newUser, navigate, dispatch) => {
   try {
     const res = await axios.post(ACCOUNT_REGISTER_SUPPLIER, newUser);
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getAllCoupleByAdmin = async (token) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.get(GET_ALL_COUPLE_BY_ADMIN + "?isAscending=true&pageNo=0&pageSize=10&sortBy=id", {
+      headers: headers,
+    });
+    return res.data.data
   } catch (error) {
     return error;
   }
@@ -362,6 +388,21 @@ export const getBookingBySupplierId = async (id, token) => {
   };
   try {
     const res = await axios.get(GET_BOOKING_BY_SUPPLIER + `?supplierId=${id}`, {
+      headers: headers,
+    });
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getBookingByAdmin = async (token) => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.get(GET_BY_ADMIN + "?isAscending=true&pageNo=0&pageSize=10&sortBy=id", {
       headers: headers,
     });
     return res.data.data;
@@ -660,6 +701,192 @@ export const getWalletHistory = async (id, token) => {
     const res = await axios.get(
       GET_WALLET_HISTORY +
         `?isAscending=true&pageNo=0&pageSize=100&sortBy=id&walletId=${id}`,
+      {
+        headers: headers,
+      }
+    );
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const topupWallet = async (data, token) => {
+  fetch(
+    'https://thedaywedding-hkaybdgafndhecbn.southeastasia-01.azurewebsites.net' +
+      TOP_UP_BY_STAFF,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error('Error:', error));
+  return data.status;
+};
+
+// Account
+
+export const updateCoupleProfile = async (couple, token) => {
+  const data = {
+    key: 'value',
+  };
+  fetch(
+    'https://thedaywedding-hkaybdgafndhecbn.southeastasia-01.azurewebsites.net' +
+      UPDATE_COUPLE_PROFILE,
+      couple,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => console.log(data.status))
+    .catch((error) => console.error('Error:', error));
+  return data.status;
+};
+
+export const updateSupplierProfile = async (supplier, token) => {
+  const data = {
+    key: 'value',
+  };
+  fetch(
+    'https://thedaywedding-hkaybdgafndhecbn.southeastasia-01.azurewebsites.net' +
+      UPDATE_SUPPLIER_PROFILE,
+      supplier,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => console.log(data.status))
+    .catch((error) => console.error('Error:', error));
+  return data.status;
+};
+export const activatedByAdmin = async (id, token) => {
+  const data = {
+    key: 'value',
+  };
+  fetch(
+    'https://thedaywedding-hkaybdgafndhecbn.southeastasia-01.azurewebsites.net' +
+      ACTIVATED_BY_ADMIN +
+      `?id=${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => console.log(data.status))
+    .catch((error) => console.error('Error:', error));
+  return data.status;
+};
+
+
+export const disabledByAdmin = async (
+  id,
+  token
+): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.delete(DISABLED_BY_ADMIN + `?id=${id}`, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getAllAccountByRole = async (role, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(
+      GET_ALL_ACCOUNT_BY_ROLE +
+        `?pageNo=0&pageSize=10&role=${role}`,
+      {
+        headers: headers,
+      }
+    );
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getAllAccountByAdmin = async (token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(
+      GET_ALL_ACCOUNT_BY_ADMIN +
+        `?pageNo=0&pageSize=100`,
+      {
+        headers: headers,
+      }
+    );
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+// Transaction
+export const getTransactionSummaryDetail = async (id, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(
+      GET_TRANSACTION_SUMMARY_DETAIL +
+        `?bookingId=${"BOOKING-30"}`,
+      {
+        headers: headers,
+      }
+    );
+    console.log(res.data.data.supplierAmountDetails)
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getTransactionSummaryStatistic = async (year, token) => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    const res = await axios.get(
+      GET_TRANSACTION_SUMMARY_STATISTIC +
+        `?year=${year}`,
       {
         headers: headers,
       }

@@ -8,3 +8,14 @@ export interface CoupleItem {
     weddingDate: String;
     account: AccountItem;
 }
+
+export interface CoupleUpdate {
+    address: String,
+    coupleId: String,
+    image: String,
+    name: String,
+    partnerName1: String,
+    partnerName2: String,
+    phoneNumber: String,
+    weddingDate: String,
+}

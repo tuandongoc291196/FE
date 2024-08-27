@@ -11,3 +11,14 @@ export interface AccountItem {
     provider: String;
     role: RoleItem;
 }
+
+export interface AccountResponse {
+    id: String,
+    roleName: String,
+    name: String,
+    email: String,
+    phoneNumber: String,
+    status: String,
+    image: String,
+    address: String,
+}

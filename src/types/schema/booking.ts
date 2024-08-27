@@ -29,3 +29,14 @@ export interface BookingItem {
     status: String,
     totalPrice: Number
 }
+
+export interface AdminBookingItem {
+    id: String,
+    weddingDate: String,
+    couple: CoupleItem
+    listBookingDetail: String,
+    note: String,
+    totalPrice: Number,
+    createdAt: String,
+    status: String,
+}

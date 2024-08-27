@@ -84,6 +84,7 @@
 }
 
 #ServiceDetail .promotion {
+    text-align: center;
     color: var(--primary-color);
     font-size: 1.8rem;
     font-weight: 700;

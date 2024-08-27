@@ -3,3 +3,8 @@ export interface Route {
   icon?: JSX.Element;
   path: string;
 }
+
+export interface SelectItem {
+  id: String,
+  name: String
+}

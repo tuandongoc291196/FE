@@ -27,6 +27,7 @@ export const REQUEST_PAYMENT = '/payment/request';
 export const GET_BOOKING_BY_COUPLE = '/booking/getByCouple';
 export const CANCEL_BOOKING = '/booking-service/cancle';
 export const RATING_BOOKING = '/rating/create';
+export const GET_BY_ADMIN = '/booking/getByAdmin';
 
 export const GET_TRANSACTION_BY_COUPLE =
   '/transaction/getCoupleTransactionsHistoryByFilter';
@@ -53,6 +54,22 @@ export const GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID =
 
 // Wallet
 export const GET_BALANCE_WALLET = '/wallet/balance';
+export const TOP_UP_BY_STAFF = '/wallet/topUpByStaff';
 
 // Wallet history
 export const GET_WALLET_HISTORY = '/wallet-history/byFilter';
+
+// Account
+export const GET_ALL_ACCOUNT_BY_ROLE = '/account/getAllAccountByRole';
+export const GET_ALL_ACCOUNT_BY_ADMIN = '/account/getAllAccountByAdmin';
+export const ACTIVATED_BY_ADMIN = '/account/activateAccountByAdmin';
+export const DISABLED_BY_ADMIN = '/account/disableAccountByAdmin';
+export const UPDATE_COUPLE_PROFILE = '/account/updateCoupleProfile';
+export const UPDATE_SUPPLIER_PROFILE = '/account/updateSupplierProfile';
+
+// Couple
+export const GET_ALL_COUPLE_BY_ADMIN = '/couple/getAllCoupleByAdmin';
+
+// Transaction summary
+export const GET_TRANSACTION_SUMMARY_DETAIL = '/transaction-summary/detail';
+export const GET_TRANSACTION_SUMMARY_STATISTIC = '/transaction-summary/statistic';

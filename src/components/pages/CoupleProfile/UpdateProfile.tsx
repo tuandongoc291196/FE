@@ -20,7 +20,7 @@ const UpdateProfile: React.FC = () => {
 
   const [profile, setProfile] = useState({
     name: user?.name,
-    phone: user?.phone,
+    phoneNumber: user?.phoneNumber,
     email: user?.email,
     logo: '',
     password: '',
@@ -63,7 +63,7 @@ const UpdateProfile: React.FC = () => {
     console.log(
       'Updating user info:',
       profile.name,
-      profile.phone,
+      profile.phoneNumber,
       profile.email
     );
   };
@@ -119,7 +119,7 @@ const UpdateProfile: React.FC = () => {
           <TextField
             label="Phone"
             name="phone"
-            value={profile.phone}
+            value={profile.phoneNumber}
             onChange={handleChange}
             fullWidth
             margin="normal"

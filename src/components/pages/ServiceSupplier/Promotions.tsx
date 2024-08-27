@@ -277,6 +277,16 @@ const Promotions: FC<Props> = (props) => {
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DemoContainer components={['DateTimePicker']}>
                                             <DateTimePicker
+                                                sx={{
+                                                    minWidth: '100px !important',
+                                                    width: '140px !important',
+                                                    '& .Mui-error': {
+                                                        color: 'black !important',
+                                                    },
+                                                    '& .MuiOutlinedInput-notchedOutline': {
+                                                        borderColor: 'gray !important',
+                                                    },
+                                                }}
                                                 onChange={(value: Dayjs | null) => {
                                                     if (value) {
                                                         setEndDate(value);

@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { ServiceCreate, ServiceUpdate } from '../../../types/entity/Entity';
 import { SegmentItem } from '../../../types/schema/segment';
-import { currencyMask, currencyMaskString } from '../../../constants/convert';
+import { currencyMask, currencyMaskString, currencyToNumber } from '../../../constants/convert';
 
 interface Props {
   setMessageStatus: Dispatch<SetStateAction<string>>;
@@ -163,7 +163,7 @@ const ServiceDetail: FC<Props> = (props) => {
         images: getImagesPayload,
         promotionId: (promotion?.id == 'none') ? "" : `${promotion?.id}`,
         name: serviceName,
-        price: parseInt(price),
+        price: currencyToNumber(price),
         supplierId: user?.userId,
         type: `${segment?.id}`,
       }
@@ -194,12 +194,6 @@ const ServiceDetail: FC<Props> = (props) => {
         {serviceDetail?.listImages?.map((item, i) =>
           <Paper key={i}>
             <img src={`${item}`} alt={`${item}`} style={{ width: '458px', height: '600px' }} key={i} />
-            {
-              (serviceDetail?.promotion) ?
-                (
-                  <h2 className="promotion">{serviceDetail?.promotion?.name}</h2>
-                ) : null
-            }
           </Paper>
         )}
       </Carousel>
@@ -226,6 +220,7 @@ const ServiceDetail: FC<Props> = (props) => {
               <div className="information-container">
                 <h1 className="header">{serviceDetail?.name}</h1>
                 <span className="service-price">{(serviceDetail?.price) && currencyMaskString(serviceDetail?.price)} VNĐ</span>
+                <h2 className="promotion">{serviceDetail?.promotion?.name}</h2>
                 <div className="underline"></div>
                 <div className="description">
                   <p className="description-header">Chi tiết</p>

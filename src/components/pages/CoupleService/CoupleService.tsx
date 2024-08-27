@@ -93,7 +93,6 @@ const CoupleService = () => {
     getServices(coupleServiceData?.id ?? '');
     getSelectedServiceList(coupleServiceData?.id ?? '', '', '', '');
   }, [coupleServiceData]);
-
   // Handle page change
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
@@ -295,6 +294,7 @@ const CoupleService = () => {
                   description={item.description}
                   price={item.price}
                   suplierID={item.id}
+                  categoryId={coupleServiceData?.id ?? ''}
                 />
               ))}
           </ul>

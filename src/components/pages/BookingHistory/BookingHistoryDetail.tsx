@@ -23,6 +23,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useSelector } from 'react-redux';
 import {
   cancelBooking,
+  getBalanceWallet,
   getBookingById,
   getBookingHistoryByCoupleId,
   ratingBooking,
@@ -46,6 +47,8 @@ const BookingHistoryDetail: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [openRating, setOpenRating] = useState(false);
+  const [openDeposit, setOpenDeposit] = useState(false);
+  const [balance, setBalance] = useState<string>('0');
 
   const [reason, setReason] = useState('');
   const navigate = useNavigate();
@@ -53,33 +56,58 @@ const BookingHistoryDetail: React.FC = () => {
   const user = useSelector((state: any) => state.auth.login.currentUser);
   const [rating, setRating] = useState<number | null>(0);
   const [description, setDescription] = useState('');
+  const [detailId, setDetailId] = useState('');
 
   const { id } = useParams();
   const getBookingDetails = async (bookingId: string) => {
     setLoading(true);
     const res = await getBookingById(bookingId, user.token);
     if (res) setData(res);
-    setLoading(false);
   };
+  async function fetchBalanceWallet() {
+    const response = await getBalanceWallet(user?.accountId, user?.token);
+    setBalance(response?.balance);
+    setLoading(false);
+  }
   useEffect(() => {
-    if (id) getBookingDetails(id);
+    if (id) {
+      getBookingDetails(id);
+      fetchBalanceWallet();
+    }
   }, []);
   const hasApprovedItem = data?.listBookingDetail?.some(
     (item: any) => item.status === BOOKING_STATUS.approved
   );
-  const remainingPayment = async () => {
-    const listBookingIds: string[] = [];
-    data.listBookingDetail.map((item: any) => {
-      if (item.status === BOOKING_STATUS.done) listBookingIds.push(item.id);
-    });
+  const hasDoneItem = data?.listBookingDetail?.some(
+    (item: any) => item.status === BOOKING_STATUS.done
+  );
+  const remainingPayment = async (listBookingIds: string[]) => {
+    console.log(listBookingIds);
     const args = { deposit: false, listBookingDetailId: listBookingIds };
     const res = await requestPayment(args, user.token);
     if (res) {
-      window.location.href = res;
+      if (
+        res.urlPaymentVNPay === '' ||
+        res.urlPaymentVNPay === null ||
+        res.urlPaymentVNPay === undefined
+      ) {
+        if (id) {
+          getBookingDetails(id);
+        }
+      } else window.location.href = res.urlPaymentVNPay;
     }
   };
+  const totalPrice = () => {
+    let total = 0;
+    data.listBookingDetail.map((item: any) => {
+      if (item.status === BOOKING_STATUS.done) {
+        total = total + item.price;
+      }
+    });
+    return total;
+  };
 
-  const handleDelete = async (detailId: string) => {
+  const handleDelete = async () => {
     setLoading(true);
     const res = await cancelBooking(detailId, reason, user.token);
     if (res) {
@@ -87,9 +115,10 @@ const BookingHistoryDetail: React.FC = () => {
       setOpen(false);
       setReason('');
       setLoading(false);
+      setDetailId('');
     }
   };
-  const handleRating = async (detailId: string) => {
+  const handleRating = async () => {
     setLoading(true);
     const res = await ratingBooking(
       detailId,
@@ -104,6 +133,7 @@ const BookingHistoryDetail: React.FC = () => {
       setDescription('');
       setRating(0);
       setLoading(false);
+      setDetailId('');
     }
   };
   const formatDate = (dateString: string) => {
@@ -117,7 +147,6 @@ const BookingHistoryDetail: React.FC = () => {
       year: 'numeric',
     });
 
-    // Combine time and date
     return `${formattedDate}`;
   };
   console.log(data);
@@ -126,7 +155,7 @@ const BookingHistoryDetail: React.FC = () => {
       <Button
         variant="contained"
         className="text-start flex text-lg items-center gap-2 font-bold cursor-pointer "
-        onClick={() => navigate('/booking-history')}
+        onClick={() => navigate(-1)}
       >
         <div>
           <KeyboardBackspace sx={{ width: 20, height: 20 }} />
@@ -187,7 +216,7 @@ const BookingHistoryDetail: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Đơn giá
+                    Nhà cung cấp{' '}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -206,7 +235,7 @@ const BookingHistoryDetail: React.FC = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Giảm giá
+                    Khuyến mãi{' '}
                   </TableCell>{' '}
                   <TableCell
                     sx={{
@@ -237,19 +266,20 @@ const BookingHistoryDetail: React.FC = () => {
                   >
                     Trạng thái
                   </TableCell>
-                  {data?.status === BOOKING_STATUS.processing ||
-                    (data?.status === BOOKING_STATUS.completed && (
-                      <TableCell
-                        sx={{
-                          fontSize: 16,
-                          color: 'var(--primary-color)',
-                          fontWeight: 600,
-                          textAlign: 'center',
-                        }}
-                      >
-                        Hành động
-                      </TableCell>
-                    ))}
+                  {(data?.status === BOOKING_STATUS.processing ||
+                    data?.status === BOOKING_STATUS.completed ||
+                    data?.status === BOOKING_STATUS.deposited) && (
+                    <TableCell
+                      sx={{
+                        fontSize: 16,
+                        color: 'var(--primary-color)',
+                        fontWeight: 600,
+                        textAlign: 'center',
+                      }}
+                    >
+                      Hành động
+                    </TableCell>
+                  )}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -261,7 +291,7 @@ const BookingHistoryDetail: React.FC = () => {
                         {detail.serviceSupplier.name}
                       </TableCell>
                       <TableCell sx={{ fontSize: 14 }}>
-                        {detail.price.toLocaleString()}
+                        {detail.serviceSupplier.supplierResponse.supplierName}{' '}
                       </TableCell>
                       <TableCell sx={{ fontSize: 14, textAlign: 'center' }}>
                         {detail.quantity}
@@ -283,7 +313,7 @@ const BookingHistoryDetail: React.FC = () => {
                           )
                         ) : (
                           <>-</>
-                        )}
+                        )}{' '}
                       </TableCell>
                       <TableCell sx={{ fontSize: 14 }}>
                         {detail.promotionServiceSupplier ? (
@@ -319,14 +349,24 @@ const BookingHistoryDetail: React.FC = () => {
                       <TableCell sx={{ fontSize: 14, textAlign: 'center' }}>
                         <StatusChip status={detail.status} />
                       </TableCell>
-                      {data?.status === BOOKING_STATUS.processing && (
+                      {(detail?.status === BOOKING_STATUS.processing ||
+                        detail?.status === BOOKING_STATUS.deposited) && (
                         <>
                           <TableCell sx={{ textAlign: 'center' }}>
-                            <IconButton onClick={() => setOpen(true)}>
+                            <IconButton
+                              disabled={detail.status === BOOKING_STATUS.cancel}
+                              onClick={() => {
+                                setOpen(true);
+                                setDetailId(detail.id);
+                              }}
+                            >
                               <DeleteIcon
                                 sx={{
                                   fontSize: 20,
-                                  color: 'red',
+                                  color:
+                                    detail.status === BOOKING_STATUS.cancel
+                                      ? 'gray'
+                                      : 'red',
                                 }}
                               />
                             </IconButton>
@@ -359,7 +399,7 @@ const BookingHistoryDetail: React.FC = () => {
                                     color: 'white',
                                   }}
                                   variant="contained"
-                                  onClick={() => handleDelete(detail.id)}
+                                  onClick={() => handleDelete()}
                                   disabled={reason === ''}
                                 >
                                   Xác nhận
@@ -381,7 +421,10 @@ const BookingHistoryDetail: React.FC = () => {
                                   fontWeight: 600,
                                 }}
                                 disabled={detail.serviceSupplier.rating !== 0}
-                                onClick={() => setOpenRating(true)}
+                                onClick={() => {
+                                  setOpenRating(true);
+                                  setDetailId(detail.id);
+                                }}
                               >
                                 {detail.serviceSupplier.rating !== 0
                                   ? 'Đã đánh giá'
@@ -418,7 +461,7 @@ const BookingHistoryDetail: React.FC = () => {
                               />
                               <Box sx={{ textAlign: 'end', mt: 2 }}>
                                 <Button
-                                  onClick={() => handleRating(detail.id)}
+                                  onClick={() => handleRating()}
                                   sx={{
                                     px: 2,
                                     py: 0.5,
@@ -477,7 +520,127 @@ const BookingHistoryDetail: React.FC = () => {
                 </Box>
               </>
             )}
-            {data?.status === BOOKING_STATUS.done && (
+            {hasDoneItem && (
+              <>
+                <Typography my={1} variant="h5">
+                  Tổng cộng:{' '}
+                  <Box
+                    component="span"
+                    sx={{ color: 'green', fontWeight: 'bold' }}
+                  >
+                    {totalPrice().toLocaleString()} VND
+                  </Box>
+                </Typography>
+                <Typography my={1} variant="h5">
+                  Tiền đã cọc (20%):{' '}
+                  <Box
+                    component="span"
+                    sx={{ color: 'blue', fontWeight: 'bold' }}
+                  >
+                    {(totalPrice() * 0.2)?.toLocaleString()} VND
+                  </Box>
+                </Typography>
+                <Typography my={1} variant="h5">
+                  Còn lại:{' '}
+                  <Box
+                    component="span"
+                    sx={{ color: 'red', fontWeight: 'bold' }}
+                  >
+                    {(totalPrice() - totalPrice() * 0.2)?.toLocaleString()} VND
+                  </Box>
+                </Typography>
+                <Box mt={2}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      px: 4,
+                      py: 1,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      backgroundColor: 'var(--primary-color)',
+                      color: 'white',
+                    }}
+                    onClick={() => setOpenDeposit(true)}
+                  >
+                    Tất toán
+                  </Button>
+                </Box>
+                <Modal
+                  open={openDeposit}
+                  onClose={() => setOpenDeposit(false)}
+                  aria-labelledby="modal-modal-title"
+                  aria-describedby="modal-modal-description"
+                >
+                  <Box sx={style}>
+                    <Box
+                      sx={{ display: 'flex', justifyContent: 'space-between' }}
+                    >
+                      <Typography variant="h5">Số dư ví:</Typography>
+                      <Typography variant="h5">
+                        <Box
+                          component="span"
+                          sx={{ color: 'green', fontWeight: 'bold' }}
+                        >
+                          {balance.toLocaleString()} VNĐ
+                        </Box>
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        mt: 3,
+                      }}
+                    >
+                      <Typography variant="h5">
+                        {' '}
+                        Tổng tiền cần thanh toán:
+                      </Typography>
+                      <Typography variant="h5">
+                        <Box
+                          component="span"
+                          sx={{ color: 'red', fontWeight: 'bold' }}
+                        >
+                          {(totalPrice() * 0.2).toLocaleString()} VNĐ
+                        </Box>
+                      </Typography>
+                    </Box>
+                    <Typography color={'red'} mt={2}>
+                      <i>
+                        Ghi chú: Số tiền sẽ được trừ trực tiếp vào ví nếu số dư
+                        còn đủ. Nếu không, bạn cần thanh toán qua phương thức
+                        trực tuyến.
+                      </i>
+                    </Typography>
+
+                    <Box sx={{ textAlign: 'end', mt: 2 }}>
+                      <Button
+                        onClick={() => {
+                          const listBookingIds: string[] = [];
+                          data.listBookingDetail.map((item: any) => {
+                            if (item.status === BOOKING_STATUS.done)
+                              listBookingIds.push(item.id);
+                          });
+                          remainingPayment(listBookingIds);
+                        }}
+                        sx={{
+                          px: 2,
+                          py: 0.5,
+                          fontSize: 12,
+                          fontWeight: 600,
+                          backgroundColor: 'var(--primary-color)',
+                          color: 'white',
+                        }}
+                        variant="contained"
+                      >
+                        Xác nhận
+                      </Button>
+                    </Box>
+                  </Box>
+                </Modal>
+              </>
+            )}
+            {/* {data?.status === BOOKING_STATUS.done && (
               <>
                 <Typography my={1} variant="h5">
                   Tổng cộng:{' '}
@@ -527,7 +690,7 @@ const BookingHistoryDetail: React.FC = () => {
                   </Button>
                 </Box>
               </>
-            )}
+            )} */}
           </Box>
         </>
       )}

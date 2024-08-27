@@ -47,6 +47,7 @@ import Footer from './components/modules/Footer/Footer';
 import BookingHistoryDetail from './components/pages/BookingHistory/BookingHistoryDetail';
 import TransactionHistory from './components/pages/TransactionHistory/TransactionHistory';
 import WalletHistory from './components/pages/WalletHistory/WalletHistory';
+import ComboDetail from './components/pages/ComboDetail.tsx/ComboDetail';
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -71,7 +72,12 @@ function App() {
   }, [location.pathname, user]);
   return (
     <div className="App">
-      <MessageBox status={messageStatus} message={message} setMessage={setMessage} title='inasd'></MessageBox>
+      <MessageBox
+        status={messageStatus}
+        message={message}
+        setMessage={setMessage}
+        title="inasd"
+      ></MessageBox>
       <UserProvider>
         {isDisplayHeader && (
           <Header
@@ -119,9 +125,13 @@ function App() {
           {/* Authenticate */}
           <Route
             path="/login"
-            element={<Login setRoleLogin={setRoleLogin}
-              setMessageStatus={setMessageStatus}
-              setMessage={setMessage} />}
+            element={
+              <Login
+                setRoleLogin={setRoleLogin}
+                setMessageStatus={setMessageStatus}
+                setMessage={setMessage}
+              />
+            }
           />
           <Route
             path="/register"
@@ -207,6 +217,7 @@ function App() {
           <Route path="/booking-history" element={<BookingHistory />} />
           <Route path="/transaction-history" element={<TransactionHistory />} />
           <Route path="/wallet-history" element={<WalletHistory />} />
+          <Route path="/combo-services/:id" element={<ComboDetail />} />
 
           <Route
             path="/booking-history/:id"

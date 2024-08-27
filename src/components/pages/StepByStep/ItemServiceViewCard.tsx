@@ -147,6 +147,7 @@ const ItemServiceViewCard: React.FC<VenueCardProps> = ({
                 price: price,
                 promotion: 0,
                 quantity: 1,
+                category: 'sss',
               });
               // window.location.href = '/quotation';
             }}

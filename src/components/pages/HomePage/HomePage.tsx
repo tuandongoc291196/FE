@@ -8,7 +8,7 @@ import './HomePage.css';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { ServiceData } from '../../../utils/ServiceData';
-import { getBlogsList } from '../../../api/CoupleAPI';
+import { getBlogsList, getListCombo } from '../../../api/CoupleAPI';
 
 const blogs = [
   {
@@ -73,6 +73,7 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const [slide, setSlide] = useState(0);
   const [blogsList, setBlogsList] = useState<any[]>([]);
+  const [combos, setCombos] = useState<any[]>([]);
 
   const getData = async () => {
     const response = await getBlogsList({
@@ -80,11 +81,14 @@ const HomePage: React.FC = () => {
       pageSize: 100,
     });
     setBlogsList(response);
+    const combos = await getListCombo(0, 100);
+    setCombos(combos);
   };
-
+  console.log(combos);
   useEffect(() => {
     getData();
   }, []);
+
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
 
@@ -261,8 +265,11 @@ const HomePage: React.FC = () => {
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
         >
-          {services.map((service, index) => (
+          {combos.map((combo, index) => (
             <Card
+              onClick={() => {
+                navigate(`/combo-services/${combo.id}`);
+              }}
               key={index}
               sx={{
                 minWidth: 300,
@@ -274,7 +281,7 @@ const HomePage: React.FC = () => {
               }}
               elevation={3}
             >
-              <CardMedia sx={{ height: 200 }} image={service.imageSmall} />
+              <CardMedia sx={{ height: 200 }} image={combo.image} />
               <CardContent sx={{ textAlign: 'left' }}>
                 <Typography
                   variant="h5"
@@ -284,17 +291,14 @@ const HomePage: React.FC = () => {
                     textTransform: 'uppercase',
                     fontWeight: 600,
                   }}
-                  onClick={() => {
-                    navigate(`/services/details/sfa`);
-                  }}
                 >
-                  {service.label}
+                  {combo.name}
                 </Typography>
-                <Typography fontSize={14}> 4 dịch vụ</Typography>
                 <Typography fontSize={14} fontWeight={600}>
                   {' '}
-                  {(20000000).toLocaleString('vi-VN')} VND
+                  {combo.comboServices.length} dịch vụ
                 </Typography>
+                <Typography fontSize={14}> {combo.description}</Typography>
               </CardContent>
             </Card>
           ))}
@@ -317,7 +321,7 @@ const HomePage: React.FC = () => {
             flexWrap: 'wrap',
           }}
         >
-          {blogs.map((blog, index) => (
+          {blogsList.map((blog, index) => (
             <Card
               key={index}
               sx={{
@@ -332,10 +336,10 @@ const HomePage: React.FC = () => {
               }}
               elevation={3}
               onClick={() => {
-                navigate('/blogs/details/sdaf');
+                navigate(`/blogs/details/${blog.id}`);
               }}
             >
-              <CardMedia sx={{ height: 200 }} image={blog.image} />
+              <CardMedia sx={{ height: 200 }} image={blog.listImages[0]} />
               <CardContent sx={{ textAlign: 'left' }}>
                 <Typography
                   gutterBottom
@@ -355,21 +359,8 @@ const HomePage: React.FC = () => {
                   color="text.secondary"
                   sx={{ fontWeight: 600 }}
                 >
-                  <CalendarTodayIcon sx={{ marginRight: 1 }} /> {blog.date}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  color="text.secondary"
-                  sx={{
-                    mt: 1,
-                    display: '-webkit-box',
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                    WebkitLineClamp: 3,
-                    textOverflow: 'ellipsis',
-                  }}
-                >
-                  {blog.description}
+                  <CalendarTodayIcon sx={{ marginRight: 1 }} />
+                  {formatDate(blog.createAt)}
                 </Typography>
               </CardContent>
             </Card>
@@ -386,7 +377,7 @@ const HomePage: React.FC = () => {
             }}
             elevation={3}
             onClick={() => {
-              navigate('/blogs');
+              navigate('/blogs-couple');
             }}
           >
             <CardContent

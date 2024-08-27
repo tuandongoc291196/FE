@@ -15,6 +15,7 @@ interface ServiceItemViewCardProps {
   price: number;
   suplierID: string;
   promotion: any;
+  categoryId: string;
 }
 
 const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
@@ -27,12 +28,10 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
   price,
   suplierID,
   promotion,
+  categoryId,
 }) => {
   const navigate = useNavigate();
-
-  // const [open, setOpen] = useState(false);
-  // const handleClose = () => setOpen(false);
-
+  console.log(categoryId);
   return (
     <li className="content-item">
       <div className="content-gallery">
@@ -88,6 +87,7 @@ const ServiceItemViewCard: React.FC<ServiceItemViewCardProps> = ({
                 price: price,
                 promotion: promotion,
                 quantity: 1,
+                category: categoryId,
               });
             }}
           >

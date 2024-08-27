@@ -29,6 +29,7 @@ const ComboServiceDetail = () => {
       price: service?.price,
       promotion: 0,
       quantity: 1,
+      category: 's',
     });
     window.location.href = '/quotation';
     // navigate(`/quotation`);

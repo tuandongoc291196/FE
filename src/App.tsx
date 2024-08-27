@@ -140,7 +140,7 @@ function App() {
           {/* Admin */}
           <Route element={<ProtectedRoute requiredRole={ROLE.admin} />}>
             <Route
-              path="/staffs"
+              path="/accounts"
               element={
                 <StaffList
                   setMessage={setMessage}

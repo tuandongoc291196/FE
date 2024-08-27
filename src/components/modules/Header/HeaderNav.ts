@@ -10,7 +10,7 @@ export const HeaderNav = [
             },
             {
                 name: "tài khoản",
-                navigate: "/staffs"
+                navigate: "/accounts"
             },
             {
                 name: "thanh toán",

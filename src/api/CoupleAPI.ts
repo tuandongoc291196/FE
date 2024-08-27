@@ -244,7 +244,7 @@ export const getListCombo = async (
   pageSize: number
 ): Promise<any[]> => {
   try {
-    const response = await axios.get('/combo/getAllCombo', {
+    const response = await axios.get('/combo/getComboByFilter', {
       params: {
         pageNo: pageNo,
         pageSize: pageSize,
@@ -262,6 +262,24 @@ export const getListCombo = async (
   }
 };
 
+export const getServiceSupplierByComboId = async (
+  id: string
+): Promise<any[]> => {
+  try {
+    const response = await axios.get(
+      `/combo/getServiceSupplierByCombo?comboId=${id} `
+    );
+
+    if (response.data.status === 'SUCCESS') {
+      return response.data.data;
+    } else {
+      throw new Error('API call was not successful');
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+};
 export const getListBooking = async (
   pageNo: number,
   pageSize: number

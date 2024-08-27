@@ -353,6 +353,7 @@ const StepByStep = () => {
                       description={item.description}
                       price={item.price}
                       suplierID={item.id}
+                      categoryId={services[selectedTab]?.id}
                     />
                   ))}
               </ul>

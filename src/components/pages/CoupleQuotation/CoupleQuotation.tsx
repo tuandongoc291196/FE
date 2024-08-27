@@ -28,7 +28,7 @@ const CoupleQuotation: React.FC = () => {
   const navigate = useNavigate();
   const [servicesPrice, setServicePrice] = useState(getCart());
   const [modalOpen, setModalOpen] = useState(false);
-
+  console.log(servicesPrice);
   useEffect(() => {
     const handleStorageChange = () => {
       setServicePrice(getCart());
@@ -201,6 +201,10 @@ const CoupleQuotation: React.FC = () => {
                     type="number"
                     size="small"
                     InputProps={{ inputProps: { min: 1 } }}
+                    disabled={
+                      product.category !== 'CATEGORY-1' &&
+                      product.category !== 'CATEGORY-7'
+                    }
                   />
                 </TableCell>
                 <TableCell

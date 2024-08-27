@@ -5,6 +5,7 @@ interface CartItem {
   image: string;
   promotion: any;
   quantity: number;
+  category: string;
 }
 
 const CART_KEY = 'cart';

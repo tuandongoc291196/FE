@@ -15,7 +15,7 @@ import {
   Tabs,
   Tab,
 } from '@mui/material';
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { useSelector } from 'react-redux';
 import { getBookingHistoryByCoupleId } from '../../../redux/apiRequest';
 import { Inventory, Visibility } from '@mui/icons-material';
@@ -26,21 +26,21 @@ const BookingHistory: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<string>('all'); // Default to 'all'
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useSelector((state: any) => state.auth.login.currentUser);
 
   const getData = async () => {
     setLoading(true);
     const res = await getBookingHistoryByCoupleId(user.userId, user.token);
     if (res) {
-      // Sắp xếp data theo ngày tạo đơn từ mới đến cũ
       const sortedData = res.sort(
         (a: any, b: any) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
       setData(sortedData);
-      setFilteredData(sortedData); // Set initial filtered data
+      setFilteredData(sortedData);
     }
     setLoading(false);
   };
@@ -50,14 +50,20 @@ const BookingHistory: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedStatus === 'all') {
+    const params = new URLSearchParams(location.search);
+    const status = params.get('status') || 'all';
+    setSelectedStatus(status);
+
+    if (status === 'all') {
       setFilteredData(data);
     } else {
-      setFilteredData(
-        data.filter((booking: any) => booking.status === selectedStatus)
-      );
+      setFilteredData(data.filter((booking: any) => booking.status === status));
     }
-  }, [selectedStatus, data]);
+  }, [location.search, data]);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    navigate(`?status=${newValue}`);
+  };
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
@@ -102,7 +108,7 @@ const BookingHistory: React.FC = () => {
 
       <Tabs
         value={selectedStatus}
-        onChange={(event, newValue) => setSelectedStatus(newValue)}
+        onChange={handleTabChange}
         TabIndicatorProps={{
           style: {
             backgroundColor: 'var(--primary-color)',

@@ -12,34 +12,29 @@ import { Route } from "../types/common";
 
 export const listStaffRoute: Route[] = [
   {
-    title: "Bảng điều khiến",
-    icon: <Dashboard />,
-    path: "/staff/dashboard",
-  },
-  {
     title: "Gói dịch vụ",
     icon: <Apps />,
     path: "/staff/combo-services",
   },
   {
-    title: "Quản lý bài đăng",
+    title: "Loại dịch vụ",
     icon: <DynamicFeed />,
-    path: "/staff/blogs",
-  },
-  {
-    title: "Quản lý phản hồi",
-    icon: <Comment />,
-    path: "/staff/comments",
-  },
-  {
-    title: "Quản lý danh mục",
-    icon: <Category />,
     path: "/staff/categories",
   },
   {
-    title: "",
-    path: "/staff/blog-detail",
+    title: "Dịch vụ",
+    icon: <Comment />,
+    path: "/staff/services",
   },
+  {
+    title: "Cẩm nang",
+    icon: <Category />,
+    path: "/staff/blogs",
+  },
+  // {
+  //   title: "",
+  //   path: "/staff/blog-detail",
+  // },
 ];
 
 export const listSupplierRoute: Route[] = [

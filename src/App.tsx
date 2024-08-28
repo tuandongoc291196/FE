@@ -14,7 +14,6 @@ import Photographer from './components/pages/Photographer/Photographer';
 import MessageBox from './components/pages/Popup/MessageBox/MessageBox';
 import Register from './components/pages/Authentication/Register';
 import Login from './components/pages/Authentication/Login';
-import StaffManageSuppliers from './components/pages/StaffManager/StaffManageSuppliers';
 import StaffManageServices from './components/pages/StaffManager/StaffManageServices';
 import StaffLayout from './components/modules/StaffLayout/StaffLayout';
 import { useSelector } from 'react-redux';
@@ -51,6 +50,7 @@ import ComboDetail from './components/pages/ComboDetail.tsx/ComboDetail';
 import AdminDashboard from './components/pages/Admin/AdminDashboard';
 import Deposit from './components/pages/Admin/Deposit';
 import AdminTransaction from './components/pages/Admin/AdminTransaction';
+import StaffManageComboServices from './components/pages/StaffManager/StaffManageComboServices';
 // import { listStaffRoute, listSupplierRoute } from "./constants/route";
 
 function App() {
@@ -94,12 +94,12 @@ function App() {
           {/* Will be refactored after completion of Dashboard */}
           {user && user?.roleName === ROLE.staff ? (
             <Route path="/" element={<StaffLayout />}>
-              <Route
-                path="/staff/suppliers"
-                element={<StaffManageSuppliers />}
-              />
-              <Route path="/staff/services" element={<StaffManageServices />} />
-              <Route path="/staff/blogs" element={<StaffManageBlogs />} />{' '}
+               <Route path="/staff/combo-services" element={<StaffManageComboServices setMessage={setMessage}
+              setMessageStatus={setMessageStatus} />} />
+              <Route path="/staff/services" element={<StaffManageServices setMessage={setMessage}
+              setMessageStatus={setMessageStatus} />} />
+              <Route path="/staff/blogs" element={<StaffManageBlogs  setMessage={setMessage}
+              setMessageStatus={setMessageStatus} />} />
               <Route
                 path="/staff/categories"
                 element={<StaffManageCategories />}

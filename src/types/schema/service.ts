@@ -8,3 +8,13 @@ export interface ServiceItem {
     listImages: Array<String>,
     categoryResponse: CategoryItem,
 }
+
+export interface ServiceDetail {
+    id: String,
+    name: String,
+    description: String,
+    createAt: String,
+    listImages: Array<String>,
+    categoryResponse: CategoryItem,
+    status: String,
+}

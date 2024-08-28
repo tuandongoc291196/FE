@@ -7,3 +7,13 @@ export interface BlogItem {
   staffId?: string;
   status: string;
 }
+
+export interface BlogDetail {
+  id: String,
+  title: String,
+  content: String,
+  createAt: String,
+  listImages: Array<String>,
+  staffName: "Staff",
+  status: String,
+}

@@ -14,6 +14,19 @@ export const GET_REJECTED_BLOGS = '/blog/getAllRejectedBlogPosts';
 export const GET_SUPPLIERS_BLOGS = '/blog/getAllBlogPostsByServiceSupplier';
 export const GET_ALL_CATEGORIES = '/category/getAllCategory';
 export const CREATE_CATEGORY = '/category/create';
+export const CREATE_POST = '/blog/create';
+export const GET_BLOG_BY_ID = '/blog/getBlogPostById/';
+export const UPDATE_POST = '/blog/update';
+export const CREATE_COMBO = '/combo/create';
+export const GET_ALL_COMBO_BY_ID = '/combo/getById/'
+export const GET_COMBO_BY_FILTER = '/combo/getComboByFilter'
+export const GET_ALL_COMBO = '/combo/getComboByFilter'
+export const GET_SERVICE_BY_ID = '/service/getById/{id}';
+export const GET_ALL_SERVICES_SUPPLIER = '/service-supplier/filter'
+export const UPDATE_COMBO = '/combo/update';
+export const CREATE_SERVICES = '/service/create';
+export const GET_ALL_SERVICES = '/service/getAllServices';
+export const UPDATE_SERVICE = '/service/update';
 
 // Promotion
 export const CREATE_PROMOTION = '/promotion/create';

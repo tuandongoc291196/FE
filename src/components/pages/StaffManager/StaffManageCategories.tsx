@@ -6,18 +6,14 @@ import {
   Chip,
   CircularProgress,
   FormControl,
-  IconButton,
-  Input,
   Modal,
   TextField,
   Typography,
 } from "@mui/material";
-import { Delete, Label } from "@mui/icons-material";
 import { GridColDef } from "@mui/x-data-grid";
 import { PROCESS_STATUS_VN, STATUS } from "../../../constants/consts";
 import React, { useState } from "react";
 import { useLocation } from "react-router";
-import SearchInput from "../../common/SearchInput";
 import { createCategory, getListCategories } from "../../../redux/apiRequest";
 import { CategoryItem } from "../../../types/schema/category";
 import { useSelector } from "react-redux";
@@ -90,26 +86,12 @@ const StaffManageCategories = () => {
           />
         ),
     },
-    {
-      field: "actions",
-      headerName: "Hành động",
-      align: "center",
-      headerAlign: "center",
-      flex: 1,
-      renderCell: (params: any) => (
-        <div className="flex justify-center">
-          <IconButton aria-label="view">
-            <Delete sx={{ color: "red", fontSize: 18 }} />
-          </IconButton>
-        </div>
-      ),
-    },
   ];
 
   React.useEffect(() => {
     const getCategories = async () => {
       setLoading(true);
-      const res = await getListCategories(0, 10);
+      const res = await getListCategories(0, 50);
       if (res)
         if (res.status === "SUCCESS") setData(res.data);
         else setData([]);
@@ -133,7 +115,6 @@ const StaffManageCategories = () => {
     setCategoryName("");
     setOpen(false);
   };
-
   const handleCancel = () => {
     setCategoryName("");
     setOpen(false);
@@ -175,6 +156,7 @@ const StaffManageCategories = () => {
           </Box>
         </Box>
       </Modal>
+
       <div className="flex flex-col gap-3">
         <div className="flex justify-between">
           <Typography

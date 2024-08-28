@@ -67,3 +67,43 @@ export interface BlogEntity {
     content: String,
     date: String
 }
+
+// Staff
+export interface PostCreate {
+    content: String,
+    images: String,
+    staff: String,
+    title: String,
+}
+export interface PostUpdate {
+    content: String,
+    id: String,
+    images: String,
+    title: String,
+}
+export interface ServicesCreate {
+    categoryId: string,
+    description: String,
+    images: String,
+    name: String,
+}
+export interface ServicesUpdate {
+    description: String,
+    id: string,
+    images: String,
+    name: String,
+}
+export interface ComboCreate {
+    description: String,
+    images: String,
+    listServiceSupplierId: Array<String>,
+    name: String,
+    staffId: String,
+}
+
+export interface ComboUpdate {
+    description: String,
+    images: String,
+    name: String,
+    id: String,
+}

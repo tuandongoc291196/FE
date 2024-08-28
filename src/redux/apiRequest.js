@@ -8,27 +8,37 @@ import {
   ACTIVATED_BY_ADMIN,
   CANCEL_BOOKING,
   CREATE_CATEGORY,
+  CREATE_COMBO,
+  CREATE_POST,
   CREATE_PROMOTION,
   CREATE_SERVICE,
   CREATE_SERVICE_SUPPLIER,
+  CREATE_SERVICES,
   DISABLED_BY_ADMIN,
   GET_ACTIVE_BLOGS,
   GET_ALL_ACCOUNT_BY_ADMIN,
   GET_ALL_ACCOUNT_BY_ROLE,
   GET_ALL_BLOGS,
   GET_ALL_CATEGORIES,
+  GET_ALL_COMBO,
+  GET_ALL_COMBO_BY_ID,
   GET_ALL_COUPLE_BY_ADMIN,
+  GET_ALL_SERVICES,
+  GET_ALL_SERVICES_SUPPLIER,
   GET_BALANCE_WALLET,
+  GET_BLOG_BY_ID,
   GET_BOOKING_BY_COUPLE,
   GET_BOOKING_BY_ID,
   GET_BOOKING_BY_SUPPLIER,
   GET_BOOKING_DETAIL_BY_SUPPLIER_ID,
   GET_BY_ADMIN,
+  GET_COMBO_BY_FILTER,
   GET_COUPLE_BY_ID,
   GET_PENDING_BLOGS,
   GET_PROMOTION_BY_SUPPLIER,
   GET_REJECTED_BLOGS,
   GET_SERVICE_BY_CATEGORY_ID,
+  GET_SERVICE_BY_ID,
   GET_SERVICE_SUPPLIER_BY_ID,
   GET_SERVICE_SUPPLIER_BY_SUPPLIER_ID,
   GET_SERVICE_SUPPLIER_FILTER,
@@ -42,11 +52,14 @@ import {
   RATING_BOOKING,
   REQUEST_PAYMENT,
   TOP_UP_BY_STAFF,
+  UPDATE_COMBO,
   UPDATE_CONFIRM_BOOKING_STATUS,
   UPDATE_CONFIRM_DONE_STATUS,
   UPDATE_CONFIRM_PROCESSING_STATUS,
   UPDATE_COUPLE_PROFILE,
+  UPDATE_POST,
   UPDATE_REJECT_BOOKING_STATUS,
+  UPDATE_SERVICE,
   UPDATE_SERVICE_SUPPLIER,
   UPDATE_SUPPLIER_PROFILE,
 } from '../constants/API_URLS';
@@ -81,7 +94,7 @@ export const loginUser = async (user, dispatch, navigate) => {
             return res.data.status;
           case ROLE.staff:
             dispatch(loginSuccess(res.data.data));
-            navigate('/staff/suppliers');
+            navigate('/staff/combo-services');
             return res.data.status;
           case ROLE.supplier:
             dispatch(loginSuccess(res.data.data));
@@ -196,6 +209,212 @@ export const registerStaff = async (
   }
 };
 
+export const createPost = async (
+  newPost,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.post(CREATE_POST, newPost, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getAllBlogPosts = async (page, size) => {
+  try {
+    let url = `${GET_ALL_BLOGS}?pageNo=${page}&pageSize=${size}`;
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getBlogById = async (blogId) => {
+  try {
+    const res = await axios.get(
+      GET_BLOG_BY_ID + `${blogId}`
+    );
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updatePost = async (
+  editPost,
+  token,
+  id,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    let url = `${UPDATE_POST}/${id}`;
+    const res = await axios.put(url, editPost, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const createCombo = async (
+  newCombo,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.post(CREATE_COMBO, newCombo, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+
+export const getAllComboById = async (comboId) => {
+  try {
+    const res = await axios.get(
+      GET_ALL_COMBO_BY_ID + `/${comboId}`
+    );
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getComboFilters = async (page, size, isAscending) => {
+  try {
+    let url = `${GET_COMBO_BY_FILTER}?isAscending=${isAscending}&pageNo=${page}&pageSize=${size}&softBy=id`;
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const getListCombo = async (page, size, isAscending) => {
+  try {
+    let url = `${GET_ALL_COMBO}?isAscending=${isAscending}&pageNo=${page}&pageSize=${size}&softBy=id`;
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const getServiceById = async (serviceId) => {
+  try {
+    const res = await axios.get(
+      GET_SERVICE_BY_ID + `?id=${serviceId}`
+    );
+    return res.data.data;
+  } catch (error) {
+    return error;
+  }
+};
+export const getServicesSupplierFilters = async (maxPrice, minPrice) => {
+  try {
+    let url = `${GET_ALL_SERVICES_SUPPLIER}?&maxPrice=${maxPrice}&minPrice=${minPrice}`;
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const updateCombo = async (
+  updateCombo,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.put(UPDATE_COMBO, updateCombo, {
+      headers: headers,
+    });
+    // const res = await axios.put(`${UPDATE_COMBO}/${updatedCombo.id}`, updatedCombo, {
+    //   headers: headers,
+    // });
+    
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const createServices = async (
+  newServices,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.post(CREATE_SERVICES, newServices, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const getAllListServices = async (page, size) => {
+  try {
+    let url = `${GET_ALL_SERVICES}?pageNo=${page}&pageSize=${size}`;
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
+export const updateServices = async (
+  updateService,
+  token,
+  navigate,
+  dispatch
+): Promise<string> => {
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+  try {
+    const res = await axios.put(UPDATE_SERVICE, updateService, {
+      headers: headers,
+    });
+    return res.data.status;
+  } catch (error) {
+    return error.response.data.message;
+  }
+};
 export const getListBlogs = async (page, size, status, supplier_id) => {
   try {
     let url = `${GET_ALL_BLOGS}?pageNo=${page}&pageSize=${size}`;

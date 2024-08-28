@@ -52,7 +52,7 @@ export const HeaderNav = [
             },
             {
                 name: "giao dịch",
-                navigate: "/transactions"
+                navigate: "/transaction"
             }
         ]
     }

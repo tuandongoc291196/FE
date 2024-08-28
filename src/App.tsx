@@ -218,7 +218,7 @@ function App() {
               }
             />
             <Route
-              path="/transactions"
+              path="/transaction"
               element={
                 <Transactions
                   setMessage={setMessage}

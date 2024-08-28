@@ -278,7 +278,7 @@ const CoupleQuotation: React.FC = () => {
             sx={{ mr: 2, px: 4, py: 1, fontSize: 14, fontWeight: 600 }}
             onClick={() => navigate(-1)}
           >
-            Tiếp tục mua hàng
+            Tiếp tục đặt dịch vụ
           </Button>
           <Button
             variant="contained"
@@ -293,7 +293,7 @@ const CoupleQuotation: React.FC = () => {
             disabled={servicesPrice.length === 0}
             onClick={() => setModalOpen(true)}
           >
-            Hoàn tất đơn hàng
+            Tạo đơn
           </Button>
         </Box>
       </Box>

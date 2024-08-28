@@ -75,7 +75,14 @@ const BookingHistoryDetail: React.FC = () => {
     const args = { deposit: false, listBookingDetailId: listBookingIds };
     const res = await requestPayment(args, user.token);
     if (res) {
-      window.location.href = res;
+      console.log(res);
+      if (
+        res.urlPaymentVNPay === '' ||
+        res.urlPaymentVNPay === null ||
+        res.urlPaymentVNPay === undefined
+      )
+        window.location.href = '/booking-history';
+      else window.location.href = res.urlPaymentVNPay;
     }
   };
 

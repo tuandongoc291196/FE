@@ -70,7 +70,7 @@ const BlogList: React.FC = () => {
       {blogsList.map((post, index) => (
         <Card
           onClick={() => {
-            navigate('/blogs/details/' + post);
+            navigate(`/blogs/details/${post.id}`);
           }}
           sx={{
             my: 2,

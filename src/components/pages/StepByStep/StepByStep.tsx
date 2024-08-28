@@ -17,13 +17,14 @@ import {
   getServicesByCategory,
 } from '../../../api/CoupleAPI';
 import { useLocation } from 'react-router';
-import { Inventory } from '@mui/icons-material';
+import { ArrowForward, Inventory } from '@mui/icons-material';
 import ServiceItemViewCard from '../CoupleService/ServiceItemViewCard';
 
 const StepByStep = () => {
   const [selectedTab, setSelectedTab] = React.useState(0);
   const [serviceData, setServiceData] = React.useState<any[]>([]);
   const services = ServiceData;
+  console.log(setSelectedTab);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
@@ -181,7 +182,12 @@ const StepByStep = () => {
           <Tab
             key={index}
             icon={service.icon}
-            label={service.label}
+            label={
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {service.label}
+                {index < services.length - 1 && <ArrowForward sx={{ ml: 1 }} />}
+              </Box>
+            }
             sx={{
               fontSize: '1.2rem',
             }}
